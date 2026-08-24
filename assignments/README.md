@@ -1,35 +1,46 @@
-# Obligatoriske oppgåver
+# Obligatorisk oppgåve
 
-**Must be approved before you may sit the exam.** That makes them a gate, not a
-grade — but a missed one costs you the whole semester, so they come first.
+**One** larger obligatorisk oppgåve, October/November, **deadline around 10
+November**. Godkjent/ikke-godkjent, no part-grade — and the lecturer warns
+there will probably be **no time to fix a rejected submission**:
 
-Nothing is recorded here yet. Run `python src/canvas_sync.py`; every assignment
-Mitt UiB publishes, with its deadline, lands in `docs/canvas/course.md` and the
-week records. Check that rather than trusting this file.
+> *det blir neppe tid til å rette på en ikke-godkjent innlevering!*
+> — `weeks/uke34/slides/1krav-plan+intro.pdf`, p.1
 
-## How to file one
+Approval is the only academic requirement for sitting the exam. So this is the
+one hard deadline in the semester, and it has no second attempt built in. Start
+it the week it opens (uke 44), not the week it's due.
 
-One folder per assignment, named for what it is:
+Nothing is published yet. Run `python src/canvas_sync.py`; the task and its real
+deadline land in `docs/canvas/course.md` and the week records. Check that rather
+than trusting this file.
+
+## How to file it
 
 ```
 assignments/
-  oblig1-recursion/
-    Oblig1.hs          what you submit
-    NOTES.md           what you were asked to do, and any decision you made
+  oblig/
+    NOTES.md           what you were asked to do, and every decision you made
+    *.hs               the code
+    oblig.cabal        cabal is what the course expects for the bigger tasks
 ```
 
-Keep the task text with the code. When oblig 3 asks you to build on oblig 1 and
-Mitt UiB has since been reorganised, the copy in `NOTES.md` is the only record
+Keep the task text with the code. Mitt UiB gets reorganised, and access
+disappears when the course ends; the copy in `NOTES.md` is then the only record
 of what was actually required.
+
+`cabal init` inside `assignments/oblig/` — keep the project local to that folder
+so the tutorial harness stays dependency-free.
 
 ## Before you submit
 
 ```bash
-cd tutorial && ./check.sh <week>     # the week's tests still pass
-ghc -Wall -fno-code path/to/Oblig1.hs   # no warnings, no compile
+cabal build                              # it compiles as a project, not just a file
+ghc -Wall -fno-code path/to/Oblig.hs     # no warnings
+cabal install --lib QuickCheck           # if you're property-testing it
 ```
 
 `-Wall` catches the two things that cost easy marks: non-exhaustive patterns and
-unused bindings. Then ask me for an idiom review — the tests cannot tell you
-that your five-line recursion wanted to be a `foldr`, and that is most of the
-distance between a pass and a good grade.
+unused bindings. Then ask me for an idiom review — the tests can't tell you that
+your five-line recursion wanted to be a `foldr`, and that is most of the distance
+between a pass and good work.

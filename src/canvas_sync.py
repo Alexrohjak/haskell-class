@@ -17,11 +17,15 @@ Why this exists: Mitt UiB access disappears when the course ends, and the
 lecturer publishes material week by week. Re-run this whenever something new
 appears and the repo stays a complete offline archive.
 
-A note on what is reachable. Students usually cannot enumerate the course Files
-area (the API returns 403), so this script discovers files the only way it can:
-by scanning module pages, announcements and assignments for links. A file the
-lecturer has uploaded but not yet linked from a page is invisible here. That is
-a Canvas permission boundary, not a bug.
+A note on where the material is. This course barely uses pages — the lecture
+notes and the weekly exercises sit in the **Files** area, in `forelesningsnotater/`
+and `oppgaver/`. UiB lets students enumerate that (HVL did not), so this script
+walks the folder tree and files each item by the week number in its name:
+`uke1.txt` and `1krav-plan+intro.pdf` are both course week 1, which is uke34.
+
+Links inside pages are still followed, for the courses that do work that way.
+Anything whose week cannot be determined lands in `docs/canvas/files/`, which is
+not a failure — just a file that has to be placed by hand.
 """
 
 from __future__ import annotations
@@ -38,7 +42,7 @@ from datetime import date
 from pathlib import Path
 
 from paths import ROOT
-from week import DATES, PLAN, YEAR, folder
+from week import DATES, PLAN, YEAR, folder, iso_week
 
 OUT = ROOT / "docs" / "canvas"
 RAW = OUT / "raw"
@@ -49,6 +53,40 @@ WEEK_IN_TITLE = re.compile(r"(?:[Vv]eke|[Uu]ke|[Ww]eek)\s*(\d{1,2})")
 
 # ...or when it only gives a date: "24.08", "24.08.2026", "24/8".
 DATE_IN_TITLE = re.compile(r"\b(\d{1,2})[./](\d{1,2})(?:[./](\d{2,4}))?\b")
+
+# Files-area folders whose contents belong inside a week folder, and where.
+# Keyed on the folder's own name, lowercased. Anything unlisted goes to
+# docs/canvas/files/ rather than being guessed at.
+FOLDER_MAP = {
+    "forelesningsnotater": "slides",
+    "forelesninger": "slides",
+    "notater": "slides",
+    "slides": "slides",
+    "transparenter": "slides",
+    "oppgaver": "exercises",
+    "ukesoppgaver": "exercises",
+    "obliger": None,          # obligs are cross-week — assignments/, by hand
+}
+
+# The course week a filename claims: "uke1.txt", "forelesning3.pdf", "1intro.pdf".
+COURSE_WEEK_IN_NAME = re.compile(
+    r"(?:uke|veke|week|forelesning|lecture|lec)[ _-]*(\d{1,2})", re.I)
+LEADING_NUMBER = re.compile(r"^(\d{1,2})(?=\D)")
+
+
+def course_week_from_name(name: str) -> int | None:
+    match = COURSE_WEEK_IN_NAME.search(name) or LEADING_NUMBER.match(name)
+    return int(match.group(1)) if match else None
+
+
+def place(entry: dict) -> tuple[int | None, str | None]:
+    """(uke, subfolder) for a Files-area entry. (None, None) means unplaceable."""
+    sub = FOLDER_MAP.get(Path(entry["folder"]).name.casefold(), "unknown")
+    if sub in (None, "unknown"):
+        return None, None
+    course_week = course_week_from_name(entry["name"])
+    uke = iso_week(course_week) if course_week else None
+    return (uke, sub) if uke else (None, None)
 
 
 # --------------------------------------------------------------------------
@@ -70,10 +108,14 @@ def load_env() -> dict[str, str]:
     token = vals.get("CANVAS_API_TOKEN", "")
     if not token or token == "paste_your_token_here":
         sys.exit("CANVAS_API_TOKEN is not set in .env.")
-    if not re.match(r"^\d+~", token):
+    # Two formats in the wild: the current "1234~abc..." and the legacy
+    # 64-character alphanumeric one, which is what UiB still issues.
+    if not (re.fullmatch(r"\d+~[A-Za-z0-9]{20,}", token)
+            or re.fullmatch(r"[A-Za-z0-9]{40,}", token)):
         sys.exit(
-            "CANVAS_API_TOKEN doesn't look like a Canvas token — expected a "
-            "numeric prefix then '~'. Check for stray characters from pasting."
+            "CANVAS_API_TOKEN doesn't look like a Canvas token. Expected either "
+            "'1234~' followed by letters and digits, or a single run of 40+ "
+            "letters and digits. Check for stray characters from pasting."
         )
     return vals
 
@@ -163,7 +205,7 @@ def external_links(raw: str | None) -> list[str]:
 def collect(api: Canvas) -> dict:
     """Everything the API will give us, in one dict."""
     snap: dict = {"pages": [], "modules": [], "announcements": [],
-                  "assignments": [], "files": {}, "errors": []}
+                  "assignments": [], "files": {}, "area": [], "errors": []}
 
     course, err = api.get(f"/courses/{api.cid}")
     if err:
@@ -293,6 +335,29 @@ def collect(api: Canvas) -> dict:
             "links": external_links(body),
         })
 
+    # The Files area. This is where this course actually publishes, so it
+    # matters more than everything above it.
+    folders, err = api.get(f"/courses/{api.cid}/folders", per_page=100)
+    if err:
+        snap["errors"].append(f"files area: {err}")
+    for f in folders or []:
+        if not f.get("files_count"):
+            continue
+        listing, ferr = api.get(f"/folders/{f['id']}/files", per_page=100)
+        if ferr:
+            snap["errors"].append(f"folder {f.get('full_name')}: {ferr}")
+            continue
+        for meta in listing or []:
+            snap["area"].append({
+                "folder": f.get("full_name") or "",
+                "name": meta.get("display_name"),
+                "id": meta.get("id"),
+                "size": meta.get("size"),
+                "type": meta.get("content-type"),
+                "url": meta.get("url"),      # capability URL — never committed
+                "updated": meta.get("updated_at"),
+            })
+
     # Resolve every file id we saw. Enumeration is 403 for students, so this
     # is the only way to learn a file's real name.
     seen: set[int] = set()
@@ -413,6 +478,18 @@ def write_digest(snap: dict) -> Path:
             lines += ["", "**Links:**"] + [f"- {url}" for url in page["links"]]
         lines.append("")
 
+    lines += ["## Files area", ""]
+    if not snap["area"]:
+        lines.append("*Empty, or not readable — see below.*")
+    else:
+        lines += ["| File | Folder | Filed as | Updated |", "|---|---|---|---|"]
+        for entry in sorted(snap["area"], key=lambda e: (e["folder"], e["name"] or "")):
+            uke, sub = place(entry)
+            where = f"`weeks/uke{uke}/{sub}/`" if uke else "`docs/canvas/files/` (by hand)"
+            lines.append(f"| {entry['name']} | {entry['folder']} | {where} "
+                         f"| {(entry['updated'] or '')[:10]} |")
+    lines.append("")
+
     lines += ["## Announcements", ""]
     if not snap["announcements"]:
         lines.append("*None.*")
@@ -444,6 +521,8 @@ def write_raw(snap: dict) -> Path:
     safe = json.loads(json.dumps(snap))
     for meta in safe["files"].values():
         meta.pop("url", None)
+    for entry in safe["area"]:
+        entry.pop("url", None)
     path = RAW / "snapshot.json"
     path.write_text(json.dumps(safe, indent=2, ensure_ascii=False) + "\n")
     return path
@@ -497,6 +576,16 @@ def download_files(api: Canvas, snap: dict, quiet: bool) -> list[str]:
                 status = api.download(meta["url"], dest)
                 if status != "exists" or not quiet:
                     report.append(f"  {status:11} {dest.relative_to(ROOT)}")
+
+    for entry in snap["area"]:
+        if not entry.get("url"):
+            report.append(f"  skip        {entry['name']} — no download URL")
+            continue
+        uke, sub = place(entry)
+        dest = (folder(uke) / sub / entry["name"]) if uke else (OUT / "files" / entry["name"])
+        status = api.download(entry["url"], dest)
+        if status != "exists" or not quiet:
+            report.append(f"  {status:11} {dest.relative_to(ROOT)}")
     return report
 
 
@@ -528,6 +617,13 @@ def write_week_records(snap: dict) -> list[int]:
         for uke in weeks_for_page(page):
             by_week.setdefault(uke, []).append(page)
 
+    # What the Files area put in this week, which for this course is most of it.
+    area_by_week: dict[int, list[dict]] = {}
+    for entry in snap["area"]:
+        uke, sub = place(entry)
+        if uke:
+            area_by_week.setdefault(uke, []).append(dict(entry, sub=sub))
+
     written = []
     for uke, (topic, tut) in sorted(PLAN.items()):
         base = folder(uke)
@@ -543,8 +639,15 @@ def write_week_records(snap: dict) -> list[int]:
             ]
 
         pages = by_week.get(uke, [])
-        if pages:
+        area = area_by_week.get(uke, [])
+        if pages or area:
             out += ["## Posted by the lecturer", ""]
+        for entry in area:
+            out += [f"- `{entry['sub']}/{entry['name']}` — from Canvas "
+                    f"`{entry['folder']}`, updated {(entry['updated'] or '')[:10]}"]
+        if area:
+            out.append("")
+        if pages:
             for page in pages:
                 out += [f"### {page['title']}", "", page["text"] or "*(no text)*", ""]
                 if page["file_ids"]:
@@ -555,7 +658,7 @@ def write_week_records(snap: dict) -> list[int]:
                     out.append("")
                 if page["links"]:
                     out += ["**Links:**"] + [f"- {u}" for u in page["links"]] + [""]
-        else:
+        if not pages and not area:
             out += [
                 "## Posted by the lecturer",
                 "",
@@ -598,7 +701,8 @@ def main() -> None:
     if not args.quiet:
         print(f"Course : {snap['course']['name']}")
         print(f"Pages  : {len(snap['pages'])}")
-        print(f"Files  : {len(snap['files'])} linked")
+        print(f"Files  : {len(snap['files'])} linked, "
+              f"{len(snap['area'])} in the Files area")
         print(f"Notices: {len(snap['announcements'])}")
         print(f"Tasks  : {len(snap['assignments'])}")
         print()

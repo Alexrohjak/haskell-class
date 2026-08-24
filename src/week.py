@@ -25,21 +25,54 @@ YEAR = 2026
 # uke -> (topic, tutorial week that covers it).
 # INF122 is one track, unlike DAT158 — no -ml/-alg split on the folders.
 PLAN: dict[int, tuple[str, int | None]] = {
-    34: ("(ikkje kunngjort enno)", 1),
-    35: ("(ikkje kunngjort enno)", 2),
-    36: ("(ikkje kunngjort enno)", 3),
-    37: ("(ikkje kunngjort enno)", 4),
-    38: ("(ikkje kunngjort enno)", 5),
-    39: ("(ikkje kunngjort enno)", 6),
-    40: ("(ikkje kunngjort enno)", 7),
-    41: ("(ikkje kunngjort enno)", 8),
-    42: ("(ikkje kunngjort enno)", 9),
-    43: ("(ikkje kunngjort enno)", 10),
-    44: ("(ikkje kunngjort enno)", 11),
-    45: ("(ikkje kunngjort enno)", 12),
-    46: ("(ikkje kunngjort enno)", None),
-    47: ("(ikkje kunngjort enno)", None),
+    # The lecturer's own "tentativ framdriftsplan", from
+    # weeks/uke34/slides/1krav-plan+intro.pdf p.2. Chapter numbers are Hutton.
+    # Where a topic spans several weeks his plan says so, and it is repeated
+    # here rather than split, because that is what he wrote.
+    #
+    # The tutorial column is mine, not his: it points at the tutorial week whose
+    # chapter the course is on. Weeks with no matching tutorial week say None —
+    # parsing, type inference and the oblig have no tutorial material.
+    34: ("kap. 1-2 (15) - intro, first steps", 1),
+    35: ("kap. 3-4 - types and classes, defining functions", 2),
+    36: ("kap. 3-4 - types and classes, defining functions", 3),
+    37: ("kap. 5-8 - list comprehensions to declaring types", 4),
+    38: ("kap. 5-8 - list comprehensions to declaring types", 5),
+    39: ("kap. 5-8 - list comprehensions to declaring types", 6),
+    40: ("kap. 5-8 - list comprehensions to declaring types", 7),
+    41: ("kap. 10 - interactive programming", 8),
+    42: ("kap. 10, and enkel parsing (forelesningsnotater!)", 9),
+    43: ("enkel parsing + typeinferens (forelesningsnotater!)", 10),
+    44: ("typeinferens, and the oblig opens", 11),
+    45: ("Oblig (frist antakelig rundt 10. november)", None),
+    46: ("Oblig (frist antakelig rundt 10. november)", None),
+    47: ("resultater og gjennomgang av Oblig", None),
+    48: ("spørsmål og svar", 12),
+    49: ("**Eksamen 2. desember** - 3t skriftleg, ingen hjelpemiddel", None),
 }
+
+# The course numbers its own weeks from 1, and its filenames follow suit
+# ("uke1.txt", "1krav-plan+intro.pdf"). Teaching started in ISO week 34 — the
+# first lecture was Monday 17 August — so course week 1 is uke34.
+#
+# A mid-semester break shifts this. If the lecturer's "uke 8" lands in a week
+# that PLAN says is something else, PLAN wins: fix the mapping here.
+FIRST_TEACHING_WEEK = 34
+
+
+def iso_week(number: int) -> int | None:
+    """ISO week for a week number found in a filename, or None if off-plan.
+
+    The lecturer uses both conventions: his plan says "uke 34" (ISO) while his
+    files say "uke1.txt" (the course's first week, which is uke34). A number
+    that is already a teaching week is taken at face value; anything smaller is
+    counted forward from the first one.
+    """
+    if number in PLAN:
+        return number
+    uke = FIRST_TEACHING_WEEK + number - 1
+    return uke if uke in PLAN else None
+
 
 MONTHS = {1: "jan", 2: "feb", 3: "mar", 4: "apr", 5: "mai", 6: "jun",
           7: "jul", 8: "aug", 9: "sep", 10: "okt", 11: "nov", 12: "des"}

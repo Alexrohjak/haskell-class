@@ -4,8 +4,10 @@ A self-study companion for **INF122 Funksjonell programmering** (UiB, 10 ECTS,
 autumn). Built to run *alongside* your 4h lectures + 2h exercises, not to replace
 them. Budget **2–3 hours per week**.
 
-Aligned to **Graham Hutton, _Programming in Haskell_ (2nd ed.)**, chapters 1–10
-and 15.
+Aligned to the confirmed pensum: **Graham Hutton, _Programming in Haskell_
+(2nd ed.), kap. 1–8, 10 and 15**, plus the two topics that exist only in the
+lecturer's notes — **enkel parsing** and **typeinferens**. Chapter 9 (countdown)
+and 11–14 are *not* pensum.
 
 ---
 
@@ -48,19 +50,19 @@ time and watch the count climb. Exit status is 0 only when everything passes.
 
 ## The plan
 
-| Week | Hutton | Topic | Why it matters |
+| Week | Source | Topic | Why it matters |
 |:--:|:--:|---|---|
-| 1 | 1–2 | Mindset, GHCi, first steps | The `=` sign isn't assignment |
-| 2 | 3 | Types and classes | `Ord a =>` explained; the type system is the course |
-| 3 | 4 | Defining functions | Guards, pattern matching, lambdas, sections |
-| 4 | 5 | List comprehensions | Generators, guards, the Caesar cipher |
-| 5 | 6 | Recursive functions | **Learning outcome #1** |
-| 6 | 7 | Higher-order functions | **Learning outcome #2** — `map`/`filter`/`foldr` |
-| 7 | 8 | Declaring types and classes | **Learning outcome #3** — your own data types |
-| 8 | 9 | The countdown problem | A real program, built from everything so far |
-| 9 | 10 | Interactive programming | `IO`, and how purity survives side effects |
-| 10 | 15 | Lazy evaluation | Infinite lists, `seq`, why `take 5 [1..]` works |
-| 11 | *TBD* | **FLEX** | Reserved for the chapters not yet pinned down |
+| 1 | Hutton 1–2 | Mindset, GHCi, first steps | The `=` sign isn't assignment |
+| 2 | Hutton 3 | Types and classes | `Ord a =>` explained; the type system is the course |
+| 3 | Hutton 4 | Defining functions | Guards, pattern matching, lambdas, sections |
+| 4 | Hutton 5 | List comprehensions | Generators, guards, the Caesar cipher |
+| 5 | Hutton 6 | Recursive functions | **Learning outcome #1** |
+| 6 | Hutton 7 | Higher-order functions | **Learning outcome #2** — `map`/`filter`/`foldr` |
+| 7 | Hutton 8 | Declaring types and classes | **Learning outcome #3** — your own data types |
+| 8 | Hutton 10 | Interactive programming | `IO`, and how purity survives side effects |
+| 9 | Hutton 15 | Lazy evaluation | Infinite lists, `seq`, why `take 5 [1..]` works |
+| 10 | *notes* | Enkel parsing | Examinable, and in no chapter of the book |
+| 11 | *notes* | Typeinferens | Examinable, and in no chapter of the book |
 | 12 | — | Exam prep | Timed, handwritten, no aids |
 
 ---
@@ -81,24 +83,40 @@ are in place and verified green against the reference solutions, but its `LESSON
 and `PAPER.md` are still to be written — so the exercises currently arrive without
 their teaching material. Weeks 4–12 are planned (see the table above) but not built.
 
+Week 3's exercises were built against Hutton 4, which is still week 3's chapter,
+so nothing already written was invalidated by the pensum arriving.
+
 ---
 
-**Week 11 is deliberately open.** The syllabus lists chapters 1–10 and 15; if the
-missing ones turn out to be 12 (monads), 13 (parsing), 14 (foldables) or 16
-(reasoning), that week gets built to match. If nothing more turns up, it becomes a
-second revision week. Tell me when you find the full pensum.
+**The plan above changed once the real pensum arrived** (uke 34's
+`1krav-plan+intro.pdf`, mirrored into `../weeks/uke34/slides/`). Two edits, both
+to weeks not yet built:
+
+- **Chapter 9, the countdown problem, is gone.** It isn't pensum. It is still the
+  best single exercise in the book for assembling everything at once, so ask for
+  it as a bonus week if you want it — just don't spend exam-revision time there.
+- **Weeks 10 and 11 are now parsing and type inference.** These are examinable
+  and appear in *no chapter of Hutton* — the lecturer's notes are the only
+  source, and he flags them twice with "kun forelesningsnotater!". They arrive
+  in uke 42–44, so those two tutorial weeks can only be written after his notes
+  are published.
 
 ---
 
 ## What the course actually assesses
 
-From the emneplan:
+From the emneplan and his own first-lecture notes:
 
-- **Exam: 3 hours, written, _no aids permitted_.** You will write Haskell by hand
-  on paper. Every `LESSON.md` therefore has a **paper exercises** section — do those
-  without a computer. Typing fluency is not the skill being tested.
-- **Obligatoriske oppgåver must be approved** before you can sit the exam.
-- Grading A–F; both the compulsory work and the exam must pass independently.
+- **Exam: 2 December, 3 hours, written, _no aids permitted_.** You will write
+  Haskell by hand on paper. Every `LESSON.md` therefore has a **paper exercises**
+  section — do those without a computer. Typing fluency is not being tested.
+- **One obligatorisk oppgåve**, October/November, deadline around 10 November,
+  approved or not approved. The lecturer warns there is probably *no time to fix
+  a rejected submission* — see `../assignments/`.
+- Grading A–F; the oblig and the exam must pass independently.
+- Pensum point (C) is **all exercises from the chapters covered**, assumed
+  solved. The weekly sheets in `../weeks/ukeNN/exercises/` are separate work
+  again — this tutorial is a third track on top of both.
 
 The stated learning outcomes name three concepts explicitly — **rekursjon, høgre
 ordens funksjonar, ikkje-muterbare datastrukturar** — plus being able to *discuss*
@@ -120,8 +138,8 @@ tutorial/
     week01/ ...       Exercises.hs and PAPER.md per week
 ```
 
-The repo's other folders are yours: `lectures/` for code written in class,
-`assignments/` for graded work, `scratch/` for experiments.
+The repo's other folders are yours: `../weeks/ukeNN/code/` for code written in
+class, `../assignments/` for the oblig, `../scratch/` for experiments.
 
 ---
 

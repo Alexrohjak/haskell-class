@@ -1,0 +1,39 @@
+Oppgavene i boken løses uavhengig av oppgavene som gis hver uke. 
+Spørsmål om oppgavene i boken kan også tas opp i gruppene.
+
+1. 
+Definer funksjon 
+	plu :: [Int] -> Int -> [Int]
+som tar en liste av tall xs og et tall k, og returnerer listen xs med hvert tall økt med k, f.eks. plu [1,2,5] 4 = [5,6,9].
+
+
+2. Definer funksjon
+	pali :: String -> Bool
+som returnerer True hvis inputstrengen er en palindrome (identisk lest forfra og bakfra), og False ellers. 
+
+
+3. Justering av tekst i kolonner krever forskyvning til venstre eller til høyre. En måte er å legge til passende antall 
+blanker i starten eller enden av strengen, f.eks.:
+	hjuster 6 "word" = "  word"
+mens
+	vjuster 6 "word" = "word  "
+
+Definer disse to funksjonene.  Hva gjør de når input er lengre enn den oppgitte lengden? Er det det man skulle ønske, 
+og hvis ikke, hvordan ville du løse det?
+
+
+4. Definer funksjon 
+	evens :: [a] -> [a] 
+som returnerer subliste av argumentlisten med kun elementer fra like posisjoner, f.eks.
+	evens "abcde" = "ace"
+og tilsvarende funksjon
+	odds :: [a] -> [a] 
+som returnerer sublisten med elementer fra ulike posisjoner, f.eks.
+	odds "abcde" = "bd" .
+
+
+5. Definer nå en funksjon 
+	evensOdds :: [a] -> ([a],[a])
+som returnerer par av sublister
+	evensOdds xs = (evens xs, odds xs)
+men som gjør det ved å traversere input kun én gang.

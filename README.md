@@ -4,6 +4,12 @@ UiB, autumn 2026, 10 ECTS. Everything for this subject lives here.
 
 Mitt UiB: https://mitt.uib.no/courses/59171 · Emneplan: https://www.uib.no/emne/INF122
 
+Forelesningar: **mandag 08:15–10, tysdag 14:15–16**. Gruppetimar: torsdag 10:15,
+fredag 10:15 or fredag 12:15 — or a small group (2–5 people, ≤30 min) arranged
+by email with a gruppeleiar. Emneansvarleg: Michal Walicki
+(`Michal.Walicki@uib.no`). Exam and Mitt UiB admin: `Jenny.Thunes@uib.no`.
+Contact details for the gruppeleiarar are in [`docs/canvas/course.md`](docs/canvas/).
+
 ## Start working
 
 ```bash
@@ -24,37 +30,51 @@ source .venv/bin/activate      # needed for canvas_sync.py and find.py
 
 Nothing in Haskell needs it.
 
+## Pensum
+
+From the lecturer's own plan, [`weeks/uke34/slides/1krav-plan+intro.pdf`](weeks/uke34/slides/) p.2:
+
+- **(A)** Hutton, *Programming in Haskell* (2016) — **kap. 1–8, 10, 15**
+- **(B)** *All* forelesningsnotater. Parsing and type inference are examinable
+  and appear in **no chapter of the book** — the notes are the only source.
+- **(C)** *All* exercises from the chapters covered — assumed solved.
+
+Note what is **not** in it: chapter 9 (the countdown problem), and 11–14. The
+weekly exercise sheets are separate work from the book's exercises; `uke1.txt`
+says so outright.
+
 ## Semester plan
 
-**Provisional.** ISO week numbers, matching Mitt UiB. The topics are not filled
-in yet — run the sync and update `PLAN` in `src/week.py` to match what Mitt UiB
-says. Mitt UiB is the source of truth; where this table disagrees with it, this
-table is wrong.
+His "tentativ framdriftsplan", verbatim, in ISO weeks. Mitt UiB is the source of
+truth — re-run the sync and update `PLAN` in `src/week.py` when it changes.
 
 | Uke | Dates | Tema | Tutorial | Folder |
 |-----|-------|------|----------|--------|
-| 34 | 17.–23. aug | *(TBA)* | [week01](tutorial/week01/) | [`uke34`](weeks/uke34/) |
-| 35 | 24.–30. aug | *(TBA)* | [week02](tutorial/week02/) | [`uke35`](weeks/uke35/) |
-| 36 | 31. aug–6. sep | *(TBA)* | [week03](tutorial/week03/) | [`uke36`](weeks/uke36/) |
-| 37 | 7.–13. sep | *(TBA)* | week04 | [`uke37`](weeks/uke37/) |
-| 38 | 14.–20. sep | *(TBA)* | week05 | [`uke38`](weeks/uke38/) |
-| 39 | 21.–27. sep | *(TBA)* | week06 | [`uke39`](weeks/uke39/) |
-| 40 | 28. sep–4. okt | *(TBA)* | week07 | [`uke40`](weeks/uke40/) |
-| 41 | 5.–11. okt | *(TBA)* | week08 | [`uke41`](weeks/uke41/) |
-| 42 | 12.–18. okt | *(TBA)* | week09 | [`uke42`](weeks/uke42/) |
-| 43 | 19.–25. okt | *(TBA)* | week10 | [`uke43`](weeks/uke43/) |
-| 44 | 26. okt–1. nov | *(TBA)* | week11 | [`uke44`](weeks/uke44/) |
-| 45 | 2.–8. nov | *(TBA)* | week12 | [`uke45`](weeks/uke45/) |
-| 46 | 9.–15. nov | *(TBA)* | — | [`uke46`](weeks/uke46/) |
-| 47 | 16.–22. nov | *(TBA)* | — | [`uke47`](weeks/uke47/) |
-| — | *(TBA)* | **Eksamen — 3t skriftleg, ingen hjelpemiddel** | — | [`exam/`](exam/) |
+| 34 | 17.–23. aug | kap. 1–2 (15) | [week01](tutorial/week01/) | [`uke34`](weeks/uke34/) |
+| 35 | 24.–30. aug | kap. 3–4 | [week02](tutorial/week02/) | [`uke35`](weeks/uke35/) |
+| 36 | 31. aug–6. sep | kap. 3–4 | [week03](tutorial/week03/) | [`uke36`](weeks/uke36/) |
+| 37 | 7.–13. sep | kap. 5–8 | week04 | [`uke37`](weeks/uke37/) |
+| 38 | 14.–20. sep | kap. 5–8 | week05 | [`uke38`](weeks/uke38/) |
+| 39 | 21.–27. sep | kap. 5–8 | week06 | [`uke39`](weeks/uke39/) |
+| 40 | 28. sep–4. okt | kap. 5–8 | week07 | [`uke40`](weeks/uke40/) |
+| 41 | 5.–11. okt | kap. 10 | week09 | [`uke41`](weeks/uke41/) |
+| 42 | 12.–18. okt | kap. 10 · enkel parsing | week10 | [`uke42`](weeks/uke42/) |
+| 43 | 19.–25. okt | enkel parsing · typeinferens | — | [`uke43`](weeks/uke43/) |
+| 44 | 26. okt–1. nov | typeinferens · **Oblig opens** | — | [`uke44`](weeks/uke44/) |
+| 45 | 2.–8. nov | Oblig | — | [`uke45`](weeks/uke45/) |
+| 46 | 9.–15. nov | Oblig — frist ~10. nov | — | [`uke46`](weeks/uke46/) |
+| 47 | 16.–22. nov | Resultat og gjennomgang av Oblig | — | [`uke47`](weeks/uke47/) |
+| 48 | 23.–29. nov | Spørsmål og svar | week11 | [`uke48`](weeks/uke48/) |
+| 49 | 30. nov–6. des | **Eksamen 2. desember** — 3t skriftleg, ingen hjelpemiddel | week12 | [`exam/`](exam/) |
 
-The tutorial column is a guess: week 1 of the tutorial against the first
-teaching week, and so on. Real lectures never keep that pace exactly — once the
-lecture plan is synced, re-map it in `src/week.py`.
+Parsing, type inference and the oblig have no tutorial week — nothing in Hutton
+covers them. The rest of the tutorial column is my mapping, not his: it points
+at the tutorial week whose chapter the course is on.
 
-**Obligatoriske oppgåver must be approved** before you can sit the exam. See
-[`assignments/`](assignments/).
+**One obligatorisk oppgåve**, October/November, deadline around 10 November.
+Godkjent/ikke-godkjent, no part-grade — and he warns there will probably be *no
+time to fix a rejected submission*. That makes it the one hard deadline in the
+semester. See [`assignments/`](assignments/).
 
 ## Two tracks, one repo
 
@@ -63,22 +83,20 @@ This repo holds two different things, and keeping them apart is the point.
 - **[`weeks/ukeNN/`](weeks/)** — the course. What the *lecturer* published, plus
   the code you wrote in class. The `README.md` in each is **generated** by the
   sync: it records what was posted. Don't hand-edit it.
-- **[`tutorial/`](tutorial/)** — the 12-week self-study track, aligned to Hutton
-  ch. 1–10 and 15, with tests. Runs *alongside* lectures at 2–3 h/week. Yours to
-  edit, and the only place with a feedback loop that tells you when you're right.
-
-Weeks 1–3 of the tutorial are built (week 3 still needs its `LESSON.md`);
-4–12 are planned. See [`tutorial/README.md`](tutorial/README.md).
+- **[`tutorial/`](tutorial/)** — the 12-week self-study track, with tests, at
+  2–3 h/week. Yours to edit, and the only place with a feedback loop that tells
+  you when you're right.
 
 ## Where things go
 
 | I have… | It goes in… |
 |---|---|
-| A lecture slide deck | `weeks/ukeNN/slides/` — or just re-run the sync |
+| A lecture note or slide deck | `weeks/ukeNN/slides/` — or just re-run the sync |
+| The week's exercise sheet | `weeks/ukeNN/exercises/` — the sync files these too |
 | Code I wrote in class | `weeks/ukeNN/code/` |
-| A weekly exercise sheet | `weeks/ukeNN/exercises/` |
+| My answer to a weekly exercise | `weeks/ukeNN/code/` |
 | My answers to the tutorial | `tutorial/weekNN/Exercises.hs` |
-| An obligatorisk oppgåve | `assignments/` |
+| The obligatorisk oppgåve | `assignments/` |
 | A useful link | `resources/links.md` |
 | Revision material | `exam/` |
 | A half-formed idea | `scratch/` — no rules there |
@@ -90,14 +108,13 @@ python src/find.py foldr             # where is this covered?
 python src/find.py --sources         # what is indexed
 ```
 
-Searches the week records, the Mitt UiB mirror, every lesson, every exercise
-and test file, your own Haskell, and any slide deck or textbook PDF you have
-filed — and reports the page or line, so you can go straight there. `grep` only
-reads the text files; lecture material arrives as PDF, which is exactly what you
-want during revision.
+Searches the week records, the Mitt UiB mirror, every lesson, every exercise and
+test file, your own Haskell, and every lecture-note PDF — and reports the page or
+line, so you can go straight there. `grep` only reads the text files; the notes
+arrive as PDF, and since parsing and type inference exist *only* in those notes,
+searching inside them is not optional.
 
-**Solutions are excluded by default.** Pass `--solutions` when you mean it —
-searching for an answer you haven't earned yet feels like learning and isn't.
+**Solutions are excluded by default.** Pass `--solutions` when you mean it.
 
 First run extracts and caches. After that it is instant until a file changes.
 The cache lives in `.searchcache/`, is gitignored, and can be deleted any time.
@@ -109,35 +126,38 @@ mirrors it into this repo — read-only, GETs only. It never submits an
 assignment, marks a module complete, or changes a single setting.
 
 ```bash
-python src/canvas_sync.py                # refresh, and pull new files into weeks/*/slides/
+python src/canvas_sync.py                # refresh, and pull new files into weeks/
 python src/canvas_sync.py --no-download  # text only, skip the files
 ```
 
 Needs an API token in `.env` (gitignored — see `.env.example`). Generate one at
 *Account → Settings → + New Access Token*, and revoke it when the course ends.
 
-Output lands in [`docs/canvas/course.md`](docs/canvas/) — a flattened mirror of
-every page, announcement and assignment — plus a generated `README.md` in each
-week folder and every off-Canvas link in `resources/canvas-links.md`.
-**Don't edit any of those by hand**; re-run the script.
+This course publishes almost nothing on pages: the lecture notes live in Canvas
+`Filer/forelesningsnotater/` and the weekly exercises in `Filer/oppgaver/`. UiB
+lets students read that folder tree, so the sync walks it and files each item by
+the week number in its name — `uke1.txt` and `1krav-plan+intro.pdf` are both
+course week 1, which is uke34. Anything whose week can't be worked out lands in
+`docs/canvas/files/` for you to place by hand; nothing is guessed at.
 
-Two known limits, both Canvas permission boundaries rather than bugs. Students
-usually cannot enumerate the course Files area, so the script finds files by
-scanning page links — an uploaded-but-unlinked file stays invisible. And LTI
-external tools (Panopto, Zoom, Pensum/Litteratur) are unreachable through the
-API; open those in a browser.
+Output: [`docs/canvas/course.md`](docs/canvas/) (the whole course flattened), a
+generated `README.md` per week folder, and `resources/canvas-links.md`.
+**Don't edit those by hand** — re-run the script.
+
+Two things stay out of reach, both Canvas permission boundaries rather than bugs:
+LTI external tools (**Panopto**, **Litteraturliste**) have no API, and the page
+index is disabled for this course, so pages are found through modules instead.
 
 ## Reference material
 
 `reference/` is gitignored — everything in it is public and re-downloadable, so
-it is not this repo's job to version it. Put Hutton's chapter code there (the
-zip is linked from his book page in [`resources/links.md`](resources/links.md)),
-along with any PDF you want `find.py` to index.
+it is not this repo's job to version it. Put Hutton's chapter code there (the zip
+is linked from his book page in [`resources/links.md`](resources/links.md)), plus
+any PDF you want `find.py` to index.
 
-> **A warning.** Hutton's archive contains worked code for the exercises.
-> Reading it before you have struggled with the problem feels like learning and
-> is not — which is also why `find.py` skips `tutorial/solutions/` unless you
-> pass `--solutions`.
+> **A warning.** Hutton's archive contains worked code for the book's exercises —
+> which pensum point (C) assumes you have solved yourself. Reading it before you
+> have struggled with the problem feels like learning and is not.
 
 ## Environment
 
@@ -148,18 +168,37 @@ machine with:
 curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
 ```
 
-The tutorial harness deliberately needs **no packages beyond `base`** — no
-cabal project, no stack project, just `runghc`. If you ever need a real build
-for an obligatorisk oppgåve, `cabal init` inside that assignment's folder and
-keep it local to that folder.
+Two things the course expects that plain GHC does not give you:
+
+```bash
+cabal install --lib QuickCheck   # used from the first week's notes onward
+ghcup install hls                # Haskell Language Server, for editor support
+```
+
+The lecturer recommends HLS with whatever editor you use, and cabal is what the
+oblig is expected to be built with. The tutorial harness deliberately needs
+**nothing beyond `base`** — no project file, just `runghc`.
 
 In GHCi: `:r` reload, `:t expr` type of, `:i` info, `:q` quit. The one habit
 worth building above all others is asking GHCi for the type — everything in this
 language falls out of the types.
 
+## What the lecturer said about AI
+
+On the first slide of his own intro, verbatim:
+
+> *NB! AI kan løse problemer på dette nivå: vil du lære så bruker du den ikke.*
+
+Take it seriously — the exam is three hours, handwritten, with no aids, so
+anything you didn't build yourself is worth nothing on the day. The same slide
+says the groups serve no solutions and you must have attempted the problems
+first. This repo is set up to match: `find.py` hides `tutorial/solutions/`
+unless you ask for them, and the useful thing to ask me for is an **idiom review
+after your tests are green** — not an answer before you've fought for it.
+
 ## Repo rules
 
-- **Private repo.** Lecture slides are the lecturer's copyright. Don't make it
+- **Private repo.** Lecture notes are the lecturer's copyright. Don't make it
   public, and don't push anything you'd be uncomfortable sharing.
 - `.env`, `.venv/`, `.searchcache/` and `reference/` are gitignored — secret,
   generated, or re-downloadable.

@@ -1,0 +1,182 @@
+{
+  "pages": [
+    {
+      "title": "INF122",
+      "slug": "inf122",
+      "module": "Front page",
+      "updated": "2026-08-10T04:33:22Z",
+      "text": "Velkommen til INF122 – Funksjonell programmering\n\nPå første forelesning, mandag 17. august, kl 8:15 (timeplan), får du informasjon om krav og foreløpig plan, samt en introduksjon til Haskell (samlet på transparenter for første forelesning - under Filer/forelesningsnotater). Eneste faglige kravet for å kunne gå opp til eksamen blir å få godkjent (uten karakter) én stor obligatorisk oppgave mot slutten av semesteret.\n\nGruppetimene begynner samme uke som forelesningene. På første gruppetime kan du få hjelp til å installere haskellkompilatoren og begynne på de første ukesoppgavene.\n\nHold deg oppdatert på kursets kunngjøringer på MittUiB .\n\nIntroduksjon til funksjonell programmering\n\nSett av ti minutter for å få en kjapp introduksjon - gitt av Håkon Gylterud - til hovedforskjeller mellom imperativ og funksjonell programmering:\n\nEmneansvarlig\n\nHvis du har spørsmål om kursets innhold kan du ta kontakt direkte via e-post med emneansvarlig: Michal.Walicki@uib.no.",
+      "file_ids": [],
+      "links": [
+        "https://www4.uib.no/studier/emner/inf122",
+        "https://www.uib.no/personer/H%C3%A5kon.Robbestad.Gylterud"
+      ]
+    },
+    {
+      "title": "Installasjonsguide",
+      "slug": "installasjonsguide",
+      "module": "Kom igang med Haskell",
+      "updated": "2026-06-22T18:08:22Z",
+      "text": "For å gjøre oppgaver i kurset må du installere GHC (Glasgow Haskell Compiler) og Cabal på datamaskinen din (hvis du ikke allerede har disse installert). Vi anbefaler å bruke GHCup for å installere disse to programmene. GHC er den mest brukte haskellkompilatoren og Cabal er et pakkesystem vi skal bruke i de større obligatoriske oppgavene.\n\nInstallasjon via GHCup\n\nGHCup finner du her: https://www.haskell.org/ghcup. Følg instruksjonene for operativsystemet på din maskin og installér GHCup med GHC og Cabal. (Hvis du foretrekker en annen måte å installere GHC og Cabal på din maskin kan du selvsagt bruke den.)\n\nRedigeringsprogram for kildekode\n\nDu kan skrive programmene dine i det tekstredigeringsprogrammet/IDE som passer deg best (Vim, Emacs, Kate, VSCode…).\n\nNoen IDEer støtter Language Server Protocol (LSP), som implementeres av Haskell Language Server (HLS), som gir ekstra funksjonalitet til IDEet man skriver koden i. HLS kan installeres med GHCup.\n\nHvis du vil bruke Emacs kan du installere lsp-mode, lsp-ui, lsp-haskell pakkene for å bruke HLS. Se dokumentasjonen til HLS.\n\nHvis du vil bruke VSCode kan du bruke følgende Haskell-plugin: https://marketplace.visualstudio.com/items?itemName=haskell.haskell. Velg så å bruke HLS via GHCup i instillingene til pluginet i VSCode.",
+      "file_ids": [],
+      "links": [
+        "https://www.haskell.org/cabal",
+        "https://www.haskell.org/ghcup",
+        "https://haskell-language-server.readthedocs.io/en/latest/configuration.html",
+        "https://haskell-language-server.readthedocs.io/en/latest/configuration.html#configuring-your-editor",
+        "https://marketplace.visualstudio.com/items?itemName=haskell.haskell"
+      ]
+    },
+    {
+      "title": "GHCi",
+      "slug": "ghci",
+      "module": "Kom igang med Haskell",
+      "updated": "2026-08-08T09:40:28Z",
+      "text": "Øvingsoppgaver i GHCi\n\nEtter at du har sett videoen ovenfor, bruk GHCi til å løse oppgavene nedenfor.\n\n  - Regn ut 331·(513+49).\n\n  - Regn ut summen av alle oddetall fra 1 til 100.\n\n  - Definér en funksjon, med navn oddSum, som regner ut summen av oddetall fra 1 til n for et vilkårlig heltall n.",
+      "file_ids": [],
+      "links": []
+    },
+    {
+      "title": "Læreboken",
+      "slug": "laereboken",
+      "module": "Kom igang med Haskell",
+      "updated": "2026-08-08T09:42:25Z",
+      "text": "Læreboken i dette kurset er «Programming in Haskell» av Graham Hutton.\n\nBroken gir en konsis introduksjon til, og gode eksempler på Haskellprogrammering.\n\nFørste uke er kapitel 1 og 2 pensum. Les igjennom disse kapitlene og gjør oppgavene.",
+      "file_ids": [],
+      "links": []
+    }
+  ],
+  "modules": [
+    {
+      "name": "Kom igang med Haskell",
+      "items": [
+        {
+          "title": "Installasjonsguide",
+          "type": "Page",
+          "page_url": "installasjonsguide",
+          "url": "https://mitt.uib.no/courses/59171/modules/items/777699"
+        },
+        {
+          "title": "GHCi",
+          "type": "Page",
+          "page_url": "ghci",
+          "url": "https://mitt.uib.no/courses/59171/modules/items/777700"
+        },
+        {
+          "title": "Læreboken",
+          "type": "Page",
+          "page_url": "laereboken",
+          "url": "https://mitt.uib.no/courses/59171/modules/items/777701"
+        }
+      ]
+    }
+  ],
+  "announcements": [
+    {
+      "title": "Ukens oppgaver",
+      "posted": "2026-08-18T14:30:27Z",
+      "text": "er tilgjengelige fra katalogen Filer/oppgaver/...",
+      "file_ids": [],
+      "links": []
+    },
+    {
+      "title": "Which cord? Dis cord!",
+      "posted": "2026-08-18T09:56:29Z",
+      "text": "Dette faget har nå en Discord, som kan brukes for å samarbeide og diskutere om kurset: https://discord.gg/Dh2DwgJER.\n\nDen er drevet av gruppelederene, og virker som et supplement til kurset. Det er ikke obligatorisk å bli med, alle kunngjøringer kommer fortsatt til å gå over Mitt UiB eller e-post.",
+      "file_ids": [],
+      "links": [
+        "https://discord.gg/Dh2DwgJER"
+      ]
+    },
+    {
+      "title": "Viktig info om grupper",
+      "posted": "2026-08-16T07:17:20Z",
+      "text": "Grupper blir organisert i en tutorial-stil, hvor man diskuterer løsningsforsøk dere kommer med, evt. utvikler løsninger sammen. Du velger mellom to alternative opplegg ved å melde deg til én av følgende gruppe:\n\n1) torsdag 10:15-12, fredag 10:15-12 eller fredag 12:15-14 - det blir vanlige/større diskusjons- og/eller arbeidsgrupper (meld deg via mitt-uib).\n\n2) mindre (2-5 pers) og kortere (opptil 30min) grupper skal holdes på et tidspunkt som du avtaler direkte med gruppeleder ved å kontakte Johannes.Skivdal@student.uib.no eller James.Hobson@uib.no per epost eller discord (James’ gruppe blir på engelsk). Er dere en gruppe, meld dere helst sammen (si hvem som er med i gruppen).\n\nGruppedeltakelse er ikke obligatorisk, men det er verdt å merke at kursets historikk viser en ekstrem korrelasjon mellom dem som deltar i grupper og dem som består eksamen.",
+      "file_ids": [],
+      "links": []
+    }
+  ],
+  "assignments": [],
+  "files": {},
+  "area": [
+    {
+      "folder": "course files/forelesningsnotater",
+      "name": "1krav-plan+intro.pdf",
+      "id": 7957602,
+      "size": 410502,
+      "type": "application/pdf",
+      "updated": "2026-08-16T18:43:02Z"
+    },
+    {
+      "folder": "course files/forelesningsnotater",
+      "name": "1QuickCheck.pdf",
+      "id": 7963384,
+      "size": 67253,
+      "type": "application/pdf",
+      "updated": "2026-08-18T14:11:55Z"
+    },
+    {
+      "folder": "course files/oppgaver",
+      "name": "uke1.txt",
+      "id": 7963385,
+      "size": 1343,
+      "type": "text/plain",
+      "updated": "2026-08-18T14:14:20Z"
+    }
+  ],
+  "errors": [
+    "page index: HTTP 404"
+  ],
+  "course": {
+    "name": "INF122 26H / Funksjonell programmering",
+    "code": "INF122",
+    "id": 59171
+  },
+  "tabs": [
+    {
+      "label": "Heim",
+      "url": "/courses/59171",
+      "type": "internal"
+    },
+    {
+      "label": "Kunngjeringar",
+      "url": "/courses/59171/announcements",
+      "type": "internal"
+    },
+    {
+      "label": "Diskusjonar",
+      "url": "/courses/59171/discussion_topics",
+      "type": "internal"
+    },
+    {
+      "label": "Vurderingar",
+      "url": "/courses/59171/grades",
+      "type": "internal"
+    },
+    {
+      "label": "Personar",
+      "url": "/courses/59171/users",
+      "type": "internal"
+    },
+    {
+      "label": "Filer",
+      "url": "/courses/59171/files",
+      "type": "internal"
+    },
+    {
+      "label": "Emneoversikt",
+      "url": "/courses/59171/assignments/syllabus",
+      "type": "internal"
+    },
+    {
+      "label": "Panopto Video",
+      "url": "/courses/59171/external_tools/1045",
+      "type": "external"
+    },
+    {
+      "label": "Litteraturliste",
+      "url": "/courses/59171/external_tools/1334",
+      "type": "external"
+    }
+  ]
+}

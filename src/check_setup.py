@@ -24,7 +24,9 @@ from paths import ROOT
 # because nothing in this repo needs a project build yet.
 HASKELL = [
     ("ghc", True), ("ghci", True), ("runghc", True),
-    ("cabal", True), ("ghcup", False), ("stack", False),
+    ("cabal", True),          # the oblig is expected to be a cabal project
+    ("ghcup", False), ("stack", False),
+    ("haskell-language-server-wrapper", False),   # ghcup install hls
 ]
 
 
@@ -49,6 +51,23 @@ def check_haskell() -> list[str]:
         else:
             print(f"    absent   {tool}  (optional)")
     return missing
+
+
+def check_quickcheck() -> None:
+    """The course's notes use QuickCheck from week 1, and it is not in base."""
+    print("\n  course packages")
+    try:
+        out = subprocess.run(["ghc-pkg", "list", "--simple-output", "QuickCheck"],
+                             capture_output=True, text=True, timeout=60)
+        found = (out.stdout or "").strip()
+    except Exception:
+        found = ""
+    if found:
+        print(f"    ok       QuickCheck  {found.split()[-1]}")
+    else:
+        print("    absent   QuickCheck  — cabal install --lib QuickCheck")
+        print("             Only needed for the lecturer's notes; the tutorial")
+        print("             harness deliberately uses nothing beyond base.")
 
 
 def check_python() -> list[str]:
@@ -113,6 +132,7 @@ def main() -> int:
     print(f"haskell-class — {ROOT}\n")
 
     hs_missing = check_haskell()
+    check_quickcheck()
     py_missing = check_python()
     check_sync()
 
