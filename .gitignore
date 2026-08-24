@@ -1,0 +1,30 @@
+# GHC / build artifacts
+*.hi
+*.o
+*.dyn_hi
+*.dyn_o
+*.prof
+*.hp
+*.aux
+dist/
+dist-newstyle/
+.stack-work/
+.ghc.environment.*
+
+# Compiled binaries (no extension) — track sources only
+!*.hs
+!*.lhs
+
+# Secrets — never commit
+.env
+
+# Python tooling for the sync/search scripts
+.venv/
+__pycache__/
+*.pyc
+
+# Generated: extracted text cache for src/find.py
+.searchcache/
+
+# Public, re-downloadable material — not this repo's job to version
+reference/
