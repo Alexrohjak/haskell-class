@@ -1,0 +1,8 @@
+# Python is only used by the three scripts in src/ — the Canvas sync, the
+# search and the setup check. Nothing here is needed to write Haskell.
+#
+#   python3 -m venv .venv && source .venv/bin/activate
+#   pip install -r requirements.txt
+
+pypdf==6.1.3          # text out of slide decks and textbook PDFs, for find.py
+cryptography==46.0.3   # pypdf needs it for encrypted PDFs (most UiB slide exports)
