@@ -30,8 +30,10 @@ case "$MODE" in
   *) echo "error: unknown option '$MODE'" >&2; exit 2 ;;
 esac
 
-# GHC emits a harmless 'libgmp.so' shared-library warning on this machine;
-# strip it so the test report is the only thing on screen.
+# Kept as a guard, not because it fires here any more: before libgmp-dev was
+# installed GHC emitted a shared-library warning about libgmp on every run, and
+# it would come back on a fresh machine that only has libgmp10. Strip it so the
+# test report is the only thing on screen. See ../docs/setup-notes.md.
 runghc -Wno-x-partial -i"$HERE/lib" -i"$SRC" "$HERE/$WEEK/Tests.hs" 2>&1 \
   | grep -v -e 'missed-extra-shared-lib' \
             -e 'libgmp' \

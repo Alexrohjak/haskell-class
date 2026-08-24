@@ -173,19 +173,14 @@ Also installed, both of which the course expects and plain GHC does not give you
 editor at `haskell-language-server-wrapper`). The tutorial harness still needs
 **nothing beyond `base`** — no project file, just `runghc`.
 
-> **One thing is broken and needs root to fix.** GHC can interpret but cannot
+> **One thing needed root, and is now done.** GHC could interpret but not
 > *link*: Ubuntu ships `libgmp10` while the linker wants `libgmp.so`, which comes
-> with `libgmp-dev`. `ghci`, `runghc` and the whole tutorial are unaffected —
-> but **`cabal build` fails**, and the oblig is a cabal project. One command
-> fixes it for good:
->
-> ```bash
-> sudo apt install libgmp-dev
-> ```
->
-> Full story, and the no-root alternative, in
-> [`docs/setup-notes.md`](docs/setup-notes.md). `check_setup.py` exits non-zero
-> until it's done.
+> with `libgmp-dev`. `ghci`, `runghc` and the tutorial were unaffected, but
+> `cabal build` failed — and the oblig is a cabal project. Fixed on 24 August
+> with `sudo apt install libgmp-dev`; `ghc -o` and `cabal build` are both
+> verified in a scrubbed environment. On a **new machine** you will hit this
+> again: [`docs/setup-notes.md`](docs/setup-notes.md) has the whole story, and
+> `check_setup.py` catches it in one run.
 
 In GHCi: `:r` reload, `:t expr` type of, `:i` info, `:q` quit. The one habit
 worth building above all others is asking GHCi for the type — everything in this

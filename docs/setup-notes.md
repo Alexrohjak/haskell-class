@@ -28,7 +28,10 @@ HLS is the server only. Point your editor at
 `haskell-language-server-wrapper`; the configuration guides are in
 [`../resources/links.md`](../resources/links.md).
 
-## The libgmp problem
+## The libgmp problem — fixed 24 August 2026
+
+`sudo apt install libgmp-dev` was run and this is resolved. Kept because it was
+invisible for weeks, and because a fresh machine starts out in exactly this state.
 
 **GHC on this machine could interpret Haskell but not produce a binary.**
 
@@ -79,17 +82,23 @@ Do not rely on it:
 
 Which means the oblig cannot be built until the real fix is applied.
 
-### The actual fix
-
-One command, needs root:
+### The fix that was applied
 
 ```bash
-sudo apt install libgmp-dev
+sudo apt install libgmp-dev      # + libgmpxx4ldbl, 351 kB
 ```
 
-After that, `ghc -o` and `cabal build` both work with no environment variable and
-no accidental `-L`, and the symlink becomes redundant (harmless — leave it or
-delete it).
+That installs the `/usr/lib/x86_64-linux-gnu/libgmp.so` symlink the linker was
+looking for. Verified afterwards in a scrubbed environment (`env -i`, and
+`-package-env=-` so the accidental `-L` could not help):
+
+- `ghc -o prog` links and runs
+- `cabal build` links and runs, on a project depending only on `base`
+- the `libgmp.so` warning GHC used to print on every `runghc` is gone
+
+The `~/.local/lib/libgmp.so` stopgap was then **deleted**, and both still work —
+so nothing depends on it. `tutorial/check.sh` keeps filtering the old warning as
+a guard for a fresh machine, which is a comment in that file, not a live problem.
 
 If root is genuinely unavailable, the no-root equivalent is to make both paths
 permanent by hand: `extra-lib-dirs: /home/alexrohjak/.local/lib` in
