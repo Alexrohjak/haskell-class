@@ -168,16 +168,24 @@ machine with:
 curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
 ```
 
-Two things the course expects that plain GHC does not give you:
-
-```bash
-cabal install --lib QuickCheck   # used from the first week's notes onward
-ghcup install hls                # Haskell Language Server, for editor support
-```
-
-The lecturer recommends HLS with whatever editor you use, and cabal is what the
-oblig is expected to be built with. The tutorial harness deliberately needs
+Also installed, both of which the course expects and plain GHC does not give you:
+**QuickCheck 2.18** (his notes use it from week 1) and **HLS 2.14** (point your
+editor at `haskell-language-server-wrapper`). The tutorial harness still needs
 **nothing beyond `base`** — no project file, just `runghc`.
+
+> **One thing is broken and needs root to fix.** GHC can interpret but cannot
+> *link*: Ubuntu ships `libgmp10` while the linker wants `libgmp.so`, which comes
+> with `libgmp-dev`. `ghci`, `runghc` and the whole tutorial are unaffected —
+> but **`cabal build` fails**, and the oblig is a cabal project. One command
+> fixes it for good:
+>
+> ```bash
+> sudo apt install libgmp-dev
+> ```
+>
+> Full story, and the no-root alternative, in
+> [`docs/setup-notes.md`](docs/setup-notes.md). `check_setup.py` exits non-zero
+> until it's done.
 
 In GHCi: `:r` reload, `:t expr` type of, `:i` info, `:q` quit. The one habit
 worth building above all others is asking GHCi for the type — everything in this
