@@ -1,6 +1,6 @@
 """Verify the haskell-class environment is working.
 
-Run with:  python src/check_setup.py
+Run with:  .venv/bin/python src/check_setup.py
 
 Two environments live in this repo and they are checked separately:
 

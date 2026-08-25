@@ -11,9 +11,9 @@ Approval is the only academic requirement for sitting the exam. So this is the
 one hard deadline in the semester, and it has no second attempt built in. Start
 it the week it opens (uke 44), not the week it's due.
 
-Nothing is published yet. Run `python src/canvas_sync.py`; the task and its real
-deadline land in `docs/canvas/course.md` and the week records. Check that rather
-than trusting this file.
+Nothing is published yet. Run `.venv/bin/python src/canvas_sync.py`; the task
+and its real deadline land in `docs/canvas/course.md` and the week records.
+Check that rather than trusting this file.
 
 ## How to file it
 

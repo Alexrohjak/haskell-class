@@ -4,7 +4,7 @@
 
 ## Posted by the lecturer
 
-*Nothing published for this week yet.* Re-run `python src/canvas_sync.py` once it appears.
+*Nothing published for this week yet.* Re-run `.venv/bin/python src/canvas_sync.py` once it appears.
 
 ## In this folder
 

@@ -30,9 +30,9 @@ No aids means typing fluency is worth nothing and handwriting Haskell is worth a
 lot. Each tutorial lesson has a paper-exercise section for exactly that:
 
 ```bash
-python src/find.py typeinferens      # the notes are PDFs — grep can't see them
-python src/find.py "paper"           # every paper drill in the tutorial
-cd tutorial && ./check.sh 5          # then verify what you wrote by hand
+.venv/bin/python src/find.py typeinferens   # the notes are PDFs — grep can't see them
+.venv/bin/python src/find.py "paper"        # every paper drill in the tutorial
+cd tutorial && ./check.sh 5                 # then verify what you wrote by hand
 ```
 
 Work a drill on paper first, type it in second, and note every place GHC

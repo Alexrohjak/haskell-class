@@ -106,6 +106,6 @@ permanent by hand: `extra-lib-dirs: /home/alexrohjak/.local/lib` in
 `~/.bashrc` for plain `ghc`. Two moving parts instead of none, which is why it is
 the second choice.
 
-`python src/check_setup.py` compiles a throwaway program on every run — with
+`.venv/bin/python src/check_setup.py` compiles a throwaway program on every run — with
 environment files bypassed, so it tests the toolchain rather than the accident —
 and exits non-zero while this is unfixed.

@@ -1,11 +1,11 @@
 """Search everything you have collected for this subject, in one place.
 
-    python src/find.py foldr                 # where is this covered?
-    python src/find.py "list comprehension"  # phrases need quotes
-    python src/find.py guard --context 3     # more hits per file
-    python src/find.py foldr --solutions     # include the reference answers
-    python src/find.py --sources             # what is indexed
-    python src/find.py --rebuild foldr       # force re-extraction
+    .venv/bin/python src/find.py foldr                 # where is this covered?
+    .venv/bin/python src/find.py "list comprehension"  # phrases need quotes
+    .venv/bin/python src/find.py guard --context 3     # more hits per file
+    .venv/bin/python src/find.py foldr --solutions     # include the reference answers
+    .venv/bin/python src/find.py --sources             # what is indexed
+    .venv/bin/python src/find.py --rebuild foldr       # force re-extraction
 
 Searches the week records, the Mitt UiB mirror, every lesson, every exercise
 and test file, your own Haskell code, and any slide deck or textbook PDF you
@@ -176,7 +176,7 @@ def main() -> int:
             for path in blind:
                 print(f"  {path.relative_to(ROOT)}")
         if not args.query:
-            print("\nGive a search term, e.g.  python src/find.py foldr")
+            print("\nGive a search term, e.g.  .venv/bin/python src/find.py foldr")
         return 0
 
     term = re.compile(re.escape(args.query), re.I)

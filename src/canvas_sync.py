@@ -3,9 +3,9 @@
 Read-only: this script only ever issues GET requests. It never submits, posts,
 marks anything complete, or changes a single Canvas setting.
 
-    python src/canvas_sync.py                 # sync everything, fetch new files
-    python src/canvas_sync.py --no-download   # text only, skip the files
-    python src/canvas_sync.py --quiet         # only report what changed
+    .venv/bin/python src/canvas_sync.py                 # sync everything, fetch new files
+    .venv/bin/python src/canvas_sync.py --no-download   # text only, skip the files
+    .venv/bin/python src/canvas_sync.py --quiet         # only report what changed
 
 Writes one `README.md` per week folder recording what the lecturer posted, and
 downloads the files alongside it. Those files are generated — edit them and the
@@ -663,7 +663,7 @@ def write_week_records(snap: dict) -> list[int]:
                 "## Posted by the lecturer",
                 "",
                 "*Nothing published for this week yet.* Re-run "
-                "`python src/canvas_sync.py` once it appears.",
+                "`.venv/bin/python src/canvas_sync.py` once it appears.",
                 "",
             ]
 

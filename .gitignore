@@ -26,5 +26,8 @@ __pycache__/
 # Generated: extracted text cache for src/find.py
 .searchcache/
 
-# Public, re-downloadable material — not this repo's job to version
-reference/
+# Public, re-downloadable material — not this repo's job to version.
+# The folder's own README is tracked so the instructions travel with the repo;
+# nothing you put beside it is.
+reference/*
+!reference/README.md
