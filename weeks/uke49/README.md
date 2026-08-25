@@ -2,8 +2,6 @@
 
 **30. nov - 6. des** · **Eksamen 2. desember** - 3t skriftleg, ingen hjelpemiddel
 
-Tutorial week: [`tutorial/week12/`](../../tutorial/week12/) — `cd tutorial && ./check.sh 12`
-
 ## Posted by the lecturer
 
 *Nothing published for this week yet.* Re-run `python src/canvas_sync.py` once it appears.

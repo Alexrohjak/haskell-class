@@ -2,6 +2,8 @@
 
 **19. - 25. okt** · enkel parsing + typeinferens (forelesningsnotater!)
 
+Tutorial week: [`tutorial/week10/`](../../tutorial/week10/) — `cd tutorial && ./check.sh 10`
+
 ## Posted by the lecturer
 
 *Nothing published for this week yet.* Re-run `python src/canvas_sync.py` once it appears.

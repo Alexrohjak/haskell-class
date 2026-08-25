@@ -6,11 +6,12 @@ Tutorial week: [`tutorial/week02/`](../../tutorial/week02/) — `cd tutorial && 
 
 ## Posted by the lecturer
 
-*Nothing published for this week yet.* Re-run `python src/canvas_sync.py` once it appears.
+- `slides/2typer-handout.pdf` — from Canvas `course files/forelesningsnotater`, updated 2026-08-24
 
 ## In this folder
 
-- `slides/` — empty
+- `slides/` — 1 item(s), 533 KB
+  - `2typer-handout.pdf`
 - `exercises/` — empty
 - `code/` — empty
 

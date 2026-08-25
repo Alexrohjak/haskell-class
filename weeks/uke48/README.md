@@ -2,7 +2,7 @@
 
 **23. - 29. nov** · spørsmål og svar
 
-Tutorial week: [`tutorial/week11/`](../../tutorial/week11/) — `cd tutorial && ./check.sh 11`
+Tutorial week: [`tutorial/week12/`](../../tutorial/week12/) — `cd tutorial && ./check.sh 12`
 
 ## Posted by the lecturer
 

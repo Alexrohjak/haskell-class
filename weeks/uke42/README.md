@@ -2,7 +2,7 @@
 
 **12. - 18. okt** · kap. 10, and enkel parsing (forelesningsnotater!)
 
-Tutorial week: [`tutorial/week10/`](../../tutorial/week10/) — `cd tutorial && ./check.sh 10`
+Tutorial week: [`tutorial/week09/`](../../tutorial/week09/) — `cd tutorial && ./check.sh 9`
 
 ## Posted by the lecturer
 

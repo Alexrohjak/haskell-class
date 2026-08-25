@@ -2,6 +2,8 @@
 
 **26. okt - 1. nov** · typeinferens, and the oblig opens
 
+Tutorial week: [`tutorial/week11/`](../../tutorial/week11/) — `cd tutorial && ./check.sh 11`
+
 ## Posted by the lecturer
 
 *Nothing published for this week yet.* Re-run `python src/canvas_sync.py` once it appears.

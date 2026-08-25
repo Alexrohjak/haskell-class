@@ -696,6 +696,14 @@ def main() -> None:
     digest = write_digest(snap)
     raw = write_raw(snap)
     links = write_links(snap)
+
+    # Download before writing the week records. The records list what is on
+    # disk, so filing the files afterwards leaves every record that gained a
+    # file claiming an empty folder until the next run.
+    downloads = None
+    if not args.no_download:
+        downloads = download_files(api, snap, args.quiet) or ["  nothing to do"]
+
     weeks = write_week_records(snap)
 
     if not args.quiet:
@@ -711,10 +719,10 @@ def main() -> None:
         print(f"Wrote {links.relative_to(ROOT)}")
         print(f"Wrote {len(weeks)} week records (weeks/*/README.md)")
 
-    if not args.no_download:
+    if downloads is not None:
         print()
         print("Files:")
-        for line in download_files(api, snap, args.quiet) or ["  nothing to do"]:
+        for line in downloads:
             print(line)
 
     if snap["errors"] and not args.quiet:

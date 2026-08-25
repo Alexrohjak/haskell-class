@@ -2,7 +2,7 @@
 
 **5. - 11. okt** · kap. 10 - interactive programming
 
-Tutorial week: [`tutorial/week09/`](../../tutorial/week09/) — `cd tutorial && ./check.sh 9`
+Tutorial week: [`tutorial/week08/`](../../tutorial/week08/) — `cd tutorial && ./check.sh 8`
 
 ## Posted by the lecturer
 
