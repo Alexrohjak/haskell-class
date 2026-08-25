@@ -14,18 +14,21 @@ Contact details for the gruppeleiarar are in [`docs/canvas/course.md`](docs/canv
 
 ```bash
 cd ~/code/haskell-class
-python src/week.py             # what week is it, what is filed
+.venv/bin/python src/week.py   # what week is it, what is filed
 cd tutorial && ./check.sh 2    # work this week's tutorial
 ```
 
-Verify the toolchain: `python src/check_setup.py`. It runs week 1's tests
-against the reference solution, so a green result means GHC, the harness and the
-runner all work — not just that the binaries exist.
+Verify the toolchain: `.venv/bin/python src/check_setup.py`. It runs week 1's
+tests against the reference solution, so a green result means GHC, the harness
+and the runner all work — not just that the binaries exist.
 
-The Python side is only for the scripts in `src/`:
+The Python side is only for the scripts in `src/`, and this machine has no bare
+`python` on the PATH — only `python3`, without the packages the scripts need.
+So call the venv's interpreter directly, as above, or activate it once per
+terminal and drop the prefix:
 
 ```bash
-source .venv/bin/activate      # needed for canvas_sync.py and find.py
+source .venv/bin/activate      # then plain `python src/...` works
 ```
 
 Nothing in Haskell needs it.
@@ -53,23 +56,26 @@ truth — re-run the sync and update `PLAN` in `src/week.py` when it changes.
 | 34 | 17.–23. aug | kap. 1–2 (15) | [week01](tutorial/week01/) | [`uke34`](weeks/uke34/) |
 | 35 | 24.–30. aug | kap. 3–4 | [week02](tutorial/week02/) | [`uke35`](weeks/uke35/) |
 | 36 | 31. aug–6. sep | kap. 3–4 | [week03](tutorial/week03/) | [`uke36`](weeks/uke36/) |
-| 37 | 7.–13. sep | kap. 5–8 | week04 | [`uke37`](weeks/uke37/) |
+| 37 | 7.–13. sep | kap. 5–8 | [week04](tutorial/week04/) | [`uke37`](weeks/uke37/) |
 | 38 | 14.–20. sep | kap. 5–8 | week05 | [`uke38`](weeks/uke38/) |
 | 39 | 21.–27. sep | kap. 5–8 | week06 | [`uke39`](weeks/uke39/) |
 | 40 | 28. sep–4. okt | kap. 5–8 | week07 | [`uke40`](weeks/uke40/) |
-| 41 | 5.–11. okt | kap. 10 | week09 | [`uke41`](weeks/uke41/) |
-| 42 | 12.–18. okt | kap. 10 · enkel parsing | week10 | [`uke42`](weeks/uke42/) |
-| 43 | 19.–25. okt | enkel parsing · typeinferens | — | [`uke43`](weeks/uke43/) |
-| 44 | 26. okt–1. nov | typeinferens · **Oblig opens** | — | [`uke44`](weeks/uke44/) |
+| 41 | 5.–11. okt | kap. 10 | week08 | [`uke41`](weeks/uke41/) |
+| 42 | 12.–18. okt | kap. 10 · enkel parsing | week09 | [`uke42`](weeks/uke42/) |
+| 43 | 19.–25. okt | enkel parsing · typeinferens | week10 | [`uke43`](weeks/uke43/) |
+| 44 | 26. okt–1. nov | typeinferens · **Oblig opens** | week11 | [`uke44`](weeks/uke44/) |
 | 45 | 2.–8. nov | Oblig | — | [`uke45`](weeks/uke45/) |
 | 46 | 9.–15. nov | Oblig — frist ~10. nov | — | [`uke46`](weeks/uke46/) |
 | 47 | 16.–22. nov | Resultat og gjennomgang av Oblig | — | [`uke47`](weeks/uke47/) |
-| 48 | 23.–29. nov | Spørsmål og svar | week11 | [`uke48`](weeks/uke48/) |
-| 49 | 30. nov–6. des | **Eksamen 2. desember** — 3t skriftleg, ingen hjelpemiddel | week12 | [`exam/`](exam/) |
+| 48 | 23.–29. nov | Spørsmål og svar | week12 | [`uke48`](weeks/uke48/) |
+| 49 | 30. nov–6. des | **Eksamen 2. desember** — 3t skriftleg, ingen hjelpemiddel | — | [`exam/`](exam/) |
 
-Parsing, type inference and the oblig have no tutorial week — nothing in Hutton
-covers them. The rest of the tutorial column is my mapping, not his: it points
-at the tutorial week whose chapter the course is on.
+The oblig weeks and the exam week have no tutorial week. The rest of the column
+is my mapping, not his: it points at the tutorial week whose chapter the course
+is on, and tutorial weeks 10 and 11 are parsing and type inference — the two
+topics no chapter of Hutton covers. `PLAN` in [`src/week.py`](src/week.py) is
+the source of truth for this column; the week records are generated from it, so
+edit it there and this table follows.
 
 **One obligatorisk oppgåve**, October/November, deadline around 10 November.
 Godkjent/ikke-godkjent, no part-grade — and he warns there will probably be *no
@@ -104,8 +110,8 @@ This repo holds two different things, and keeping them apart is the point.
 ## Finding things
 
 ```bash
-python src/find.py foldr             # where is this covered?
-python src/find.py --sources         # what is indexed
+.venv/bin/python src/find.py foldr        # where is this covered?
+.venv/bin/python src/find.py --sources    # what is indexed
 ```
 
 Searches the week records, the Mitt UiB mirror, every lesson, every exercise and
@@ -126,8 +132,8 @@ mirrors it into this repo — read-only, GETs only. It never submits an
 assignment, marks a module complete, or changes a single setting.
 
 ```bash
-python src/canvas_sync.py                # refresh, and pull new files into weeks/
-python src/canvas_sync.py --no-download  # text only, skip the files
+.venv/bin/python src/canvas_sync.py                # refresh, and pull new files into weeks/
+.venv/bin/python src/canvas_sync.py --no-download  # text only, skip the files
 ```
 
 Needs an API token in `.env` (gitignored — see `.env.example`). Generate one at
