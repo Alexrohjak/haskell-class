@@ -75,16 +75,16 @@ Not all twelve weeks are written yet. Current state:
 |:--:|:--:|:--:|:--:|
 | 1 | done | done (19 checks) | done + PAPER.md |
 | 2 | done | done (31 checks) | done + PAPER.md |
-| 3 | **missing** | done (42 checks) | done |
-| 4–12 | — | — | — |
+| 3 | done | done (42 checks) | done + PAPER.md |
+| 4 | done | done (50 checks) | done + PAPER.md |
+| 5–12 | — | — | — |
 
-Weeks 1 and 2 are complete and ready to work through. Week 3's exercises and tests
-are in place and verified green against the reference solutions, but its `LESSON.md`
-and `PAPER.md` are still to be written — so the exercises currently arrive without
-their teaching material. Weeks 4–12 are planned (see the table above) but not built.
+Weeks 1–4 are complete and ready to work through: lesson, exercises, tests, reference
+solutions and paper answers, with every week verified green against its own solution.
+Weeks 5–12 are planned (see the table above) but not built.
 
-Week 3's exercises were built against Hutton 4, which is still week 3's chapter,
-so nothing already written was invalidated by the pensum arriving.
+Weeks 3 and 4 were built against Hutton 4 and 5, which are still those weeks'
+chapters, so nothing already written was invalidated by the pensum arriving.
 
 ---
 
