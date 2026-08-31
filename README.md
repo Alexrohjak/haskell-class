@@ -111,7 +111,7 @@ This repo holds two different things, and keeping them apart is the point.
 | My answers to the tutorial | `tutorial/weekNN/Exercises.hs` |
 | The obligatorisk oppgåve | `assignments/` |
 | A useful link | `resources/links.md` |
-| Revision material | `exam/` — see [`revision-uke34-35.md`](exam/revision-uke34-35.md) |
+| Revision material | `exam/` — the [uke34–35 guide](exam/revision-uke34-35.md) and the [drill room](exam/interactive-revision.html) |
 | A half-formed idea | `scratch/` — no rules there |
 
 ## Finding things

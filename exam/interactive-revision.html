@@ -1,0 +1,1422 @@
+<title>INF122 Drill Room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+
+<style>
+:root {
+  --ground:      #E9EDEF;
+  --surface:     #FAFCFC;
+  --surface-2:   #DFE5E8;
+  --line:        #C6D0D5;
+  --ink:         #16232B;
+  --ink-soft:    #55666F;
+  --ink-faint:   #84969E;
+  --accent:      #1E5F74;
+  --accent-soft: #D6E4E9;
+  --on-accent:   #FAFCFC;
+  --good:        #2F7D4F;
+  --good-soft:   #DCEBE1;
+  --bad:         #A8342E;
+  --bad-soft:    #F2DEDC;
+  --warn:        #8A6212;
+
+  --f-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --f-body:    "Public Sans", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --f-mono:    "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  --col: 66ch;
+  --r: 3px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:      #101A1F;
+    --surface:     #172329;
+    --surface-2:   #1F2E35;
+    --line:        #2E4149;
+    --ink:         #E4EBEE;
+    --ink-soft:    #9FB2BA;
+    --ink-faint:   #6C838C;
+    --accent:      #6FB3C9;
+    --accent-soft: #1B3A45;
+    --on-accent:   #0C1418;
+    --good:        #6FBF8C;
+    --good-soft:   #17301F;
+    --bad:         #E08A83;
+    --bad-soft:    #33191A;
+    --warn:        #D0A54A;
+  }
+}
+:root[data-theme="dark"] {
+  --ground:      #101A1F;
+  --surface:     #172329;
+  --surface-2:   #1F2E35;
+  --line:        #2E4149;
+  --ink:         #E4EBEE;
+  --ink-soft:    #9FB2BA;
+  --ink-faint:   #6C838C;
+  --accent:      #6FB3C9;
+  --accent-soft: #1B3A45;
+  --on-accent:   #0C1418;
+  --good:        #6FBF8C;
+  --good-soft:   #17301F;
+  --bad:         #E08A83;
+  --bad-soft:    #33191A;
+  --warn:        #D0A54A;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+code, kbd, pre, .mono { font-family: var(--f-mono); font-variant-ligatures: none; }
+
+h1, h2, h3 { font-family: var(--f-display); font-weight: 500; text-wrap: balance; margin: 0; line-height: 1.25; }
+
+a { color: var(--accent); }
+
+.eyebrow {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.11em;
+  text-transform: uppercase; color: var(--ink-faint);
+}
+
+/* ---------- chrome ---------- */
+
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  background: color-mix(in srgb, var(--ground) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.topbar-in {
+  max-width: 1120px; margin: 0 auto; padding: 12px 24px;
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+}
+.brand { display: flex; align-items: baseline; gap: 10px; margin-right: auto; }
+.brand .lam { font-family: var(--f-mono); font-size: 20px; font-weight: 700; color: var(--accent); }
+.brand .nm { font-family: var(--f-display); font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+.brand .sub { font-size: 12px; color: var(--ink-faint); }
+
+.modes { display: flex; gap: 2px; background: var(--surface-2); padding: 3px; border-radius: var(--r); }
+.modes button {
+  font-family: var(--f-body); font-size: 13px; font-weight: 600;
+  padding: 6px 15px; border: 0; border-radius: 2px;
+  background: transparent; color: var(--ink-soft); cursor: pointer;
+}
+.modes button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.modes button:hover:not([aria-selected="true"]) { color: var(--ink); }
+
+.icon-btn {
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink-soft);
+  border-radius: var(--r); padding: 6px 10px; font-size: 12px; font-family: var(--f-body);
+  font-weight: 600; cursor: pointer;
+}
+.icon-btn:hover { color: var(--ink); border-color: var(--ink-faint); }
+
+main { max-width: 1120px; margin: 0 auto; padding: 32px 24px 96px; }
+
+/* ---------- week strip ---------- */
+
+.weekstrip { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
+.weekchip {
+  border: 1px solid var(--line); background: var(--surface); border-radius: var(--r);
+  padding: 8px 14px; cursor: pointer; text-align: left; font-family: var(--f-body);
+  display: flex; flex-direction: column; gap: 1px; min-width: 128px;
+}
+.weekchip:hover { border-color: var(--accent); }
+.weekchip[aria-selected="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.weekchip .wk { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); }
+.weekchip[aria-selected="true"] .wk { color: var(--accent); }
+.weekchip .tp { font-size: 13px; font-weight: 600; color: var(--ink); }
+
+/* ---------- dashboard ---------- */
+
+.dash { display: grid; grid-template-columns: 1.55fr 1fr; gap: 24px; align-items: start; }
+@media (max-width: 860px) { .dash { grid-template-columns: 1fr; } }
+
+.panel {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r); padding: 22px 24px;
+}
+.panel > h2 { font-size: 20px; margin-bottom: 4px; }
+.panel .note { font-size: 13px; color: var(--ink-soft); margin: 0 0 18px; }
+
+.wrow {
+  display: grid; grid-template-columns: 1fr auto; gap: 4px 16px;
+  padding: 14px 0; border-top: 1px solid var(--line); align-items: center;
+}
+.wrow:first-of-type { border-top: 0; }
+.wrow .t { font-family: var(--f-display); font-size: 17px; font-weight: 500; }
+.wrow .m { font-size: 12px; color: var(--ink-faint); grid-column: 1; }
+.wrow .n { font-family: var(--f-mono); font-size: 13px; font-variant-numeric: tabular-nums; color: var(--ink-soft); grid-row: 1 / 3; align-self: center; text-align: right; }
+.bar { grid-column: 1 / 3; height: 5px; background: var(--surface-2); border-radius: 99px; overflow: hidden; margin-top: 6px; }
+.bar i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .4s ease; }
+.bar i.full { background: var(--good); }
+
+.weak { display: flex; flex-direction: column; gap: 8px; }
+.weakitem { display: flex; align-items: center; gap: 12px; font-size: 14px; }
+.weakitem .lbl { flex: 1; }
+.weakitem .cnt {
+  font-family: var(--f-mono); font-size: 12px; font-variant-numeric: tabular-nums;
+  background: var(--bad-soft); color: var(--bad); padding: 2px 8px; border-radius: 99px; font-weight: 700;
+}
+.empty { font-size: 14px; color: var(--ink-faint); font-style: italic; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--f-body); font-size: 14px; font-weight: 600;
+  background: var(--accent); color: var(--on-accent);
+  border: 0; border-radius: var(--r); padding: 10px 18px; cursor: pointer;
+}
+.btn:hover { filter: brightness(1.1); }
+.btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+.btn.ghost:hover { background: var(--accent-soft); filter: none; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+
+/* ---------- learn ---------- */
+
+.learn { display: grid; grid-template-columns: 232px 1fr; gap: 36px; align-items: start; }
+@media (max-width: 860px) { .learn { grid-template-columns: 1fr; gap: 20px; } }
+
+.rail { position: sticky; top: 84px; display: flex; flex-direction: column; gap: 2px; }
+@media (max-width: 860px) { .rail { position: static; } }
+.rail button {
+  text-align: left; font-family: var(--f-body); font-size: 13.5px; line-height: 1.4;
+  background: transparent; border: 0; border-left: 2px solid var(--line);
+  padding: 8px 12px; cursor: pointer; color: var(--ink-soft); display: flex; gap: 9px;
+}
+.rail button:hover { color: var(--ink); border-left-color: var(--ink-faint); }
+.rail button[aria-current="true"] { color: var(--ink); border-left-color: var(--accent); font-weight: 600; }
+.rail .num { font-family: var(--f-mono); font-size: 11px; color: var(--ink-faint); padding-top: 2px; }
+.rail button[aria-current="true"] .num { color: var(--accent); }
+.rail .tick { color: var(--good); font-weight: 700; }
+
+.article { max-width: var(--col); }
+.article h2 { font-size: 27px; letter-spacing: -0.015em; margin-bottom: 8px; }
+.article p { margin: 0 0 15px; }
+.article ul { margin: 0 0 15px; padding-left: 20px; }
+.article li { margin-bottom: 7px; }
+.article strong { font-weight: 700; }
+.article code { font-size: 0.9em; background: var(--surface-2); padding: 1px 5px; border-radius: 2px; }
+
+.cite {
+  display: inline-flex; align-items: center; gap: 7px; font-size: 11.5px;
+  color: var(--ink-soft); border: 1px solid var(--line); background: var(--surface);
+  border-radius: 99px; padding: 3px 11px; margin-bottom: 18px;
+}
+.cite .src { font-weight: 700; color: var(--accent); }
+
+pre.code {
+  font-size: 13.5px; line-height: 1.65; background: var(--surface);
+  border: 1px solid var(--line); border-left: 2px solid var(--accent);
+  border-radius: var(--r); padding: 14px 16px; margin: 0 0 16px;
+  overflow-x: auto; white-space: pre;
+}
+
+.ghci {
+  background: var(--accent-soft); border-radius: var(--r);
+  padding: 13px 16px; margin: 0 0 16px;
+}
+.ghci .eyebrow { display: block; margin-bottom: 6px; color: var(--accent); }
+.ghci pre { margin: 0; font-family: var(--f-mono); font-size: 13.5px; overflow-x: auto; white-space: pre; }
+
+.checkpoint { border-top: 1px solid var(--line); margin-top: 26px; padding-top: 20px; }
+.checkpoint .q { font-family: var(--f-display); font-size: 18px; font-weight: 500; margin-bottom: 12px; }
+.reveal {
+  background: var(--surface); border: 1px dashed var(--line); border-radius: var(--r);
+  padding: 14px 16px; font-size: 14.5px; margin-top: 12px;
+}
+.reveal pre { margin: 8px 0 0; font-family: var(--f-mono); font-size: 13.5px; overflow-x: auto; }
+
+.pager { display: flex; gap: 10px; margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--line); }
+.pager .spacer { flex: 1; }
+
+/* ---------- drill ---------- */
+
+.drill { max-width: 640px; margin: 0 auto; }
+.drillhead { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+.drillhead .eyebrow { margin-right: auto; }
+.drillhead .cnt { font-family: var(--f-mono); font-size: 12px; font-variant-numeric: tabular-nums; color: var(--ink-soft); }
+.progress { height: 4px; background: var(--surface-2); border-radius: 99px; overflow: hidden; margin-bottom: 24px; }
+.progress i { display: block; height: 100%; background: var(--accent); transition: width .3s ease; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 26px 28px; }
+.card .tag {
+  display: inline-block; font-size: 10.5px; font-weight: 700; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--accent); background: var(--accent-soft);
+  padding: 3px 9px; border-radius: 99px; margin-bottom: 14px;
+}
+.card .prompt { font-family: var(--f-display); font-size: 20px; font-weight: 500; margin-bottom: 16px; }
+.card pre.code { border-left-color: var(--ink-faint); }
+
+.answer { display: flex; gap: 10px; margin-top: 4px; }
+.answer input {
+  flex: 1; font-family: var(--f-mono); font-size: 15px; color: var(--ink);
+  background: var(--ground); border: 1px solid var(--line); border-radius: var(--r);
+  padding: 11px 13px;
+}
+.answer input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+
+.choices { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+.choices button {
+  text-align: left; font-family: var(--f-body); font-size: 14.5px; line-height: 1.45;
+  background: var(--ground); border: 1px solid var(--line); border-radius: var(--r);
+  padding: 12px 15px; cursor: pointer; color: var(--ink); display: flex; gap: 11px;
+}
+.choices button:hover:not(:disabled) { border-color: var(--accent); }
+.choices button .k { font-family: var(--f-mono); font-size: 12px; color: var(--ink-faint); padding-top: 2px; }
+.choices button.picked { border-color: var(--accent); background: var(--accent-soft); }
+.choices button.right { border-color: var(--good); background: var(--good-soft); }
+.choices button.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.choices button:disabled { cursor: default; }
+
+.verdict { margin-top: 18px; padding: 15px 17px; border-radius: var(--r); font-size: 14.5px; }
+.verdict.ok { background: var(--good-soft); border: 1px solid var(--good); }
+.verdict.no { background: var(--bad-soft); border: 1px solid var(--bad); }
+.verdict .hd { font-weight: 700; margin-bottom: 7px; display: flex; align-items: center; gap: 8px; }
+.verdict.ok .hd { color: var(--good); }
+.verdict.no .hd { color: var(--bad); }
+.verdict .expected { font-family: var(--f-mono); font-size: 13.5px; display: block; margin: 6px 0 10px; }
+.verdict p { margin: 0 0 8px; }
+.verdict p:last-child { margin-bottom: 0; }
+.verdict .selfmark { display: flex; gap: 8px; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid currentColor; flex-wrap: wrap; }
+.verdict .selfmark span { font-size: 13px; color: var(--ink-soft); }
+.mini {
+  font-family: var(--f-body); font-size: 12.5px; font-weight: 600; cursor: pointer;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r);
+  padding: 5px 11px; color: var(--ink-soft);
+}
+.mini:hover { color: var(--ink); border-color: var(--ink-faint); }
+
+.done { text-align: center; padding: 40px 20px; }
+.done .big { font-family: var(--f-display); font-size: 34px; font-weight: 500; margin-bottom: 8px; }
+.done .sc { font-family: var(--f-mono); font-size: 15px; color: var(--ink-soft); margin-bottom: 24px; font-variant-numeric: tabular-nums; }
+
+footer {
+  max-width: 1120px; margin: 0 auto; padding: 0 24px 56px;
+  font-size: 12.5px; color: var(--ink-faint); line-height: 1.65;
+}
+footer .rule { height: 1px; background: var(--line); margin-bottom: 20px; }
+footer strong { color: var(--ink-soft); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+</style>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <span class="lam">λ</span>
+      <span class="nm">Drill Room</span>
+      <span class="sub">INF122 · uke 34–36</span>
+    </div>
+    <div class="modes" role="tablist" aria-label="Mode">
+      <button role="tab" id="m-home" aria-selected="true">Overview</button>
+      <button role="tab" id="m-learn" aria-selected="false">Learn</button>
+      <button role="tab" id="m-drill" aria-selected="false">Drill</button>
+    </div>
+    <button class="icon-btn" id="themebtn" title="Switch theme">Theme</button>
+  </div>
+</header>
+
+<main id="view"></main>
+
+<footer>
+  <div class="rule"></div>
+  <p><strong>Paraphrased, not reproduced.</strong> Every explanation here is written from
+  scratch and cites where the lecturer covers it — <em>uke35 s.19</em> means slide 19 of
+  <code>2typer-handout.pdf</code>. Open his PDF alongside; it is the examinable text, this is not.</p>
+  <p><strong>No exercise answers.</strong> None of these drills are items from
+  <code>uke1.txt</code>, <code>uke2.txt</code> or the tutorial's <code>Exercises.hs</code>.
+  They test the same ideas on different examples, on purpose — his first slide says using AI
+  to solve problems at this level means not learning them.</p>
+  <p><strong>Verify in GHCi.</strong> A browser cannot run Haskell. Every answer here is
+  checkable with <code>:t</code> in about four seconds, and checking it yourself is the
+  part that sticks.</p>
+</footer>
+
+<script>
+"use strict";
+
+/* ------------------------------------------------------------------ data --
+   Every concept and drill below is written from scratch. `cite` points at the
+   lecturer's own slide so his handout stays the authority. No item reproduces
+   a task from uke1.txt, uke2.txt or the tutorial's Exercises.hs.
+---------------------------------------------------------------------------- */
+
+const WEEKS = [
+{
+  n: 1, uke: "uke34", chapter: "Hutton 1–2", topic: "The functional mindset",
+  blurb: "Expressions instead of statements, GHCi, application, and the list toolkit.",
+  concepts: [
+    { t: "An equals sign is not an assignment",
+      cite: "uke34 s.3 · Hutton 1",
+      body: `<p>In an imperative language <code>x = x + 1</code> is an instruction that changes
+        something. In Haskell <code>=</code> introduces a <strong>definition</strong>: it says
+        what a name means, permanently. <code>x = x + 1</code> is not a step, it is a claim
+        about <code>x</code> that has no solution.</p>
+        <p>The consequence is the property the lecturer spends five slides on:
+        <strong>referential transparency</strong>. An expression can always be replaced by its
+        value without changing the program, because there is no state for it to depend on. That
+        is what makes equational reasoning — and the exam's "trace this by hand" questions —
+        possible at all.</p>`,
+      code: `double x = x * 2\n\n-- double 3 IS 6. Not "becomes", not "returns". Is.\n-- So double 3 + double 3  =  6 + 6  =  12, always.`,
+      cp: { q: "Why can a Haskell function never behave differently on two calls with the same argument?",
+            a: `Because there is no mutable state for it to consult. The result depends only on
+                the argument values, so the call and its value are interchangeable everywhere.
+                Rename this and you have referential transparency.` } },
+
+    { t: "GHCi is the tool you live in",
+      cite: "uke34 s.9–10",
+      body: `<p>Four commands cover almost everything. Of these, <code>:t</code> is the one to
+        build a reflex around — most confusion in this course is type confusion wearing a
+        disguise.</p>
+        <ul>
+          <li><code>:l Foo.hs</code> load a file · <code>:r</code> reload it after an edit</li>
+          <li><code>:t expr</code> the type of an expression, without evaluating it</li>
+          <li><code>:i name</code> info: fixity, the class it comes from, where it was defined</li>
+          <li><code>:q</code> quit</li>
+        </ul>
+        <p><code>it</code> holds the last result, which is handy for chaining experiments.</p>`,
+      code: `ghci> :t reverse\nreverse :: [a] -> [a]\n\nghci> reverse "abc"\n"cba"\nghci> length it\n3`,
+      ghci: `:t (:)\n:i (+)`,
+      cp: { q: "What does :t tell you that running the expression would not?",
+            a: `It answers without evaluating. You can ask the type of something that would loop
+                forever or crash — <code>:t head []</code> is fine, <code>head []</code> is not.` } },
+
+    { t: "Application binds tighter than every operator",
+      cite: "uke34 s.14",
+      body: `<p>Function application is written by juxtaposition — a space — and it binds more
+        tightly than any operator. This one rule explains a large share of first-month
+        errors.</p>
+        <p>Equally important: <code>f a b</code> is <em>not</em> <code>f(a,b)</code>. The first
+        applies <code>f</code> to two arguments in sequence; the second applies it to one
+        argument that happens to be a pair. They have different types and are not
+        interchangeable.</p>`,
+      code: `f a + b     means   (f a) + b        -- not f (a + b)\nf a b       means   (f a) b          -- two arguments\nf (a, b)    means   f applied to ONE pair`,
+      ghci: `:t fst\n:t max`,
+      cp: { q: "You want to negate the result of `abs x`. Is `- abs x` or `-(abs x)` needed?",
+            a: `Neither is wrong here — application binds tightest, so <code>- abs x</code>
+                already parses as <code>-(abs x)</code>. The parentheses cost nothing and
+                are worth writing while the rule is still new.` } },
+
+    { t: "Backticks and the list toolkit",
+      cite: "uke34 s.19",
+      body: `<p>Any two-argument function can be written infix by wrapping it in backticks, and
+        any operator can be written prefix by wrapping it in parentheses. They are the same
+        function either way.</p>
+        <p>Then there is the Prelude's list vocabulary. Learn these by hand — you will be asked
+        to use them on paper with no autocomplete.</p>`,
+      code: `div 7 2   ==   7 \`div\` 2   ==   3\n(+) 3 4   ==   3 + 4       ==   7\n\nhead [1,2,3]  = 1        tail [1,2,3] = [2,3]\nlast [1,2,3]  = 3        init [1,2,3] = [1,2]\ntake 2 [1,2,3] = [1,2]   drop 2 [1,2,3] = [3]\nlength [1,2,3] = 3       reverse [1,2,3] = [3,2,1]\n[1,2] ++ [3]  = [1,2,3]  [1,2,3] !! 0 = 1\nnull [] = True           elem 2 [1,2,3] = True`,
+      ghci: `:t (!!)\ntake 3 (reverse [1..10])`,
+      cp: { q: "What is `drop 9 [1,2,3]`?",
+            a: `<code>[]</code>. <code>take</code> and <code>drop</code> are total: asking for
+                more than there is gives you everything or nothing, never an error. That is
+                unlike <code>head</code> and <code>!!</code>, which are partial.` } },
+
+    { t: "Indentation is syntax, not style",
+      cite: "uke34 s.15",
+      body: `<p>The layout rule turns whitespace into structure. Two things follow, and both
+        cost people marks:</p>
+        <ul>
+          <li>Top-level definitions must all start in the <strong>same column</strong>. Indent
+            one and the compiler reads it as a continuation of the line above.</li>
+          <li>A continuation line must be indented <strong>more</strong> than the thing it
+            continues.</li>
+        </ul>
+        <p>Names carry meaning too: functions and variables start lowercase, while types and
+        data constructors start uppercase. That is enforced, not conventional.</p>`,
+      code: `-- legal\nf x = x + 1\ng y = y * 2\n\n-- error: g looks like part of f's body\nf x = x + 1\n  g y = y * 2`,
+      cp: { q: "Is `Total = 5` a valid definition?",
+            a: `No. A leading capital marks a type or a data constructor, so GHC will not accept
+                it as a variable binding. Write <code>total = 5</code>.` } },
+
+    { t: "No loops — recursion instead",
+      cite: "uke34 s.16–18",
+      body: `<p>There is no <code>for</code> and no <code>while</code>, because both depend on a
+        counter that changes. Repetition comes from a function calling itself, and every such
+        function has the same two-part shape: a <strong>base case</strong> that stops, and a
+        <strong>recursive case</strong> that makes the problem smaller.</p>
+        <p>Lists are built for exactly this. A list is either <code>[]</code> or a value
+        <code>x</code> followed by a shorter list <code>xs</code>, written <code>x:xs</code> —
+        which is the same two cases again.</p>`,
+      code: `fact 0 = 1\nfact n = n * fact (n - 1)\n\nsumAll []     = 0\nsumAll (x:xs) = x + sumAll xs\n\n-- [1,2,3]  is  1:[2,3]  is  1:2:[3]  is  1:2:3:[]`,
+      ghci: `:t (:)\n1 : 2 : 3 : []`,
+      cp: { q: "What goes wrong if you write only `sumAll (x:xs) = x + sumAll xs`?",
+            a: `Nothing stops it. The pattern never matches <code>[]</code>, so the recursion
+                runs off the end of every list and you get a pattern-match failure at runtime,
+                not a compile error.` } },
+
+    { t: "Evaluation is lazy: outside in",
+      cite: "uke34 s.13 · Hutton 15",
+      body: `<p>He introduces this in the very first lecture even though the book puts it in
+        chapter 15, because it explains behaviour you meet immediately.</p>
+        <p>Most languages are <em>eager</em>: arguments are evaluated before the call. Haskell
+        is <strong>lazy</strong> — it evaluates the outermost expression first and only reduces
+        an argument when something actually demands its value. An argument nobody looks at is
+        never computed.</p>`,
+      code: `fst (a, b) = a\n\nfst (1 + 1, undefined)\n  =  1 + 1        -- fst matched, second component dropped\n  =  2            -- 'undefined' was never touched`,
+      ghci: `head [1, undefined]\ntake 3 [1..]`,
+      cp: { q: "Why does `take 3 [1..]` finish, when `[1..]` is infinite?",
+            a: `<code>take 3</code> only ever demands three elements, so only three are ever
+                produced. The infinite list is a recipe, not a stored value. You will use this
+                deliberately in week 4 with <code>zip xs [0..]</code>.` } }
+  ],
+  drills: [
+    { tag: "application", kind: "choice", prompt: "How does Haskell parse this?", code: "f a + b",
+      choices: ["(f a) + b", "f (a + b)", "f (a, b)", "It is a syntax error"], answer: 0,
+      explain: "Application binds tighter than any operator, so `f a` happens first. This is uke34 s.14 and it is the single most common early misread." },
+    { tag: "application", kind: "choice", prompt: "`f a b` and `f (a, b)` are…", code: "",
+      choices: ["The same call written two ways", "Different: two arguments vs one pair", "Only valid if a and b have the same type", "Different only for operators"], answer: 1,
+      explain: "`f a b` applies f to two arguments in turn. `f (a, b)` applies it to a single tuple. Different types entirely — and turning one into the other is what `curry` and `uncurry` do." },
+    { tag: "prelude", kind: "value", prompt: "What is the value of this expression?", code: "drop 9 [1,2,3]",
+      answer: "[]", accept: ["[]"],
+      explain: "`drop` is total — dropping more than there is gives the empty list rather than an error. Contrast `[1,2,3] !! 9`, which crashes." },
+    { tag: "prelude", kind: "value", prompt: "What is the value of this expression?", code: "init [4,5,6]",
+      answer: "[4,5]", accept: ["[4,5]"],
+      explain: "`init` drops the last element, `tail` drops the first. They are the two halves people mix up under exam pressure." },
+    { tag: "prelude", kind: "value", prompt: "What is the value of this expression?", code: "7 `div` 2",
+      answer: "3", accept: ["3"],
+      explain: "Integer division truncates toward negative infinity. Backticks make any two-argument function infix — `div 7 2` is the same call." },
+    { tag: "prelude", kind: "value", prompt: "What is the value of this expression?", code: "reverse (take 3 [1..10])",
+      answer: "[3,2,1]", accept: ["[3,2,1]"],
+      explain: "Innermost first: `take 3 [1..10]` is `[1,2,3]`, reversed is `[3,2,1]`. Note `[1..10]` is a range, not ten literals." },
+    { tag: "laziness", kind: "value", prompt: "What does GHCi print?", code: "head [1, undefined]",
+      answer: "1", accept: ["1"],
+      explain: "Lazy evaluation: `head` demands only the first element, so `undefined` is never forced. Change it to `length [1, undefined]` and it still works — length looks at the shape, not the values." },
+    { tag: "laziness", kind: "choice", prompt: "Why does `take 3 [1..]` terminate?", code: "",
+      choices: ["GHC special-cases the take function", "[1..] is secretly finite", "Only the three elements demanded are ever produced", "It does not — it hangs"], answer: 2,
+      explain: "Outside-in evaluation. `[1..]` is a recipe for elements, and nothing produces an element until something asks. uke34 s.13." },
+    { tag: "naming", kind: "choice", prompt: "Which of these is a legal top-level definition?", code: "",
+      choices: ["Total = 5", "total = 5", "5 = total", "let Total = 5"], answer: 1,
+      explain: "Leading capitals are reserved for types and data constructors. Variables and functions must start lowercase — enforced by the compiler, not a style guide." },
+    { tag: "layout", kind: "choice", prompt: "Two top-level definitions, the second indented two spaces. What happens?", code: "f x = x + 1\n  g y = y * 2",
+      choices: ["Fine — indentation is cosmetic", "A parse error: g reads as a continuation of f", "g becomes local to f", "A warning, but it compiles"], answer: 1,
+      explain: "The layout rule makes the indented line a continuation of the one above, so GHC sees a malformed `f`. Top-level definitions must share a column. uke34 s.15." },
+    { tag: "recursion", kind: "choice", prompt: "This definition is missing something. What breaks?", code: "sumAll (x:xs) = x + sumAll xs",
+      choices: ["Nothing — [] is handled automatically", "A type error at compile time", "A pattern-match failure at runtime on []", "Infinite loop on every input"], answer: 2,
+      explain: "It type-checks fine. The recursion shrinks the list until it reaches `[]`, which no equation matches, and you get a runtime pattern-match failure. Every recursion needs its base case written." },
+    { tag: "prelude", kind: "value", prompt: "What is the value of this expression?", code: "null (drop 5 [1,2,3])",
+      answer: "True", accept: ["true"],
+      explain: "`drop 5 [1,2,3]` is `[]`, and `null []` is True. Two total functions composing safely where `head` would have crashed." }
+  ]
+},
+
+{
+  n: 2, uke: "uke35", chapter: "Hutton 3", topic: "Types and classes",
+  blurb: "What a type is, currying, polymorphism, and what `Ord a =>` finally means.",
+  concepts: [
+    { t: "A type is a set of values, checked before anything runs",
+      cite: "uke35 s.2–3",
+      body: `<p>A type names a collection of values: <code>Bool</code> is the two-element set
+        <code>{True, False}</code>, <code>[Int]</code> is every list of integers.</p>
+        <p>The important word is <strong>before</strong>. Type checking happens at compile time,
+        so <code>1 + False</code> never runs — GHC rejects it while reading. The error you get
+        is <em>No instance for (Num Bool)</em>, which reads as: <code>+</code> wanted a number
+        and <code>Bool</code> is not one.</p>
+        <p>What type checking does <em>not</em> catch is the partial function.
+        <code>last :: [a] -> a</code> promises an <code>a</code> for every list, and there is
+        no <code>a</code> to give for <code>[]</code>. It compiles and then throws.</p>`,
+      code: `ghci> 1 + False\n<interactive> error:\n    No instance for (Num Bool) arising from a use of '+'\n\nghci> last []\n*** Exception: Prelude.last: empty list   -- compiled fine, failed at runtime`,
+      cp: { q: "Why does `last []` type-check when it cannot possibly work?",
+            a: `The signature <code>[a] -> a</code> makes a promise the definition cannot keep
+                for the empty list. Types constrain shape, not totality. This is uke35 s.4 and
+                the reason to prefer pattern matching over <code>head</code>/<code>last</code>.` } },
+
+    { t: "Lists and tuples differ in two ways at once",
+      cite: "uke35 s.11–13",
+      body: `<p>Both group values, and confusing them is the most common type error in the
+        first weeks. Two differences, and they both matter:</p>
+        <ul>
+          <li>A <strong>list</strong> has any length, and every element must share one type.
+            Length is not part of the type: <code>[1,2]</code> and <code>[1,2,3]</code> are
+            both <code>[Int]</code>.</li>
+          <li>A <strong>tuple</strong> has a fixed length that <em>is</em> part of its type, and
+            the components may have different types.</li>
+        </ul>
+        <p><code>String</code> is a synonym for <code>[Char]</code>, so every list function
+        works on strings with nothing extra.</p>`,
+      code: `[1, 2, 3]        :: [Int]         -- any length, one type\n[1, 2]           :: [Int]         -- same type as above\n\n('a', True)      :: (Char, Bool)   -- length 2 is in the type\n('a', True, 9)   :: (Char, Bool, Int)   -- a DIFFERENT type\n\n[1, 'a']         -- rejected: elements disagree\n"abc"            :: String  =  [Char]`,
+      ghci: `:t ('a', True, 9)\n:t "abc"`,
+      cp: { q: "Can a list hold a mixture of `Int` and `Char`?",
+            a: `No. One element type per list. If you need a pair of different things, that is
+                what a tuple is for — or a user-defined type, which is chapter 8.` } },
+
+    { t: "Every function takes exactly one argument",
+      cite: "uke35 s.15, s.19",
+      body: `<p><code>add :: Int -> Int -> Int</code> has no comma, and that is deliberate.
+        <code>-></code> associates to the <strong>right</strong>, so the signature means
+        <code>Int -> (Int -> Int)</code>: <em>takes an Int, returns a function</em>.</p>
+        <p>This is <strong>currying</strong>. It pairs with the other associativity rule —
+        application associates to the <strong>left</strong>, so <code>f x y</code> is
+        <code>(f x) y</code>. The two fit together exactly: each application peels one arrow
+        off the front of the type.</p>
+        <p>The payoff is that partial application needs no special support. Supply one
+        argument, get a function back.</p>`,
+      code: `add :: Int -> Int -> Int        -- means Int -> (Int -> Int)\nadd x y = x + y\n\nghci> :t add 1\nadd 1 :: Int -> Int             -- one arrow gone\n\ninc = add 1                     -- a perfectly good definition\n\n-- the two rules, side by side:\n--   a -> b -> c   is   a -> (b -> c)     types associate right\n--   f x y         is   (f x) y           application associates left`,
+      ghci: `:t (+)\n:t (+) 1\n:t map`,
+      cp: { q: "How many arrows does `(a -> b) -> [a] -> [b]` have at the top level, and what does the first pair of parentheses do?",
+            a: `Two top-level arrows: it takes a function, then a list, then gives a list. The
+                parentheses are load-bearing — without them <code>a -> b -> [a] -> [b]</code>
+                would be a three-argument function instead. That signature is <code>map</code>.` } },
+
+    { t: "Polymorphism: a type variable is a promise of ignorance",
+      cite: "uke35 s.17",
+      body: `<p>A lowercase name in a type is a <strong>type variable</strong>, standing for any
+        type at all. <code>length :: [a] -> Int</code> works on a list of anything because it
+        only counts — it never looks at an element.</p>
+        <p>Read a type variable as a restriction on the <em>author</em>, not the caller. Because
+        the type promises to work for every <code>a</code> and says nothing about <code>a</code>,
+        the definition cannot compare, show, or add those values. It can only move them around.
+        That is why so few functions have a given polymorphic type.</p>
+        <p>One wrinkle worth knowing before it surprises you: modern GHC reports
+        <code>length</code> more generally than the book does, because it works on more than
+        lists.</p>`,
+      code: `length  :: [a] -> Int            -- Hutton, and what he will ask for\nreverse :: [a] -> [a]\nfst     :: (a, b) -> a\n\nghci> :t length\nlength :: Foldable t => t a -> Int     -- GHC 9.10 is more general`,
+      ghci: `:t fst\n:t length\n:t id`,
+      cp: { q: "How many total functions have the type `a -> a`?",
+            a: `One useful one: <code>id</code>, which returns its argument. The type says
+                nothing about <code>a</code>, so there is nothing else the definition is
+                allowed to do with it.` } },
+
+    { t: "`Ord a =>` is a constraint, not an argument",
+      cite: "uke35 s.9",
+      body: `<p>Everything left of <code>=></code> is a <strong>class constraint</strong>. It
+        does not add a parameter; it narrows which types <code>a</code> may be instantiated to.
+        <code>qsort :: Ord a => [a] -> [a]</code> reads: <em>for any type that can be ordered,
+        this takes a list of them and gives a list back.</em></p>
+        <p>The five classes he names are the five to memorise:</p>`,
+      code: `Eq    ==  /=                       function types are NOT in it\nOrd   <  <=  >  >=  min  max       requires Eq\nShow  show :: a -> String\nRead  read :: String -> a\nNum   +  -  *  negate  abs         NO division\n\n-- several constraints go in a tuple:\ndescribe :: (Show a, Ord a) => a -> a -> String`,
+      ghci: `:t (<)\n:i Ord\n:t show`,
+      cp: { q: "`sort` needs `Ord a =>`. Why is `length` free of any constraint?",
+            a: `Sorting has to compare elements, and comparison only exists for types in
+                <code>Ord</code>. Counting never inspects an element, so it demands nothing of
+                the type. The constraint tells you what the function actually does.` } },
+
+    { t: "The two class traps he flags by name",
+      cite: "uke35 s.9–10",
+      body: `<p><strong>Num has no division.</strong> The class gives you
+        <code>+ - * negate abs signum</code> and stops. Integer division is <code>div</code>
+        (in <code>Integral</code>) and <code>/</code> lives in <code>Fractional</code>. This is
+        why averaging a list of <code>Int</code> needs <code>fromIntegral</code> to climb from
+        one to the other.</p>
+        <p><strong>Function types are in none of Eq, Show or Read.</strong> Deciding whether two
+        functions are equal means checking they agree on every input — undecidable in general.
+        Haskell declines to pretend, so <code>(+1) == (+1)</code> is a type error, not
+        <code>False</code>.</p>
+        <p>A third, quieter one: numeric literals are polymorphic. <code>1</code> is not an
+        <code>Int</code> until something makes it one.</p>`,
+      code: `ghci> :t 1\n1 :: Num a => a                 -- not Int!\n\nghci> :t 2.5\n2.5 :: Fractional a => a\n\nghci> read "3"\nerror: Ambiguous type variable      -- result type unconstrained\nghci> read "3" :: Int\n3`,
+      ghci: `:t 1\n:t (/)\n:t div`,
+      cp: { q: "Why does `read \"3\"` fail on its own but `read \"3\" :: Int` succeed?",
+            a: `<code>read :: Read a => String -> a</code> has its result type appearing only in
+                the output, so nothing tells GHC what to parse into. The annotation supplies the
+                missing information.` } }
+  ],
+  drills: [
+    { tag: "types", kind: "type", prompt: "What is the type of this value?", code: "('a', True)",
+      answer: "(Char, Bool)", accept: ["(char,bool)"],
+      explain: "A pair. Both the length and each component type are part of the tuple's type — `('a', True, 9)` would be a different type entirely." },
+    { tag: "types", kind: "type", prompt: "What is the type of this value?", code: "[(True, 'x'), (False, 'y')]",
+      answer: "[(Bool, Char)]", accept: ["[(bool,char)]"],
+      explain: "A list of pairs. Read outside in: the brackets are the list, the parentheses inside are the element type." },
+    { tag: "types", kind: "type", prompt: "What is the type of this value?", code: "\"abc\"",
+      answer: "String", accept: ["string", "[char]"],
+      explain: "`String` is a synonym for `[Char]` — both answers are right. That equivalence is why every list function works on strings unchanged." },
+    { tag: "listtuple", kind: "choice", prompt: "Which of these is rejected by the type checker?", code: "",
+      choices: ["(1, 'a')", "[1, 'a']", "[(1, 'a')]", "('a', 'b', 'c')"], answer: 1,
+      explain: "A list needs one element type throughout. A tuple is exactly where mixed types are allowed, which is the difference worth being able to state cold." },
+    { tag: "currying", kind: "type", prompt: "Given `add :: Int -> Int -> Int`, what is the type of `add 1`?", code: "add 1",
+      answer: "Int -> Int", accept: ["int->int"],
+      explain: "One argument supplied, one arrow peeled off. This is partial application, and it works because `Int -> Int -> Int` already meant `Int -> (Int -> Int)`." },
+    { tag: "currying", kind: "choice", prompt: "`a -> b -> c` is identical to which of these?", code: "",
+      choices: ["(a -> b) -> c", "a -> (b -> c)", "(a, b) -> c", "c -> b -> a"], answer: 1,
+      explain: "`->` associates to the right. `(a -> b) -> c` is a genuinely different type — it takes a function as its argument. uke35 s.19." },
+    { tag: "currying", kind: "choice", prompt: "`f x y` is parsed as…", code: "",
+      choices: ["f (x y)", "(f x) y", "f (x, y)", "Ambiguous without parentheses"], answer: 1,
+      explain: "Application associates to the left, types associate to the right, and the two fit together: each application peels one arrow off the front." },
+    { tag: "currying", kind: "type", prompt: "What is the most general type of this lambda?", code: "\\f x -> f (f x)",
+      answer: "(a -> a) -> a -> a", accept: ["(a->a)->a->a", "(t->t)->t->t"],
+      explain: "`f` is applied to `x` and then to its own result, so its input and output must be the same type. Any letters will do — GHCi may say `t`." },
+    { tag: "classes", kind: "choice", prompt: "Why is `(+1) == (+1)` a type error rather than True?", code: "",
+      choices: ["The two sections are different objects", "Function types are not instances of Eq", "== only works on numbers", "You need parentheses around each side"], answer: 1,
+      explain: "Equality of functions means agreeing on every input — undecidable in general, so Haskell provides no Eq instance for function types. A classic exam question." },
+    { tag: "classes", kind: "choice", prompt: "Which operation does the `Num` class NOT give you?", code: "",
+      choices: ["negate", "*", "/", "abs"], answer: 2,
+      explain: "`Num` stops at `+ - * negate abs signum`. `/` is in `Fractional` and `div` is in `Integral`. This is why averaging Ints needs `fromIntegral`." },
+    { tag: "defaulting", kind: "type", prompt: "What does GHCi report for the type of the literal 1?", code: ":t 1",
+      answer: "Num a => a", accept: ["num a=>a", "num t=>t", "(num a)=>a"],
+      explain: "Numeric literals are polymorphic until context pins them down. Answering `Int` here is the single most common slip on this topic — uke35 s.8." },
+    { tag: "classes", kind: "choice", prompt: "Why does `read \"3\"` fail on its own?", code: "",
+      choices: ["\"3\" is not a valid number", "read only takes Char", "Nothing determines the result type", "read needs a Show instance"], answer: 2,
+      explain: "`read :: Read a => String -> a` — the type variable appears only in the result, so GHC has nothing to infer it from. Annotate: `read \"3\" :: Int`." },
+    { tag: "types", kind: "choice", prompt: "`length` in Hutton is `[a] -> Int`. What does GHC 9.10 actually report?", code: ":t length",
+      choices: ["[a] -> Int", "Foldable t => t a -> Int", "Num a => [a] -> a", "It is a type error"], answer: 1,
+      explain: "GHC generalises it to any Foldable container. Write `[a] -> Int` on the exam, since that is the course's version — but do not be thrown when GHCi says otherwise." },
+    { tag: "types", kind: "type", prompt: "What is the type of this function?", code: "\\(x, y) -> y",
+      answer: "(a, b) -> b", accept: ["(a,b)->b", "(t,t1)->t1"],
+      explain: "It takes one argument — a pair — and returns the second component. This is `snd`. Note it is one argument, not two: contrast `\\x y -> y`, which is `a -> b -> b`." }
+  ]
+},
+
+{
+  n: 3, uke: "uke36", chapter: "Hutton 4", topic: "Defining functions",
+  blurb: "Conditionals, guards, pattern matching, lambdas and sections. Today's lecture.",
+  concepts: [
+    { t: "`if` is an expression, so `else` is compulsory",
+      cite: "uke36 s.1",
+      body: `<p>He puts this in capitals on his own slide. In an imperative language
+        <code>if</code> is a statement and the <code>else</code> branch is optional — skipping
+        it means "do nothing". Haskell's <code>if</code> is an <strong>expression</strong>: it
+        must produce a value, and there is no value for "did nothing".</p>
+        <p>Both branches must also have the <em>same</em> type, since the whole expression has
+        one type either way.</p>`,
+      code: `-- legal\nsignOf x = if x >= 0 then "up" else "down"\n\n-- error: no value when the test is False\nsignOf x = if x >= 0 then "up"\n\n-- error: branches disagree on type\nsignOf x = if x >= 0 then "up" else 0`,
+      cp: { q: "Can the two branches of an `if` have different types?",
+            a: `No. The expression has a single type, so both branches must produce it. This
+                also means you cannot use an <code>if</code> to "return early" — there is no
+                early to return to.` } },
+
+    { t: "Guards read better than nested ifs",
+      cite: "uke36 s.1 · Hutton 4.2",
+      body: `<p>A guard is a boolean condition on the left of <code>=</code>, introduced by
+        <code>|</code>. Guards are tried <strong>top to bottom</strong> and the first true one
+        wins.</p>
+        <p><code>otherwise</code> is not a keyword. It is a name defined in the Prelude as
+        <code>True</code>, so it always matches — which is exactly why it belongs last.</p>
+        <p><code>where</code> attaches local definitions to the whole equation, so a name bound
+        there is visible from every guard. That is its advantage over <code>let</code>, which
+        belongs to a single expression.</p>`,
+      code: `grade s\n  | s >= 90   = 'A'\n  | s >= 80   = 'B'\n  | s >= 60   = 'C'\n  | otherwise = 'F'\n\n-- otherwise = True, from the Prelude\n\nbmiNote w h\n  | b < 18.5  = "low"\n  | b < 25    = "ok"\n  | otherwise = "high"\n  where b = w / (h * h)          -- visible in every guard`,
+      ghci: `:t otherwise\notherwise`,
+      cp: { q: "What happens if you put `| otherwise = ...` first?",
+            a: `Every later guard becomes unreachable, because <code>otherwise</code> is
+                <code>True</code> and the first match wins. GHC will warn about the overlap;
+                the function will silently return the same thing for every input.` } },
+
+    { t: "Patterns match on shape",
+      cite: "uke36 s.2",
+      body: `<p>Pattern matching decomposes a value by the way it was built. Equations are tried
+        top to bottom — <em>første mønster til mølla</em>, as his slide puts it — so order is
+        meaningful. Some functional languages forbid overlapping patterns; Haskell allows them
+        and resolves by order.</p>
+        <p>The patterns available now: literals (<code>0</code>, <code>'a'</code>,
+        <code>True</code>), variables (match anything, bind the value), the wildcard
+        <code>_</code> (match anything, bind nothing), tuples <code>(x, y)</code>, and the list
+        constructors <code>[]</code> and <code>x:xs</code>.</p>`,
+      code: `isZero 0 = True\nisZero _ = False        -- order matters; swap these and it is always True\n\nfstOf (x, _) = x\n\ndescribe []     = "empty"\ndescribe [_]    = "one"\ndescribe (_:_)  = "several"`,
+      cp: { q: "Why does `describe []` return \"empty\" and not \"several\"?",
+            a: `First match wins, and <code>[]</code> is tried first. Note that
+                <code>(_:_)</code> would not have matched anyway — it requires at least one
+                element.` } },
+
+    { t: "`(x:xs)` needs its parentheses, and matches only non-empty",
+      cite: "uke36 s.2 · Hutton 4.4",
+      body: `<p>The cons pattern splits a list into its head and tail. Two facts to keep
+        straight:</p>
+        <ul>
+          <li>It <strong>never matches the empty list</strong>. <code>x:xs</code> requires at
+            least one element, which is precisely why it pairs with a <code>[]</code>
+            equation.</li>
+          <li>It <strong>needs parentheses</strong> in an argument position, because application
+            binds tighter than <code>:</code>. Without them, <code>f x:xs</code> parses as
+            <code>(f x) : xs</code>.</li>
+        </ul>
+        <p>One further rule people break: a variable may appear <strong>at most once</strong> in
+        a pattern. <code>same (x, x)</code> looks like it should mean "a pair of equal halves",
+        and Haskell refuses — patterns work by shape alone, and equality needs
+        <code>Eq</code>.</p>`,
+      code: `myHead (x:_)  = x\nmyHead []     = error "empty"\n\n-- illegal: x appears twice\nsame (x, x) = True\n\n-- legal: the comparison is explicit, and so is the Eq constraint\nsame (x, y) | x == y = True\n            | otherwise = False`,
+      ghci: `:t (:)`,
+      cp: { q: "Why is repeating a variable in a pattern disallowed?",
+            a: `Matching would have to compare the two, and comparison is not available for
+                every type — it needs <code>Eq</code>. Patterns are meant to work by structure
+                alone, so Haskell makes you write the comparison, which also makes the
+                constraint visible in the type.` } },
+
+    { t: "Lambdas are what function definitions are made of",
+      cite: "uke36 s.1 · Hutton 4.5",
+      body: `<p><code>\\x -> e</code> is a function with no name. The backslash is meant to look
+        like a lambda.</p>
+        <p>They matter for more than convenience: a curried definition is <em>defined</em> as
+        nested lambdas. <code>f x y = e</code> is shorthand for
+        <code>f = \\x -> \\y -> e</code>, which is why the type is
+        <code>a -> (b -> c)</code>. Being able to move between the two forms without thinking
+        is what makes chapter 7 painless.</p>`,
+      code: `\\x -> x * 2                    -- anonymous doubling\n(\\x -> x * 2) 5   ==  10\n\n-- these three define the same function:\nadd x y = x + y\nadd x   = \\y -> x + y\nadd     = \\x -> \\y -> x + y`,
+      ghci: `:t \\x -> x * 2\n(\\x y -> x) 1 2`,
+      cp: { q: "What does `(\\x y -> x) 1 2` evaluate to?",
+            a: `<code>1</code>. It takes two arguments and returns the first, ignoring the
+                second. Its type is <code>a -> b -> a</code>, which in the Prelude is
+                <code>const</code>.` } },
+
+    { t: "Sections, and the one operator that betrays you",
+      cite: "uke36 s.1 · Hutton 4.6",
+      body: `<p>Parenthesise an operator with one side missing and you get a function. Which side
+        you leave off matters for any operator that is not commutative.</p>
+        <p>Then the trap. <code>-</code> is also unary negation, and negation wins:
+        <code>(-3)</code> is negative three, not <code>\\x -> x - 3</code>. His slides call this
+        out and it is a favourite exam question. Use <code>subtract 3</code>. The left section
+        <code>(3-)</code> is unambiguous and works fine.</p>`,
+      code: `(1+)  ==  \\x -> 1 + x\n(+1)  ==  \\x -> x + 1        -- same thing; + is commutative\n\n(2^)  ==  \\x -> 2 ^ x        -- (2^) 10  = 1024\n(^2)  ==  \\x -> x ^ 2        -- (^2) 10  = 100\n(/2)  ==  \\x -> x / 2\n(2/)  ==  \\x -> 2 / x\n\n(-3)          -- negative three. NOT a section.\nsubtract 3    -- the function you meant\n(3-)          -- fine: \\x -> 3 - x`,
+      ghci: `:t (^2)\n:t subtract\n(3-) 10`,
+      cp: { q: "You want a function that subtracts 3 from its argument. Write it two ways.",
+            a: `<code>subtract 3</code>, or <code>\\x -> x - 3</code>. Not <code>(-3)</code>,
+                which is the number. <code>(+ (-3))</code> also works and is uglier.` } }
+  ],
+  drills: [
+    { tag: "conditionals", kind: "choice", prompt: "Is this a valid definition?", code: "f x = if x > 0 then 1",
+      choices: ["Yes", "No — `if` must have an `else`", "Yes, but only for Int", "Only inside a where clause"], answer: 1,
+      explain: "`if` is an expression and must produce a value on every path. He writes this in capitals on his own slide — uke36 s.1." },
+    { tag: "conditionals", kind: "choice", prompt: "What is wrong with `if x > 0 then \"up\" else 0`?", code: "",
+      choices: ["Nothing", "The branches have different types", "You cannot compare with 0", "String needs backticks"], answer: 1,
+      explain: "The whole expression has one type, so both branches must produce it. String and a numeric literal cannot unify." },
+    { tag: "guards", kind: "value", prompt: "`otherwise` is not a keyword. What value is it bound to in the Prelude?", code: "",
+      answer: "True", accept: ["true"],
+      explain: "An ordinary binding equal to True. GHCi's `:t otherwise` shows only its type, Bool — the value is what matters here, because it is why otherwise always matches and belongs last." },
+    { tag: "guards", kind: "choice", prompt: "Guards are tried in which order?", code: "",
+      choices: ["Most specific first, automatically", "Top to bottom, first true one wins", "Bottom to top", "All of them, then the results are combined"], answer: 1,
+      explain: "Top to bottom, first match wins — same rule as equations. Put `otherwise` first and everything below it becomes unreachable." },
+    { tag: "sections", kind: "value", prompt: "What is the value of this expression?", code: "(^2) 10",
+      answer: "100", accept: ["100"],
+      explain: "The missing side is the left one, so 10 goes there: 10 squared. Compare `(2^) 10`, which is 2 to the 10th." },
+    { tag: "sections", kind: "value", prompt: "What is the value of this expression?", code: "(2^) 10",
+      answer: "1024", accept: ["1024"],
+      explain: "Here 2 is fixed on the left and 10 fills the right: 2^10. For `+` and `*` the side never matters; for `^`, `-` and `/` it always does." },
+    { tag: "sections", kind: "choice", prompt: "What is `(-3)`?", code: "",
+      choices: ["The function \\x -> x - 3", "The number negative three", "The function \\x -> 3 - x", "A syntax error"], answer: 1,
+      explain: "`-` doubles as unary negation and negation wins. The function you wanted is `subtract 3`. His slides flag this, and it is a favourite exam trick." },
+    { tag: "sections", kind: "value", prompt: "What is the value of this expression?", code: "(3-) 10",
+      answer: "-7", accept: ["-7"],
+      explain: "The left section is unambiguous, so this is 3 - 10. Only the right section of `-` is blocked by the negation clash." },
+    { tag: "patterns", kind: "choice", prompt: "Does the pattern `(x:xs)` match `[]`?", code: "",
+      choices: ["Yes, with xs bound to []", "No — it needs at least one element", "Only if x has a Monoid instance", "Yes, but GHC warns"], answer: 1,
+      explain: "`x:xs` requires a head, so it never matches the empty list. That is why it always pairs with a separate `[]` equation." },
+    { tag: "patterns", kind: "choice", prompt: "Is `same (x, x) = True` legal Haskell?", code: "",
+      choices: ["Yes — it matches pairs of equal values", "No — a variable may appear only once in a pattern", "Yes, but it needs an Eq constraint written in", "Only for tuples of Int"], answer: 1,
+      explain: "Conflicting definitions for 'x'. Matching would need equality, which is not available for every type — write the comparison as a guard instead, which also surfaces the Eq constraint." },
+    { tag: "patterns", kind: "value", prompt: "Given these two equations, what is `f 0`?", code: "f 0 = 'a'\nf _ = 'b'",
+      answer: "'a'", accept: ["a", "'a'"],
+      explain: "First match wins. Swap the equations and `f 0` becomes 'b', because the wildcard would catch everything first." },
+    { tag: "lambda", kind: "value", prompt: "What is the value of this expression?", code: "(\\x y -> x) 1 2",
+      answer: "1", accept: ["1"],
+      explain: "Two arguments in, the first one out. This is `const`, and its type `a -> b -> a` tells you the whole story before you read the body." },
+    { tag: "lambda", kind: "choice", prompt: "`f x y = x + y` is shorthand for which of these?", code: "",
+      choices: ["f = \\x y -> x + y only", "f = \\x -> \\y -> x + y", "f = \\(x, y) -> x + y", "It is not shorthand for anything"], answer: 1,
+      explain: "Nested lambdas — which is why the type is `a -> (a -> a)` and why partial application works. The tuple version is a genuinely different function." },
+    { tag: "guards", kind: "choice", prompt: "A name bound in a `where` clause is visible…", code: "",
+      choices: ["Only in the first guard", "In every guard of that equation", "Throughout the whole file", "Only inside a let"], answer: 1,
+      explain: "`where` attaches to the whole equation, which is exactly what makes it better than repeating an expression across guards. `let` belongs to one expression." }
+  ]
+},
+
+{
+  n: 4, uke: "uke36→37", chapter: "Hutton 5", topic: "List comprehensions",
+  blurb: "Generators, guards, zip, and the two idioms every past paper has used.",
+  concepts: [
+    { t: "Comprehensions come from set notation",
+      cite: "uke36 s.5",
+      body: `<p>Mathematics writes <code>{x² | x ∈ M, P(x)}</code>. Haskell writes almost the same
+        thing with ASCII, and it means the same thing except that the result is ordered.</p>
+        <p>Read the bar aloud as <strong>"such that"</strong>. Left of it is the expression
+        produced for each element; right of it is a comma-separated list of
+        <strong>generators</strong> (<code>x &lt;- xs</code>) and <strong>guards</strong>
+        (any boolean).</p>`,
+      code: `[x * x | x <- [1..10]]\n-- "the list of x*x, such that x is drawn from 1 to 10"\n\n[x | x <- [1..10], odd x]\n--                 ^^^^^^ a guard: keeps only what satisfies it\n\n[1,4,9,16,25,36,49,64,81,100]\n[1,3,5,7,9]`,
+      ghci: `[x * x | x <- [1..6]]\n[c | c <- "Haskell", c /= 'l']`,
+      cp: { q: "In `[x | x <- xs, p x]`, which part is the generator and which is the guard?",
+            a: `<code>x &lt;- xs</code> is the generator — it draws values. <code>p x</code> is
+                the guard — it filters them. Order matters: a guard can only mention variables
+                bound to its left.` } },
+
+    { t: "With several generators, the last one moves fastest",
+      cite: "uke36 s.5",
+      body: `<p>Add a comma and a second generator and you get every combination — behaving
+        exactly like nested loops, with the <strong>last generator as the innermost loop</strong>.</p>
+        <p>Swapping two generators gives you the same pairs in a different order, and since a
+        list is ordered, that is a different list. Exam questions about comprehension output are
+        usually testing precisely this.</p>
+        <p>A later generator may also mention a variable bound by an earlier one. That is how
+        you avoid generating duplicates rather than filtering them afterwards.</p>`,
+      code: `[(x,y) | x <- [1,2], y <- [3,4]]\n  = [(1,3),(1,4),(2,3),(2,4)]      -- y sweeps within each x\n\n[(x,y) | y <- [1,2], x <- [3,4]]\n  = [(3,1),(4,1),(3,2),(4,2)]      -- same pairs, different order\n\n[(x,y) | x <- [1..3], y <- [x..3]]\n  = [(1,1),(1,2),(1,3),(2,2),(2,3),(3,3)]\n--            ^ y starts wherever x is: each unordered pair once`,
+      ghci: `[(x,y) | x <- [1,2], y <- "ab"]`,
+      cp: { q: "How many elements does `[(x,y) | x <- [1..3], y <- [x..3]]` produce?",
+            a: `Six. <code>x=1</code> gives three, <code>x=2</code> gives two, <code>x=3</code>
+                gives one. The dependent generator halves the full 3×3 grid by keeping only
+                <code>x &lt;= y</code>.` } },
+
+    { t: "Empty ranges hand you base cases for free",
+      cite: "uke36 s.6 · Hutton 5.2",
+      body: `<p><code>[1..0]</code> is <code>[]</code>, not an error and not a countdown. Any
+        range whose start exceeds its end is empty.</p>
+        <p>This is quietly useful: a comprehension over an empty range produces
+        <code>[]</code>, so definitions get their <code>n = 0</code> case without you writing
+        one.</p>
+        <p>Related: sometimes you want a generator only for its <em>length</em>, never its
+        values. Use the wildcard <code>_</code> — GHC warns about unused bindings, and the
+        wildcard says the omission was deliberate.</p>`,
+      code: `[1..0]           = []\n[5..2]           = []\n\nrepeatIt n x = [x | _ <- [1..n]]\n\nrepeatIt 3 'a'   = "aaa"\nrepeatIt 0 'a'   = ""      -- no base case needed`,
+      ghci: `[1..0]\n[7 | _ <- [1..3]]`,
+      cp: { q: "What does `[y | _ <- [1..0]]` give?",
+            a: `<code>[]</code>. The generator draws from an empty list, so the output
+                expression never runs — which is why an empty range is such a convenient base
+                case.` } },
+
+    { t: "Patterns on the left of `<-` also filter",
+      cite: "Hutton 5.4",
+      body: `<p>The left of an arrow does not have to be a plain variable. Any pattern works, and
+        this gives you destructuring for free.</p>
+        <p>The part worth remembering: if the pattern <strong>fails to match</strong> an
+        element, that element is silently skipped rather than causing an error. So a pattern on
+        the left of <code>&lt;-</code> is a filter as well as a decomposition.</p>`,
+      code: `[x | (x, _) <- [(1,'a'), (2,'b')]]\n  = [1,2]                       -- destructuring\n\n[c | ('y', c) <- [('y','1'), ('n','2'), ('y','3')]]\n  = "13"                        -- non-matching elements dropped, no error`,
+      ghci: `[a | (a, True) <- [(1,True),(2,False),(3,True)]]`,
+      cp: { q: "What happens to an element whose shape does not match the pattern?",
+            a: `It is skipped. This is different from pattern matching in a function equation,
+                where no matching equation is a runtime error.` } },
+
+    { t: "`zip` truncates, and two idioms depend on it",
+      cite: "Hutton 5.5",
+      body: `<p><code>zip</code> pairs two lists and <strong>stops at the shorter one</strong>.
+        That truncation is not a caveat, it is the mechanism the two standard idioms are built
+        on. Both appear in past papers.</p>
+        <p><strong>Adjacent pairs</strong> — zip a list with its own tail. The tail is one
+        shorter, so it stops in exactly the right place. "Is this sorted" then becomes a
+        statement about adjacent pairs, which is what sortedness means.</p>
+        <p><strong>Indices</strong> — zip against <code>[0..]</code>. The index list is
+        infinite; it works because <code>zip</code> stops at the shorter list and Haskell never
+        produces what nothing demands. Your first genuinely useful laziness.</p>`,
+      code: `zip "abc" [1,2,3,4]  = [('a',1),('b',2),('c',3)]\n\n-- adjacent pairs\npairs xs = zip xs (tail xs)\npairs [1,2,3,4]      = [(1,2),(2,3),(3,4)]\n\nsorted xs = and [x <= y | (x,y) <- pairs xs]\n\n-- indices\nzip "abc" [0..]      = [('a',0),('b',1),('c',2)]\n\npositions x xs = [i | (v,i) <- zip xs [0..], v == x]`,
+      ghci: `zip [1,2,3] "ab"\nzip "abc" [0..]`,
+      cp: { q: "Why does zipping against the infinite `[0..]` terminate?",
+            a: `<code>zip</code> stops when either list runs out, and laziness means
+                <code>[0..]</code> only produces as many elements as the finite list asks for.
+                The infinite list is never built.` } },
+
+    { t: "Strings are lists, so all of this works on text",
+      cite: "uke35 s.12 · Hutton 5.5",
+      body: `<p><code>String</code> is <code>[Char]</code>, so comprehensions need nothing extra
+        to work on text. The count idiom — generate, guard, take the length — is the one to
+        have ready.</p>
+        <p>This is the machinery behind the chapter's Caesar cipher: shift each letter by
+        <code>n</code> positions, wrapping with <code>mod</code>. Because shifting by
+        <code>-n</code> undoes shifting by <code>n</code>, one function both encodes and
+        decodes.</p>`,
+      code: `[c | c <- "Haskell", c /= 'l']       = "Haske"\n\nlength [c | c <- "Mississippi", c == 's']   = 4\n\n-- the Caesar shape (not the whole cipher)\nlet2int c = ord c - ord 'a'\nint2let n = chr (ord 'a' + n)\nshift n c = int2let ((let2int c + n) \`mod\` 26)\n\n-- mod 26 is what makes 'z' wrap round to 'a'`,
+      ghci: `length [c | c <- "banana", c == 'a']\n:t words`,
+      cp: { q: "Why does encoding with `-n` decode a message encoded with `n`?",
+            a: `Because the shift is addition modulo 26, and adding <code>-n</code> undoes
+                adding <code>n</code> in that arithmetic. One function serves both directions,
+                which is the point of the exercise.` } }
+  ],
+  drills: [
+    { tag: "comprehension", kind: "value", prompt: "What is the value of this expression?", code: "[x * 2 | x <- [1,2,3]]",
+      answer: "[2,4,6]", accept: ["[2,4,6]"],
+      explain: "The simplest shape: an output expression applied to each drawn value. Read it as \"the list of x*2 such that x is drawn from [1,2,3]\"." },
+    { tag: "generators", kind: "value", prompt: "What is the value of this expression?", code: "[(x,y) | x <- [1,2], y <- [3,4]]",
+      answer: "[(1,3),(1,4),(2,3),(2,4)]", accept: ["[(1,3),(1,4),(2,3),(2,4)]"],
+      explain: "The last generator is the inner loop, so y sweeps fully within each x. Swap the generators and you get the same four pairs in a different order — a different list." },
+    { tag: "generators", kind: "choice", prompt: "In a comprehension with two generators, which one changes fastest?", code: "",
+      choices: ["The first", "The last", "Whichever is shorter", "They advance together"], answer: 1,
+      explain: "Exactly like nested loops with the last generator innermost. Predicting output order is a standard exam question." },
+    { tag: "comprehension", kind: "value", prompt: "What is the value of this expression?", code: "[x | x <- [1..10], even x, x > 5]",
+      answer: "[6,8,10]", accept: ["[6,8,10]"],
+      explain: "Two guards, both must hold. Guards may use anything bound to their left, and several are simply ANDed together." },
+    { tag: "generators", kind: "value", prompt: "What is the value of this expression?", code: "[1..0]",
+      answer: "[]", accept: ["[]"],
+      explain: "A range whose start exceeds its end is empty — not a countdown, not an error. This is what gives comprehension-based definitions their n=0 case for free." },
+    { tag: "generators", kind: "value", prompt: "How many elements does this produce?", code: "[(x,y) | x <- [1..3], y <- [x..3]]",
+      answer: "6", accept: ["6"],
+      explain: "3 + 2 + 1. The dependent generator starts y wherever x is, so each unordered pair appears once instead of generating the full 3x3 grid and filtering." },
+    { tag: "zip", kind: "value", prompt: "What is the value of this expression?", code: "zip \"ab\" [1,2,3]",
+      answer: "[('a',1),('b',2)]", accept: ["[('a',1),('b',2)]"],
+      explain: "zip stops at the shorter list. That truncation is not a caveat — it is the mechanism both standard idioms rely on." },
+    { tag: "zip", kind: "choice", prompt: "What does `zip xs (tail xs)` give you?", code: "",
+      choices: ["The list paired with itself", "Every pair of elements", "Adjacent pairs", "The list reversed"], answer: 2,
+      explain: "The tail is one shorter, so zip stops exactly right. This is how `sorted` is written: `and [x <= y | (x,y) <- pairs xs]`." },
+    { tag: "zip", kind: "choice", prompt: "Why does `zip xs [0..]` terminate on a finite xs?", code: "",
+      choices: ["[0..] is capped at 1000", "zip stops at the shorter list, and laziness supplies only what is demanded", "GHC rewrites it at compile time", "It does not — it hangs"], answer: 1,
+      explain: "Your first genuinely useful laziness. Zip against [0..] instead of indexing with `!!` inside a loop — that habit comes from Python and is wrong here." },
+    { tag: "comprehension", kind: "value", prompt: "What is the value of this expression?", code: "[x | (x, _) <- [(1,'a'), (2,'b')]]",
+      answer: "[1,2]", accept: ["[1,2]"],
+      explain: "A pattern on the left of `<-` destructures each element. The wildcard discards the component you do not need." },
+    { tag: "comprehension", kind: "choice", prompt: "An element whose shape does not match the pattern left of `<-` is…", code: "[c | ('y', c) <- pairs]",
+      choices: ["A runtime error", "Silently skipped", "Replaced by undefined", "A compile-time error"], answer: 1,
+      explain: "Skipped. So a pattern on the left of an arrow filters as well as destructures — unlike a function equation, where no matching equation is a runtime failure." },
+    { tag: "comprehension", kind: "value", prompt: "What is the value of this expression?", code: "length [c | c <- \"banana\", c == 'a']",
+      answer: "3", accept: ["3"],
+      explain: "Generate, guard, take the length — the standard count idiom. It works on text because String is [Char], with nothing extra needed." },
+    { tag: "comprehension", kind: "value", prompt: "What is the value of this expression?", code: "[c | c <- \"Haskell\", c /= 'l']",
+      answer: "\"Haske\"", accept: ["haske", "\"haske\""],
+      explain: "Both l's are dropped and the result is still a String, since filtering a [Char] gives a [Char]." },
+    { tag: "generators", kind: "choice", prompt: "What is the `_` doing in `[x | _ <- [1..n]]`?", code: "",
+      choices: ["Binding the value for later use", "Marking the generator as lazy", "Drawing values that are deliberately ignored", "Nothing — it is a typo for x"], answer: 2,
+      explain: "The generator is used only for its length. The wildcard says the omission is deliberate, which also silences GHC's unused-binding warning." }
+  ]
+}
+];
+
+/* ---------------------------------------------------------------- storage -- */
+
+const KEY = "inf122-drillroom-v1";
+const blank = () => ({ read: {}, drilled: {}, wrong: {} });
+let S = blank();
+
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) {
+      const p = JSON.parse(raw);
+      S = { read: p.read || {}, drilled: p.drilled || {}, wrong: p.wrong || {} };
+    }
+  } catch (e) { S = blank(); }
+}
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* private mode */ }
+}
+
+/* ------------------------------------------------------------------- util -- */
+
+const $ = (sel, root) => (root || document).querySelector(sel);
+function el(tag, cls, text) {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text !== undefined) n.textContent = text;
+  return n;
+}
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+// Compare a typed answer to the expected one, forgiving whitespace, quotes and case.
+function norm(s) {
+  return String(s).toLowerCase().replace(/\s+/g, "").replace(/[""]/g, '"').replace(/['']/g, "'");
+}
+function matches(given, item) {
+  const g = norm(given);
+  if (!g) return false;
+  const pool = [item.answer].concat(item.accept || []);
+  return pool.some(a => norm(a) === g);
+}
+
+const TAGS = {
+  application: "application order", prelude: "list toolkit", laziness: "lazy evaluation",
+  naming: "naming rules", layout: "the layout rule", recursion: "recursion shape",
+  types: "reading types", listtuple: "lists vs tuples", currying: "currying",
+  classes: "type classes", defaulting: "numeric defaulting", conditionals: "if-expressions",
+  guards: "guards and where", patterns: "pattern matching", lambda: "lambdas",
+  sections: "operator sections", comprehension: "comprehensions", generators: "generators", zip: "zip idioms"
+};
+
+/* ------------------------------------------------------------------ state -- */
+
+let mode = "home";
+let week = 3;          // uke36 is today's lecture
+let ci = 0;            // concept index
+let queue = [], qi = 0, answered = false, runScore = 0, runTotal = 0, runTag = null;
+
+const view = $("#view");
+const wk = n => WEEKS.find(w => w.n === n);
+
+function conceptKey(w, i) { return w + ":" + i; }
+function weekRead(w) { return w.concepts.filter((_, i) => S.read[conceptKey(w.n, i)]).length; }
+
+// Progress keys are derived from an item's own content, so they survive
+// reordering and stay distinct for drills that share a prompt.
+function hash(s) {
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+function drillKey(d) { return d.tag + ":" + hash(d.prompt + "\u0000" + (d.code || "") + "\u0000" + d.answer); }
+function weekDrilled(w) { return w.drills.filter(d => S.drilled[drillKey(d)]).length; }
+
+/* ------------------------------------------------------------------ views -- */
+
+function renderWeekStrip(onPick) {
+  const strip = el("div", "weekstrip");
+  WEEKS.forEach(w => {
+    const b = el("button", "weekchip");
+    b.setAttribute("aria-selected", String(w.n === week));
+    b.appendChild(el("span", "wk", "Week " + w.n + " · " + w.uke));
+    b.appendChild(el("span", "tp", w.topic));
+    b.onclick = () => { week = w.n; ci = 0; onPick(); };
+    strip.appendChild(b);
+  });
+  return strip;
+}
+
+function renderHome() {
+  view.textContent = "";
+
+  const dash = el("div", "dash");
+
+  /* --- progress panel --- */
+  const p1 = el("div", "panel");
+  p1.appendChild(el("h2", null, "Where you are"));
+  p1.appendChild(el("p", "note", "Four weeks of material, tracked in this browser only. Nothing here is submitted anywhere."));
+
+  WEEKS.forEach(w => {
+    const row = el("div", "wrow");
+    const t = el("div", "t", "Week " + w.n + " — " + w.topic);
+    const m = el("div", "m", w.chapter + " · lectured in " + w.uke);
+    const r = weekRead(w), d = weekDrilled(w);
+    const n = el("div", "n", r + "/" + w.concepts.length + " read   " + d + "/" + w.drills.length + " drilled");
+    const bar = el("div", "bar");
+    const fill = el("i");
+    const pct = Math.round(((r + d) / (w.concepts.length + w.drills.length)) * 100);
+    fill.style.width = pct + "%";
+    if (pct === 100) fill.className = "full";
+    bar.appendChild(fill);
+    row.append(t, n, m, bar);
+    p1.appendChild(row);
+  });
+
+  const acts = el("div");
+  acts.style.cssText = "display:flex;gap:10px;margin-top:22px;flex-wrap:wrap";
+  const bLearn = el("button", "btn", "Read week " + week);
+  bLearn.onclick = () => setMode("learn");
+  const bDrill = el("button", "btn ghost", "Drill week " + week);
+  bDrill.onclick = () => { startDrill(wk(week).drills.slice()); };
+  acts.append(bLearn, bDrill);
+  p1.appendChild(acts);
+
+  /* --- weak spots panel --- */
+  const p2 = el("div", "panel");
+  p2.appendChild(el("h2", null, "Weak spots"));
+  p2.appendChild(el("p", "note", "Topics you have got wrong, most-missed first. Drilling one pulls every question with that tag, from any week."));
+
+  const spots = Object.entries(S.wrong).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
+  if (!spots.length) {
+    p2.appendChild(el("p", "empty", "Nothing missed yet — drill a week and this fills in."));
+  } else {
+    const list = el("div", "weak");
+    spots.forEach(([tag, count]) => {
+      const it = el("div", "weakitem");
+      const btn = el("button", "mini", "Drill");
+      btn.onclick = () => {
+        const pool = [];
+        WEEKS.forEach(w => w.drills.forEach(d => { if (d.tag === tag) pool.push(d); }));
+        runTag = tag;
+        startDrill(pool);
+      };
+      it.appendChild(el("span", "lbl", TAGS[tag] || tag));
+      it.appendChild(el("span", "cnt", String(count)));
+      it.appendChild(btn);
+      list.appendChild(it);
+    });
+    p2.appendChild(list);
+
+    const clear = el("button", "mini", "Clear weak spots");
+    clear.style.marginTop = "18px";
+    clear.onclick = () => { S.wrong = {}; save(); renderHome(); };
+    p2.appendChild(clear);
+  }
+
+  const p3 = el("div", "panel");
+  p3.style.marginTop = "24px";
+  p3.appendChild(el("h2", null, "How to use this"));
+  const ol = el("div");
+  ol.style.cssText = "font-size:14px;color:var(--ink-soft);display:flex;flex-direction:column;gap:10px;margin-top:12px";
+  [
+    ["Read", "Learn mode, one concept at a time. Each cites the slide it came from, so his handout stays the authority."],
+    ["Run it", "Every concept has a GHCi block. Type it. The browser cannot run Haskell and is not pretending to."],
+    ["Drill", "Answer before revealing. Getting it wrong on purpose here is cheaper than on 2 December."],
+    ["Then code", "./tutorial/check.sh 2 in the repo — 142 checks across the four weeks are where this actually lands."]
+  ].forEach(([h, b]) => {
+    const d = el("div");
+    d.innerHTML = "<strong style='color:var(--ink)'>" + esc(h) + ".</strong> " + esc(b);
+    ol.appendChild(d);
+  });
+  p3.appendChild(ol);
+
+  const right = el("div");
+  right.append(p2);
+  dash.append(p1, right);
+
+  view.appendChild(renderWeekStrip(renderHome));
+  view.appendChild(dash);
+  view.appendChild(p3);
+}
+
+function renderLearn() {
+  view.textContent = "";
+  const w = wk(week);
+  view.appendChild(renderWeekStrip(renderLearn));
+
+  const wrap = el("div", "learn");
+
+  const rail = el("nav", "rail");
+  rail.setAttribute("aria-label", "Concepts in week " + w.n);
+  w.concepts.forEach((c, i) => {
+    const b = el("button");
+    if (i === ci) b.setAttribute("aria-current", "true");
+    const done = S.read[conceptKey(w.n, i)];
+    b.appendChild(el("span", done ? "num tick" : "num", done ? "✓" : String(i + 1)));
+    b.appendChild(el("span", null, c.t));
+    b.onclick = () => { ci = i; renderLearn(); window.scrollTo({ top: 0, behavior: "smooth" }); };
+    rail.appendChild(b);
+  });
+
+  const c = w.concepts[ci];
+  const art = el("article", "article");
+
+  const cite = el("div", "cite");
+  cite.appendChild(el("span", "src", c.cite));
+  art.appendChild(cite);
+  art.appendChild(el("h2", null, c.t));
+
+  const body = el("div");
+  body.innerHTML = c.body;
+  art.appendChild(body);
+
+  if (c.code) {
+    const pre = el("pre", "code");
+    pre.textContent = c.code;
+    art.appendChild(pre);
+  }
+  if (c.ghci) {
+    const g = el("div", "ghci");
+    g.appendChild(el("span", "eyebrow", "Run this in GHCi"));
+    const pre = el("pre");
+    pre.textContent = c.ghci.split("\n").map(l => "ghci> " + l).join("\n");
+    g.appendChild(pre);
+    art.appendChild(g);
+  }
+
+  if (c.cp) {
+    const cp = el("div", "checkpoint");
+    cp.appendChild(el("span", "eyebrow", "Checkpoint"));
+    cp.appendChild(el("div", "q", c.cp.q));
+    const btn = el("button", "btn ghost", "Show the answer");
+    cp.appendChild(btn);
+    btn.onclick = () => {
+      btn.remove();
+      const r = el("div", "reveal");
+      r.innerHTML = c.cp.a;
+      cp.appendChild(r);
+      S.read[conceptKey(w.n, ci)] = true;
+      save();
+    };
+    art.appendChild(cp);
+  }
+
+  const pager = el("div", "pager");
+  const prev = el("button", "btn ghost", "← Previous");
+  prev.disabled = ci === 0;
+  prev.onclick = () => { ci--; renderLearn(); window.scrollTo({ top: 0 }); };
+  const spacer = el("div", "spacer");
+  const next = el("button", "btn", ci === w.concepts.length - 1 ? "Drill this week →" : "Next →");
+  next.onclick = () => {
+    S.read[conceptKey(w.n, ci)] = true; save();
+    if (ci === w.concepts.length - 1) { startDrill(w.drills.slice()); }
+    else { ci++; renderLearn(); window.scrollTo({ top: 0 }); }
+  };
+  pager.append(prev, spacer, next);
+  art.appendChild(pager);
+
+  wrap.append(rail, art);
+  view.appendChild(wrap);
+}
+
+function startDrill(pool) {
+  queue = pool.slice();
+  for (let i = queue.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [queue[i], queue[j]] = [queue[j], queue[i]];
+  }
+  qi = 0; runScore = 0; runTotal = queue.length;
+  setMode("drill");
+}
+
+function markWrong(tag) { S.wrong[tag] = (S.wrong[tag] || 0) + 1; save(); }
+function unmarkWrong(tag) {
+  if (S.wrong[tag]) { S.wrong[tag] = Math.max(0, S.wrong[tag] - 1); if (!S.wrong[tag]) delete S.wrong[tag]; save(); }
+}
+
+function renderDrill() {
+  view.textContent = "";
+  if (!queue.length) { startDrill(wk(week).drills.slice()); return; }
+
+  const box = el("div", "drill");
+
+  if (qi >= queue.length) {
+    const d = el("div", "done");
+    d.appendChild(el("div", "big", runScore === runTotal ? "All correct." : "Run finished."));
+    d.appendChild(el("div", "sc", runScore + " of " + runTotal + " right"));
+    const acts = el("div");
+    acts.style.cssText = "display:flex;gap:10px;justify-content:center;flex-wrap:wrap";
+    const again = el("button", "btn", "Run it again");
+    again.onclick = () => startDrill(queue.slice());
+    const home = el("button", "btn ghost", "Back to overview");
+    home.onclick = () => { runTag = null; setMode("home"); };
+    acts.append(again, home);
+    d.appendChild(acts);
+    if (runScore < runTotal) {
+      const p = el("p");
+      p.style.cssText = "margin-top:26px;font-size:14px;color:var(--ink-soft)";
+      p.textContent = "What you missed is now on the overview under weak spots. Verify the ones you got wrong in GHCi before you drill them again — reading the explanation is not the same as watching it happen.";
+      d.appendChild(p);
+    }
+    box.appendChild(d);
+    view.appendChild(box);
+    return;
+  }
+
+  const item = queue[qi];
+  answered = false;
+
+  const head = el("div", "drillhead");
+  head.appendChild(el("span", "eyebrow", runTag ? "Weak spot · " + (TAGS[runTag] || runTag) : "Week " + week + " · " + wk(week).topic));
+  head.appendChild(el("span", "cnt", (qi + 1) + " / " + queue.length));
+  box.appendChild(head);
+
+  const prog = el("div", "progress");
+  const pf = el("i");
+  pf.style.width = Math.round((qi / queue.length) * 100) + "%";
+  prog.appendChild(pf);
+  box.appendChild(prog);
+
+  const card = el("div", "card");
+  card.appendChild(el("span", "tag", TAGS[item.tag] || item.tag));
+  card.appendChild(el("div", "prompt", item.prompt));
+  if (item.code) {
+    const pre = el("pre", "code");
+    pre.textContent = item.code;
+    card.appendChild(pre);
+  }
+
+  const verdictSlot = el("div");
+
+  function finish(correct, expectedShown) {
+    answered = true;
+    S.drilled[drillKey(item)] = true;
+    if (correct) { runScore++; unmarkWrong(item.tag); } else { markWrong(item.tag); }
+    save();
+
+    const v = el("div", "verdict " + (correct ? "ok" : "no"));
+    const hd = el("div", "hd");
+    hd.textContent = correct ? "✓ Correct" : "✗ Not quite";
+    v.appendChild(hd);
+    if (!correct || expectedShown) {
+      const e = el("code", "expected");
+      e.textContent = item.answer;
+      v.appendChild(e);
+    }
+    const ex = el("p");
+    ex.textContent = item.explain;
+    v.appendChild(ex);
+
+    if (item.kind !== "choice") {
+      const sm = el("div", "selfmark");
+      sm.appendChild(el("span", null, correct ? "Matcher too lenient?" : "Wrote the same thing another way?"));
+      const flip = el("button", "mini", correct ? "Mark it wrong" : "I had this right");
+      flip.onclick = () => {
+        if (correct) { runScore--; markWrong(item.tag); } else { runScore++; unmarkWrong(item.tag); }
+        save();
+        flip.remove();
+        sm.appendChild(el("span", null, "Recorded."));
+      };
+      sm.appendChild(flip);
+      v.appendChild(sm);
+    }
+    verdictSlot.appendChild(v);
+
+    const nx = el("button", "btn", qi === queue.length - 1 ? "See the score →" : "Next question →");
+    nx.style.marginTop = "18px";
+    nx.onclick = () => { qi++; renderDrill(); window.scrollTo({ top: 0 }); };
+    verdictSlot.appendChild(nx);
+    nx.focus();
+  }
+
+  if (item.kind === "choice") {
+    const box2 = el("div", "choices");
+    const btns = [];
+    item.choices.forEach((ch, i) => {
+      const b = el("button");
+      b.appendChild(el("span", "k", String.fromCharCode(97 + i) + ")"));
+      b.appendChild(el("span", null, ch));
+      b.onclick = () => {
+        if (answered) return;
+        btns.forEach((x, j) => {
+          x.disabled = true;
+          if (j === item.answer) x.classList.add("right");
+          else if (j === i) x.classList.add("wrong");
+        });
+        finish(i === item.answer, false);
+      };
+      btns.push(b);
+      box2.appendChild(b);
+    });
+    card.appendChild(box2);
+  } else {
+    const f = el("form", "answer");
+    const inp = el("input");
+    inp.type = "text";
+    inp.autocomplete = "off";
+    inp.spellcheck = false;
+    inp.setAttribute("aria-label", "Your answer");
+    inp.placeholder = item.kind === "type" ? "e.g. Int -> Bool" : "the value it evaluates to";
+    const sub = el("button", "btn", "Check");
+    sub.type = "submit";
+    const skip = el("button", "btn ghost", "Reveal");
+    skip.type = "button";
+    skip.onclick = () => { if (!answered) { inp.disabled = true; sub.disabled = true; skip.disabled = true; finish(false, true); } };
+    f.onsubmit = (e) => {
+      e.preventDefault();
+      if (answered) return;
+      const ok = matches(inp.value, item);
+      inp.disabled = true; sub.disabled = true; skip.disabled = true;
+      finish(ok, true);
+    };
+    f.append(inp, sub, skip);
+    card.appendChild(f);
+    setTimeout(() => inp.focus(), 30);
+  }
+
+  card.appendChild(verdictSlot);
+  box.appendChild(card);
+  view.appendChild(box);
+}
+
+/* ------------------------------------------------------------------- shell -- */
+
+function setMode(m) {
+  mode = m;
+  ["home", "learn", "drill"].forEach(k => {
+    $("#m-" + k).setAttribute("aria-selected", String(k === m));
+  });
+  if (m === "home") { runTag = null; renderHome(); }
+  else if (m === "learn") renderLearn();
+  else renderDrill();
+}
+
+$("#m-home").onclick = () => setMode("home");
+$("#m-learn").onclick = () => setMode("learn");
+$("#m-drill").onclick = () => { runTag = null; startDrill(wk(week).drills.slice()); };
+
+$("#themebtn").onclick = () => {
+  const cur = document.documentElement.getAttribute("data-theme");
+  const dark = cur ? cur === "dark"
+    : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+  try { localStorage.setItem(KEY + "-theme", dark ? "light" : "dark"); } catch (e) {}
+};
+
+try {
+  const t = localStorage.getItem(KEY + "-theme");
+  if (t) document.documentElement.setAttribute("data-theme", t);
+} catch (e) {}
+
+load();
+setMode("home");
+</script>

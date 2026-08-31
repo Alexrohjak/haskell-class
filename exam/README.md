@@ -46,6 +46,17 @@ ask the person who writes the paper what he expects on it.
 - [`revision-uke34-35.md`](revision-uke34-35.md) — the first two lecture weeks:
   what was actually taught (with slide pages), the practice attached to them,
   and a six-hour route through it. Written 31 August.
+- [`interactive-revision.html`](interactive-revision.html) — the drill room.
+  25 concepts across Hutton 1–5, each cited to the slide it came from, and 54
+  drills. Published at <https://claude.ai/code/artifact/e3c608e9-c5c4-471a-b1c3-b710d40c945c>
+  (private); open the local file with `xdg-open exam/interactive-revision.html`
+  if you would rather not use the hosted copy. Every value and type in it was
+  checked against GHC 9.10.3 before publishing.
+
+  It contains **no answers** to `uke1.txt`, `uke2.txt` or the tutorial
+  exercises — different examples, same ideas, deliberately. It cannot run
+  Haskell either: a browser has no GHC, so every drill ends by telling you what
+  to type into GHCi.
 
 ## What goes in here
 
