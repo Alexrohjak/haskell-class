@@ -1,0 +1,82 @@
+1.
+Bestem typer til følgende uttrykk:
+
+False :: ?
+5 + 8 :: ?
+(+) 2 :: ?
+(["foo", "bar"], 'a')  :: ?
+[(True, []), (False, [['a']])]  :: ?
+\x y ->  y !! x  :: ? 
+[ take, drop, \x y ->  [ y !! x ] ] :: ?
+
+
+2.
+Fyll inn spørsmålstegn:
+
+e1 :: ?
+e1 = [False, True, False]
+
+e2 :: ?
+e2 = [[1,2],[3,4]]
+
+e3 :: ?
+e3 = [ (“a”,7) ] 
+
+e4 :: ?
+e4 = [ (‘a’,7) ]
+
+e5 :: ?
+e5 x = x * 2
+
+e6 :: ?
+e6 (x,y) = x
+
+e7 :: a -> (a,a)
+e7 ? = ? 
+
+
+3.
+Gi mest generell type for hver funksjon definert under
+
+app f x = f x 
+com f g x = f (g x)
+sub f g x = (f x) (g x)  
+fix f = f (fix f)   
+selv f = f f
+
+
+4.
+Hvilke av ligningene nedenfor er feiltypet? For de som er riktig typet, 
+hva kan du si om typen til xs, og hvilke av dem holder?
+
+[] : xs = xs
+[] : xs = [[],xs]
+xs : [] = xs
+xs : [] = [xs]
+xs : xs = [xs,xs]
+xs : [xs] = [xs,xs]
+[[]] ++ xs = xs
+[[]] ++ xs = [xs]
+[[]] ++ xs = [[],xs]
+[[]] ++ [xs] = [[],xs]
+[xs] ++ [] = [xs]
+[xs] ++ [xs] = [xs,xs]
+
+5.
+Det finnes to ting (True og False) av type Bool. Hvor mange forskjellige 
+ting finnes med hver av følgende typer:
+
+1. Bool -> Bool
+2. Bool -> Bool -> Bool
+3. Bool -> Bool -> Bool -> Bool
+4. (Bool, Bool)
+5. (Bool, Bool) -> Bool
+6. (Bool, Bool, Bool)
+7. (Bool, Bool, Bool) -> Bool
+8. (Bool -> Bool) -> Bool
+9. (Bool -> Bool -> Bool) -> Bool
+10.((Bool -> Bool) -> Bool) -> Bool
+(Hint: Hvis mengdene A og B har henholdsvis a og b elementer, er 
+antallet funksjoner fra A til B lik b^a (b opphøyd i a).)
+
+Definer i Haskell alle funksjoner med typen Bool -> Bool.

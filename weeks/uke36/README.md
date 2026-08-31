@@ -1,16 +1,17 @@
 # Uke 36 — INF122
 
-**31. aug - 6. sep** · kap. 3-4 - types and classes, defining functions
+**31. aug - 6. sep** · kap. 4-5 - defining functions, list comprehensions
 
 Tutorial week: [`tutorial/week03/`](../../tutorial/week03/) — `cd tutorial && ./check.sh 3`
 
 ## Posted by the lecturer
 
-*Nothing published for this week yet.* Re-run `.venv/bin/python src/canvas_sync.py` once it appears.
+- `slides/3-func+list-handoutpdf.pdf` — from Canvas `course files/forelesningsnotater`, updated 2026-08-25
 
 ## In this folder
 
-- `slides/` — empty
+- `slides/` — 1 item(s), 144 KB
+  - `3-func+list-handoutpdf.pdf`
 - `exercises/` — empty
 - `code/` — empty
 

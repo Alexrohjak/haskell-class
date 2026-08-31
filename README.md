@@ -55,7 +55,7 @@ truth — re-run the sync and update `PLAN` in `src/week.py` when it changes.
 |-----|-------|------|----------|--------|
 | 34 | 17.–23. aug | kap. 1–2 (15) | [week01](tutorial/week01/) | [`uke34`](weeks/uke34/) |
 | 35 | 24.–30. aug | kap. 3–4 | [week02](tutorial/week02/) | [`uke35`](weeks/uke35/) |
-| 36 | 31. aug–6. sep | kap. 3–4 | [week03](tutorial/week03/) | [`uke36`](weeks/uke36/) |
+| 36 | 31. aug–6. sep | kap. 4–5 † | [week03](tutorial/week03/) | [`uke36`](weeks/uke36/) |
 | 37 | 7.–13. sep | kap. 5–8 | [week04](tutorial/week04/) | [`uke37`](weeks/uke37/) |
 | 38 | 14.–20. sep | kap. 5–8 | week05 | [`uke38`](weeks/uke38/) |
 | 39 | 21.–27. sep | kap. 5–8 | week06 | [`uke39`](weeks/uke39/) |
@@ -69,6 +69,13 @@ truth — re-run the sync and update `PLAN` in `src/week.py` when it changes.
 | 47 | 16.–22. nov | Resultat og gjennomgang av Oblig | — | [`uke47`](weeks/uke47/) |
 | 48 | 23.–29. nov | Spørsmål og svar | week12 | [`uke48`](weeks/uke48/) |
 | 49 | 30. nov–6. des | **Eksamen 2. desember** — 3t skriftleg, ingen hjelpemiddel | — | [`exam/`](exam/) |
+
+† His plan said "kap. 3–4" here as well. The notes he actually published for
+the week are titled *[kap.4–5]* — patterns, lists and list comprehensions — so
+the table follows the slides. He is running a chapter ahead of his own plan, and
+has already dipped into two later chapters: lazy evaluation (kap. 15) in lecture
+1, and type classes (kap. 8.1–8.5) in lecture 2. Nothing in the pensum changed —
+only the order.
 
 The oblig weeks and the exam week have no tutorial week. The rest of the column
 is my mapping, not his: it points at the tutorial week whose chapter the course
@@ -104,7 +111,7 @@ This repo holds two different things, and keeping them apart is the point.
 | My answers to the tutorial | `tutorial/weekNN/Exercises.hs` |
 | The obligatorisk oppgåve | `assignments/` |
 | A useful link | `resources/links.md` |
-| Revision material | `exam/` |
+| Revision material | `exam/` — see [`revision-uke34-35.md`](exam/revision-uke34-35.md) |
 | A half-formed idea | `scratch/` — no rules there |
 
 ## Finding things

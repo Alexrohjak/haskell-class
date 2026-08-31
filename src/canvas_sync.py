@@ -38,7 +38,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 from paths import ROOT
@@ -306,7 +306,15 @@ def collect(api: Canvas) -> dict:
             })
         snap["modules"].append(entry)
 
+    # Canvas only returns the last 14 days unless a window is given, so older
+    # notices would silently vanish from the record as new ones arrive. Ask for
+    # the whole semester instead — starting a month before teaching does, since
+    # the ones about groups and sign-up land before the first lecture.
+    term_start = date.fromisocalendar(YEAR, min(PLAN), 1) - timedelta(days=30)
+    term_end = date.fromisocalendar(YEAR, max(PLAN), 7)
     anns, err = api.get("/announcements", per_page=100,
+                        start_date=term_start.isoformat(),
+                        end_date=term_end.isoformat(),
                         **{"context_codes[]": f"course_{api.cid}"})
     if err:
         snap["errors"].append(f"announcements: {err}")

@@ -73,6 +73,13 @@
   ],
   "announcements": [
     {
+      "title": "Oppgaver uke2.txt",
+      "posted": "2026-08-25T14:13:20Z",
+      "text": "er tilgjengelige fra katalogen Filer/oppgaver/...",
+      "file_ids": [],
+      "links": []
+    },
+    {
       "title": "Ukens oppgaver",
       "posted": "2026-08-18T14:30:27Z",
       "text": "er tilgjengelige fra katalogen Filer/oppgaver/...",
@@ -124,12 +131,28 @@
       "updated": "2026-08-24T08:35:20Z"
     },
     {
+      "folder": "course files/forelesningsnotater",
+      "name": "3-func+list-handoutpdf.pdf",
+      "id": 7979986,
+      "size": 147911,
+      "type": "application/pdf",
+      "updated": "2026-08-25T12:57:09Z"
+    },
+    {
       "folder": "course files/oppgaver",
       "name": "uke1.txt",
       "id": 7963385,
       "size": 1343,
       "type": "text/plain",
       "updated": "2026-08-18T14:14:20Z"
+    },
+    {
+      "folder": "course files/oppgaver",
+      "name": "uke2.txt",
+      "id": 7975524,
+      "size": 1507,
+      "type": "text/plain",
+      "updated": "2026-08-25T14:11:45Z"
     }
   ],
   "errors": [

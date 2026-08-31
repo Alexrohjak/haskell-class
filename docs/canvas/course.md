@@ -111,9 +111,17 @@ Første uke er kapitel 1 og 2 pensum. Les igjennom disse kapitlene og gjør oppg
 | 1QuickCheck.pdf | course files/forelesningsnotater | `weeks/uke34/slides/` | 2026-08-18 |
 | 1krav-plan+intro.pdf | course files/forelesningsnotater | `weeks/uke34/slides/` | 2026-08-16 |
 | 2typer-handout.pdf | course files/forelesningsnotater | `weeks/uke35/slides/` | 2026-08-24 |
+| 3-func+list-handoutpdf.pdf | course files/forelesningsnotater | `weeks/uke36/slides/` | 2026-08-25 |
 | uke1.txt | course files/oppgaver | `weeks/uke34/exercises/` | 2026-08-18 |
+| uke2.txt | course files/oppgaver | `weeks/uke35/exercises/` | 2026-08-25 |
 
 ## Announcements
+
+### Oppgaver uke2.txt
+
+*Posted 2026-08-25T14:13:20Z*
+
+er tilgjengelige fra katalogen Filer/oppgaver/...
 
 ### Ukens oppgaver
 

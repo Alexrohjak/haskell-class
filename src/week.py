@@ -36,7 +36,12 @@ PLAN: dict[int, tuple[str, int | None]] = {
     # parsing, type inference and the oblig have no tutorial material.
     34: ("kap. 1-2 (15) - intro, first steps", 1),
     35: ("kap. 3-4 - types and classes, defining functions", 2),
-    36: ("kap. 3-4 - types and classes, defining functions", 3),
+    # His plan said "kap. 3-4" for this week too, but the notes he published
+    # for it are titled "[kap.4-5]" — patterns, lists and list comprehensions.
+    # weeks/uke36/slides/3-func+list-handoutpdf.pdf p.1. Published beats
+    # tentative, so the topic follows the slides; the tutorial week still says
+    # 3 because Hutton 4 is where the week starts. Hutton 5 is week 4.
+    36: ("kap. 4-5 - defining functions, list comprehensions", 3),
     37: ("kap. 5-8 - list comprehensions to declaring types", 4),
     38: ("kap. 5-8 - list comprehensions to declaring types", 5),
     39: ("kap. 5-8 - list comprehensions to declaring types", 6),

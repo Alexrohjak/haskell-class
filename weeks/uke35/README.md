@@ -7,12 +7,14 @@ Tutorial week: [`tutorial/week02/`](../../tutorial/week02/) — `cd tutorial && 
 ## Posted by the lecturer
 
 - `slides/2typer-handout.pdf` — from Canvas `course files/forelesningsnotater`, updated 2026-08-24
+- `exercises/uke2.txt` — from Canvas `course files/oppgaver`, updated 2026-08-25
 
 ## In this folder
 
 - `slides/` — 1 item(s), 533 KB
   - `2typer-handout.pdf`
-- `exercises/` — empty
+- `exercises/` — 1 item(s), 1 KB
+  - `uke2.txt`
 - `code/` — empty
 
 ---

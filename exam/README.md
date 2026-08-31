@@ -41,6 +41,12 @@ disagreed with you. That gap is your revision list.
 Weeks 47 and 48 are gjennomgang of the oblig and open Q&A — the last chance to
 ask the person who writes the paper what he expects on it.
 
+## Revision guides written so far
+
+- [`revision-uke34-35.md`](revision-uke34-35.md) — the first two lecture weeks:
+  what was actually taught (with slide pages), the practice attached to them,
+  and a six-hour route through it. Written 31 August.
+
 ## What goes in here
 
 Past papers, and your own revision material. Anything the lecturer publishes
