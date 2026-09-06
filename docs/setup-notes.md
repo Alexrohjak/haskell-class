@@ -109,3 +109,80 @@ the second choice.
 `.venv/bin/python src/check_setup.py` compiles a throwaway program on every run — with
 environment files bypassed, so it tests the toolchain rather than the accident —
 and exits non-zero while this is unfixed.
+
+
+## The editor: VS Code + haskell-language-server
+
+Installed 2026-09-03. VS Code 1.136.0 from Microsoft's apt repo
+(`/etc/apt/sources.list.d/vscode.sources`), plus the `haskell.haskell`
+extension v2.8.2, which pulls in `haskell.language-haskell` v3.8.0 for syntax
+highlighting. The extension is set to `"haskell.manageHLS": "GHCup"` so it
+reuses the ghcup toolchain already here — GHC 9.10.3 and HLS 2.14.0.0 — rather
+than downloading a second copy.
+
+### Why there is a .cabal file in a repo that has no build system
+
+`inf122-tutorial.cabal` is **not** a build system and you never run
+`cabal build`. `tutorial/check.sh` still shells out to plain `runghc`, exactly
+as before. The file exists only so the language server can load the code, and
+it is needed because of two facts a loose `-i` search path cannot express:
+
+1. Every week defines a module called `Exercises`. They cannot all be loaded
+   into one unit — that is a duplicate-module error — so each week needs its
+   own component.
+2. `weekNN/Tests.hs` imports `Check` from `tutorial/lib`. The importing module
+   and the imported one must live in the *same* unit, or GHC reports
+   `attempting to use module 'Check' ... which is not loaded`.
+
+A `hie.yaml` with one `direct` cradle per week was tried first and fails on
+point 2: the multi-cradle assigns `Check.hs` to whichever component owns its
+path, which is never the week doing the importing. Cabal components express
+both facts, so `hie.yaml` now just points at the cabal project, with `scratch/`
+carved out as a `direct` cradle because it is a sandbox for throwaway files.
+
+Cabal's build directory for this goes to `~/.cache/hie-bios/`, not into the
+repo, so there is no `dist-newstyle/` to ignore.
+
+### Verified
+
+- HLS loads all five shapes of file here: a week's `Exercises.hs` and
+  `Tests.hs`, `lib/Check.hs`, a `solutions/weekNN/Exercises.hs`, and
+  `scratch/Hello.hs`.
+- A real `textDocument/hover` over `sumSquares` in the week-4 solution returns
+  `sumSquares :: Int -> Int`, so type-on-hover genuinely works and is not just
+  a server that started.
+- `./tutorial/check.sh 4` and `./tutorial/check.sh 4 --solution` are unchanged:
+  50 todos and 50/50 respectively.
+
+### Known cosmetic noise
+
+The Haskell output panel logs one `[Error] Request
+textDocument/semanticTokens/full failed` at startup. HLS disables semantic
+tokens globally by default; highlighting comes from the TextMate grammar in
+`language-haskell` instead. Nothing is broken.
+
+### Editor conventions chosen
+
+Format-on-save is deliberately **off** — reformatting exercise files mid-thought
+is more disruptive than useful. Format on purpose with Shift+Alt+F. `Ctrl+Shift+B`
+runs `check.sh` for whichever week the open file belongs to; the other two tasks
+in `.vscode/tasks.json` run that week's solution and open GHCi.
+
+### The explorer is cut down to the work
+
+Added 2026-09-06. Opening the repo root showed fifteen directories, of which one
+is the thing you type into. `files.exclude` in `.vscode/settings.json` now hides
+everything that is reading material (`exam/`, `docs/`, `weeks/`, `reference/`,
+`resources/`, `assignments/`), plumbing (`hie.yaml`, the `.cabal` file, `src/`,
+`scratch/`, `.vscode/` itself) or an answer key (`tutorial/solutions/`,
+`tutorial/lib/`, `check.sh`). What remains is `tutorial/weekNN/`, and file
+nesting folds `LESSON.md` and `Tests.hs` under `Exercises.hs`, so each week is
+one row until you expand it.
+
+This is a *display* setting only. Hidden files still load in HLS, still compile,
+still show in git, and still open by path — `code exam/README.md` works, and so
+does reopening the settings file itself. Nothing was moved or deleted.
+
+One consequence worth knowing: VS Code does not watch excluded paths, so if you
+ever edit `hie.yaml` or `inf122-tutorial.cabal`, restart the language server
+(`Ctrl+Shift+P` → *Haskell: Restart LSP Server*) rather than expecting a reload.

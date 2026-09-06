@@ -182,9 +182,8 @@ curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
 ```
 
 Also installed, both of which the course expects and plain GHC does not give you:
-**QuickCheck 2.18** (his notes use it from week 1) and **HLS 2.14** (point your
-editor at `haskell-language-server-wrapper`). The tutorial harness still needs
-**nothing beyond `base`** — no project file, just `runghc`.
+**QuickCheck 2.18** (his notes use it from week 1) and **HLS 2.14**. The tutorial
+harness still needs **nothing beyond `base`** — no project file, just `runghc`.
 
 > **One thing needed root, and is now done.** GHC could interpret but not
 > *link*: Ubuntu ships `libgmp10` while the linker wants `libgmp.so`, which comes
@@ -198,6 +197,36 @@ editor at `haskell-language-server-wrapper`). The tutorial harness still needs
 In GHCi: `:r` reload, `:t expr` type of, `:i` info, `:q` quit. The one habit
 worth building above all others is asking GHCi for the type — everything in this
 language falls out of the types.
+
+## Editing
+
+**VS Code** is set up for this repo — `code ~/code/haskell-class` and open a
+week's `Exercises.hs`. The `haskell.haskell` extension drives HLS 2.14 against
+the ghcup toolchain already here, so you get types on hover (the Prelude's too,
+which is half the hint in most exercises) and live error squiggles that match
+what `check.sh` prints.
+
+| | |
+|---|---|
+| hover a name | its type |
+| `Ctrl+Shift+B` | run `check.sh` for the week that owns the open file |
+| *Tasks: Run Task* → GHCi | that week's REPL, loaded |
+| `Shift+Alt+F` | format — deliberately **not** on save |
+| `Ctrl+K Ctrl+/` | fold every comment block, when the file feels wordy |
+
+The explorer is cut down to `tutorial/weekNN/Exercises.hs` and nothing else,
+with `LESSON.md` and `Tests.hs` nested underneath. That is a display setting in
+`.vscode/settings.json` — hidden files still compile, still load, still show in
+git, and still open by path (`code exam/README.md`). The reading material is
+meant to be read in the browser; the editor is the workbench.
+
+Two pieces of plumbing make this work, and neither is a build system you run:
+`hie.yaml` and `inf122-tutorial.cabal` exist **only** so the language server can
+load the code, because every week defines a module called `Exercises` and they
+cannot share a unit. `check.sh` is still plain `runghc`. Full reasoning, and the
+one cosmetic startup error you can ignore, in
+[`docs/setup-notes.md`](docs/setup-notes.md).
+
 
 ## What the lecturer said about AI
 

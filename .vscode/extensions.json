@@ -1,0 +1,7 @@
+{
+  // VS Code offers these when the folder is opened. "haskell.haskell" is the
+  // only one that matters; it pulls in the syntax-highlighting extension too.
+  "recommendations": [
+    "haskell.haskell"
+  ]
+}

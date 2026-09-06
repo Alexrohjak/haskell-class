@@ -1,0 +1,16 @@
+# Tells haskell-language-server how to load this repo.
+#
+# tutorial/ is described by inf122-tutorial.cabal -- see the comments in that
+# file for why. scratch/ is deliberately outside it: it is a sandbox for loose
+# throwaway files, so it gets a plain GHC cradle with no project at all.
+cradle:
+  multi:
+    - path: "./scratch"
+      config:
+        cradle:
+          direct:
+            arguments: ["-Wno-x-partial", "-iscratch"]
+    - path: "./"
+      config:
+        cradle:
+          cabal:

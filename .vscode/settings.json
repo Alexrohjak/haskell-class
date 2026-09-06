@@ -1,0 +1,99 @@
+{
+  // ---- Haskell -----------------------------------------------------------
+  // ghcup already manages GHC 9.10.3 and HLS 2.14.0.0, so let the extension
+  // reuse that toolchain instead of downloading a second copy of everything.
+  "haskell.manageHLS": "GHCup",
+
+  // How the project is loaded is decided by hie.yaml at the repo root, not
+  // here. Do not set a formatter to run on save: these are exercise files and
+  // reformatting them mid-thought is more distracting than useful. Format
+  // deliberately with Shift+Alt+F when you actually want it.
+  "haskell.formattingProvider": "ormolu",
+
+  // The tutorial's own runner already passes -Wno-x-partial; this keeps the
+  // editor's squiggles matching what ./check.sh prints.
+  "haskell.plugin.ghcide-type-lenses.globalOn": true,
+
+  // ---- Editor ------------------------------------------------------------
+  // Haskell is layout-sensitive: a stray tab changes what the code means.
+  "[haskell]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.rulers": [80],
+    "editor.wordBasedSuggestions": "off"
+  },
+
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+
+  // ---- The explorer shows the work, and nothing else ----------------------
+  //
+  // The reading material lives in the browser drill room and in this repo's
+  // markdown; the editor is the workbench. So the tree is cut down to the one
+  // thing you actually type into: tutorial/weekNN/Exercises.hs.
+  //
+  // Nothing here is deleted or unreachable -- a hidden file still opens by
+  // path from the terminal (`code exam/README.md`), still loads in HLS, and is
+  // still there for git. This only decides what the sidebar draws.
+  //
+  // To see everything again, delete this block, or flip an entry to false.
+  // This file is itself hidden below; reopen it with:
+  //
+  //     code ~/code/haskell-class/.vscode/settings.json
+  //
+  "files.exclude": {
+    // Compiler droppings and environments -- never opened by hand.
+    "**/*.hi": true,
+    "**/*.o": true,
+    "**/*.dyn_hi": true,
+    "**/*.dyn_o": true,
+    "**/.venv": true,
+    "**/__pycache__": true,
+    "**/.searchcache": true,
+
+    // Course material that reads better outside the editor.
+    "assignments": true,
+    "docs": true,
+    "exam": true,
+    "reference": true,
+    "resources": true,
+    "weeks": true,
+
+    // Plumbing. Touch these and you are no longer doing the exercise.
+    ".env": true,
+    ".env.example": true,
+    ".gitignore": true,
+    ".vscode": true,
+    "hie.yaml": true,
+    "inf122-tutorial.cabal": true,
+    "requirements.txt": true,
+    "scratch": true,
+    "src": true,
+
+    // Inside tutorial/: the harness, the runner, and the answers.
+    "tutorial/README.md": true,
+    "tutorial/check.sh": true,
+    "tutorial/lib": true,
+    "tutorial/solutions": true
+  },
+
+  // Each week collapses to a single row -- Exercises.hs -- with the lesson and
+  // the test spec one chevron away underneath it.
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "Exercises.hs": "LESSON.md, Tests.hs"
+  },
+
+  // Ctrl+Shift+F searches your work, not the answers to it.
+  "search.exclude": {
+    "**/reference": true,
+    "**/dist-newstyle": true,
+    "tutorial/solutions": true
+  },
+
+  // Less chrome around the code itself.
+  "editor.minimap.enabled": false,
+  "breadcrumbs.enabled": false,
+  "explorer.compactFolders": false
+}

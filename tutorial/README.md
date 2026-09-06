@@ -36,7 +36,14 @@ Unimplemented stubs report as `todo`, not `FAIL`, so you can work one exercise a
 time and watch the count climb. Exit status is 0 only when everything passes.
 
 **No dependencies.** The harness is a single file (`lib/Check.hs`) using nothing but
-`base`. No cabal, no stack, no installing packages — `runghc` and go.
+`base`. No stack, no installing packages — `runghc` and go.
+
+There *is* an `inf122-tutorial.cabal` at the repo root, but it is not a build
+system and you never run `cabal build`. It exists only so haskell-language-server
+can load this code in an editor: every week defines a module called `Exercises`,
+so they need separate components, and `Tests.hs` imports `Check` from `lib/`, so
+importer and imported must share one. `check.sh` is unaffected — still `runghc`.
+See [`../docs/setup-notes.md`](../docs/setup-notes.md).
 
 ### The two feedback loops
 
@@ -140,6 +147,11 @@ tutorial/
 
 The repo's other folders are yours: `../weeks/ukeNN/code/` for code written in
 class, `../assignments/` for the oblig, `../scratch/` for experiments.
+
+In VS Code the explorer hides all of that on purpose, and nests `LESSON.md` and
+`Tests.hs` under each `Exercises.hs`, so the sidebar shows the work and nothing
+else. Nothing is deleted — it is one `files.exclude` block in
+`../.vscode/settings.json`.
 
 ---
 

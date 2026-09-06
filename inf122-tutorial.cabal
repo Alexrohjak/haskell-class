@@ -1,0 +1,82 @@
+cabal-version:   3.0
+name:            inf122-tutorial
+version:         0.1.0.0
+synopsis:        IDE scaffolding for the INF122 tutorial (not a build system)
+build-type:      Simple
+
+-- This file exists ONLY so haskell-language-server can give you types, hover
+-- and inline errors in the editor. Nothing in the tutorial builds through
+-- cabal: ./check.sh still runs each week with plain runghc, exactly as before,
+-- and you never need to run `cabal build` yourself.
+--
+-- The reason it is needed: every week defines a module called `Exercises`, so
+-- they cannot all be loaded at once, and Tests.hs imports `Check` from
+-- tutorial/lib. Cabal components express both facts; a loose -i search path
+-- cannot. See docs/setup-notes.md.
+--
+-- Adding week05: copy the `sublibrary`/`executable` pair and bump the number.
+
+common warnings
+  ghc-options:      -Wno-x-partial
+  default-language: Haskell2010
+
+-- The shared test harness, imported by every week's Tests.hs.
+library check
+  import:          warnings
+  hs-source-dirs:  tutorial/lib
+  exposed-modules: Check
+  build-depends:   base
+
+-- Your work: one component per week, so the `Exercises` modules stay separate.
+executable week01-tests
+  import:         warnings
+  hs-source-dirs: tutorial/week01
+  main-is:        Tests.hs
+  other-modules:  Exercises
+  build-depends:  base, inf122-tutorial:check
+
+executable week02-tests
+  import:         warnings
+  hs-source-dirs: tutorial/week02
+  main-is:        Tests.hs
+  other-modules:  Exercises
+  build-depends:  base, inf122-tutorial:check
+
+executable week03-tests
+  import:         warnings
+  hs-source-dirs: tutorial/week03
+  main-is:        Tests.hs
+  other-modules:  Exercises
+  build-depends:  base, inf122-tutorial:check
+
+executable week04-tests
+  import:         warnings
+  hs-source-dirs: tutorial/week04
+  main-is:        Tests.hs
+  other-modules:  Exercises
+  build-depends:  base, inf122-tutorial:check
+
+-- The reference solutions. No Tests.hs of their own, so these are libraries.
+library sol-week01
+  import:          warnings
+  hs-source-dirs:  tutorial/solutions/week01
+  exposed-modules: Exercises
+  build-depends:   base
+
+library sol-week02
+  import:          warnings
+  hs-source-dirs:  tutorial/solutions/week02
+  exposed-modules: Exercises
+  build-depends:   base
+
+library sol-week03
+  import:          warnings
+  hs-source-dirs:  tutorial/solutions/week03
+  exposed-modules: Exercises
+  build-depends:   base
+
+library sol-week04
+  import:          warnings
+  hs-source-dirs:  tutorial/solutions/week04
+  exposed-modules: Exercises
+  build-depends:   base
