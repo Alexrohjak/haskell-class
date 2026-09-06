@@ -307,6 +307,45 @@ footer {
 footer .rule { height: 1px; background: var(--line); margin-bottom: 20px; }
 footer strong { color: var(--ink-soft); }
 
+/* --- workbench --- */
+.wb { display: flex; flex-direction: column; gap: 24px; }
+.wbtop { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; justify-content: space-between; }
+.wbtop .cmd {
+  font-family: var(--f-mono); font-size: 13.5px; background: var(--surface-2);
+  border: 1px solid var(--line); border-radius: var(--r); padding: 8px 12px; white-space: nowrap;
+}
+.wbitem { border-top: 1px solid var(--line); padding-top: 20px; margin-top: 20px; }
+.wbitem:first-of-type { border-top: 0; padding-top: 4px; margin-top: 6px; }
+.wbrow { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.wbrow h3 {
+  font-family: var(--f-display); font-size: 19px; font-weight: 600; margin: 0;
+  letter-spacing: -.01em;
+}
+.wbrow .sig { font-family: var(--f-mono); font-size: 13px; color: var(--ink-soft); }
+.wbrow .spacer { flex: 1; }
+.wbitem p { font-size: 14.5px; color: var(--ink-soft); margin: 10px 0 0; line-height: 1.6; }
+.wbitem p strong { color: var(--ink); font-weight: 600; }
+.wbitem code { font-family: var(--f-mono); font-size: .9em; background: var(--surface-2); padding: 1px 4px; border-radius: 2px; }
+.hintrow { display: flex; gap: 10px; margin-top: 14px; align-items: center; flex-wrap: wrap; }
+.hintrow .n { font-size: 12.5px; color: var(--ink-faint); }
+.hint {
+  background: var(--surface); border: 1px dashed var(--line); border-left: 2px solid var(--accent);
+  border-radius: var(--r); padding: 12px 15px; font-size: 14px; margin-top: 10px; line-height: 1.6;
+}
+.hint .k { display: block; font-size: 11px; letter-spacing: .09em; text-transform: uppercase;
+  color: var(--ink-faint); margin-bottom: 5px; }
+.chk {
+  font: 500 12.5px/1 var(--f-body); cursor: pointer; padding: 6px 11px;
+  border: 1px solid var(--line); background: transparent; color: var(--ink-soft);
+  border-radius: 100px;
+}
+.chk:hover { border-color: var(--ink-faint); color: var(--ink); }
+.chk.on { background: var(--good-soft); border-color: var(--good); color: var(--good); }
+.wbnote {
+  font-size: 13.5px; color: var(--ink-soft); border-top: 1px solid var(--line);
+  margin-top: 26px; padding-top: 18px; line-height: 1.65;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
@@ -324,6 +363,7 @@ footer strong { color: var(--ink-soft); }
       <button role="tab" id="m-home" aria-selected="true">Overview</button>
       <button role="tab" id="m-learn" aria-selected="false">Learn</button>
       <button role="tab" id="m-drill" aria-selected="false">Drill</button>
+      <button role="tab" id="m-work" aria-selected="false">Work</button>
     </div>
     <button class="icon-btn" id="themebtn" title="Switch theme">Theme</button>
   </div>
@@ -968,8 +1008,161 @@ const WEEKS = [
 
 /* ---------------------------------------------------------------- storage -- */
 
+/* ---------------------------------------------------------------- work -- */
+/* The bridge from reading to doing. Prompts and hints only: no answers to
+   anything in Exercises.hs live here, by design. The hints get progressively
+   more specific and stop at the point where the thinking starts. */
+
+const WORK = {
+1: {
+  dir: "tutorial/week01", cmd: "./check.sh 1", checks: 19, exercises: 6,
+  intro: `Seven concepts read is not week 1 done. Paper first — your exam is handwritten,
+          so the pen has to go before the keyboard. Then the six exercises, one at a time,
+          watching the count climb.`,
+  paper: [
+    { n: "P1", t: "Precedence, by hand",
+      brief: `Parenthesise each line to show the order of application, then evaluate it.
+              No computer until you have written all three down.`,
+      code: "2 ^ 3 * 4\n2 * 3 + 4 * 5\n2 + 3 * 4 ^ 5",
+      hints: [
+        `Three levels are in play here: <code>^</code> binds tightest, then <code>*</code>
+         and <code>/</code>, then <code>+</code> and <code>-</code>.`,
+        `<code>^</code> is right-associative, <code>*</code> and <code>+</code> are
+         left-associative. Only one of the three lines has two operators at the same level,
+         and that is the line where associativity decides anything.`,
+        `Settle it yourself: <code>:i (^)</code> and <code>:i (*)</code> in GHCi print
+         <code>infixr 8</code> and <code>infixl 7</code>. That pair of numbers <em>is</em>
+         the answer to "which binds tighter".` ] },
+
+    { n: "P2", t: "Three errors, found by reading",
+      brief: `Hutton exercise 2.3. This script has exactly three errors. Find them by reading,
+              not by compiling, then write the corrected version out.`,
+      code: "N = a 'div' length xs\n   where\n      a = 10\n     xs = [1,2,3,4,5]",
+      hints: [
+        `One error is in the name. One is in how <code>div</code> has been written infix.
+         One is in the whitespace.`,
+        `All three are covered in the concepts you just read: the naming rules, backticks,
+         and the layout rule.`,
+        `For the layout one — what has to be true about the indentation of two definitions
+         sitting in the same <code>where</code> block?` ] },
+
+    { n: "P3", t: "Evaluate before you run",
+      brief: `What is the value of <code>take 3 (reverse [1,2,3,4,5])</code>? Write it down,
+              then check it in GHCi. If they disagree, the interesting question is which
+              step you got wrong.`,
+      hints: [
+        `Inner parentheses first. What list does <code>reverse</code> hand to <code>take</code>?`,
+        `<code>take n</code> never fails on a list shorter than <code>n</code> — it simply
+         gives you what there is. Worth knowing now; you will lean on it in exercise 2.` ] },
+
+    { n: "P4", t: "The essay one",
+      brief: `In two sentences, as if to a classmate still taking INF100: why is
+              <code>x = x + 1</code> perfectly good Python and meaningless Haskell?
+              Write it out in full — this is exam practice, not a thought.`,
+      hints: [
+        `The words that need to land: <strong>instruction</strong> versus
+         <strong>definition</strong>, and <strong>referential transparency</strong>.`,
+        `Say what the Haskell line would be <em>claiming</em>, then note that no value of
+         <code>x</code> makes the claim true.`,
+        `This is the shape of "discuss the difference between the imperative and the
+         functional paradigm", which the learning outcomes name outright. It is the easiest
+         mark on the paper to leave on the table.` ] }
+  ],
+  code: [
+    { n: 1, name: "myLast", sig: "[a] -> a", checks: 3,
+      brief: `<code>last</code>, written yourself. <strong>Allowed:</strong> <code>head</code>,
+              <code>reverse</code>, <code>length</code>, <code>(!!)</code>, <code>drop</code>,
+              <code>sum</code>. <strong>Banned:</strong> <code>last</code> itself, recursion,
+              and <code>(x:xs)</code> patterns — those are week 3. The ban is the lesson:
+              it forces you to think in whole-list transformations instead of loops.`,
+      code: "myLast [1,2,3]  ==  3\nmyLast \"abc\"    ==  'c'",
+      hints: [
+        `Two routes exist. Either move the element you want to the <em>front</em> of the
+         list, or index straight at it.`,
+        `For the indexing route: <code>(!!)</code> is zero-based, so the final element sits
+         one below the length.`,
+        `Precedence trap, and you will hit it: <code>xs !! length xs - 1</code> parses as
+         <code>(xs !! length xs) - 1</code>. Application binds tighter than any operator.
+         Put the parentheses where you actually meant them.`,
+        `Look at the type again — <code>[a] -> a</code>, no <code>Eq</code>, no
+         <code>Ord</code>. That is a guarantee your definition never inspects an element.
+         It can only move them about.` ] },
+
+    { n: 2, name: "myInit", sig: "[a] -> [a]", checks: 3,
+      brief: `Everything except the final element, without using <code>init</code>. Write one
+              route, then put the other in a comment underneath so you have seen both.`,
+      code: "myInit [1,2,3]  ==  [1,2]\nmyInit \"abc\"    ==  \"ab\"",
+      hints: [
+        `Route A reverses, drops one from the front, reverses back. Route B takes a prefix
+         of the right length.`,
+        `Route B needs to know how long that prefix is. <code>length</code> is in scope, and
+         the same off-by-one from exercise 1 applies.`,
+        `Now try each route on <code>[]</code>. One crashes and one returns <code>[]</code>.
+         Knowing which, and why, is the difference between <code>tail</code> being partial
+         and <code>take</code> being total.` ] },
+
+    { n: 3, name: "average", sig: "[Int] -> Double", checks: 3,
+      brief: `The mean of a list of <code>Int</code>, as a <code>Double</code>. This exercise
+              exists to teach one specific pain: Haskell will <strong>not</strong> quietly
+              widen an <code>Int</code> for you the way C or Python would.`,
+      code: "average [1,2,3,4]  ==  2.5\naverage [10]       ==  10.0",
+      hints: [
+        `Write <code>sum xs / length xs</code> first and read the error message properly.
+         It is the most useful error you will see this week.`,
+        `<code>:t (/)</code> gives <code>Fractional a => a -> a -> a</code>. <code>:t length</code>
+         gives <code>[a] -> Int</code>. There is no <code>Fractional Int</code> instance, and
+         that is the entire complaint.`,
+        `<code>fromIntegral :: (Integral a, Num b) => a -> b</code> is the bridge out of the
+         whole numbers. Count how many of the two operands are stuck on the wrong side of it.`,
+        `Both of them. And it is the <code>Double</code> in your signature that tells GHC
+         which <code>Fractional</code> type to land in — delete the signature and the same
+         code becomes ambiguous.` ] },
+
+    { n: 4, name: "productR", sig: "[Int] -> Int", checks: 3,
+      brief: `<code>product</code>, by recursion. A preview of week 5, and the same shape as
+              Hutton's <code>sum</code> on page 3 with <code>(*)</code> in place of
+              <code>(+)</code>.`,
+      code: "productR [2,3,4]  ==  24\nproductR []       ==  1",
+      hints: [
+        `Two equations: one for the empty list, one for <code>(x:xs)</code>. The concept
+         "No loops — recursion instead" has the shape in full.`,
+        `The empty case is the one worth thinking about, and it is not <code>0</code>.`,
+        `Here is why it must be <code>1</code>: <code>productR (xs ++ ys)</code> should equal
+         <code>productR xs * productR ys</code> for any two lists. Put <code>xs = []</code>
+         into that and only the identity element of <code>(*)</code> survives. Every fold you
+         write from week 7 on will have this same question in it.` ] },
+
+    { n: 5, name: "qsortDesc", sig: "Ord a => [a] -> [a]", checks: 3,
+      brief: `Hutton's <code>qsort</code> — it is at the top of your exercise file — sorting
+              into <strong>descending</strong> order instead. Copy it and change as little as
+              you possibly can. The answer is roughly one character.`,
+      code: "qsortDesc [3,1,2]      ==  [3,2,1]\nqsortDesc \"haskell\"    ==  \"sllkhea\"",
+      hints: [
+        `Do not restructure anything. The recursion, the <code>++</code>, and the
+         <code>where</code> are all already correct for either ordering.`,
+        `Exactly one thing decides what ends up to the <em>left</em> of <code>x</code>.
+         For a descending sort, what should be over there?`,
+        `Whatever you change, keep the two comprehension guards between them covering every
+         element exactly once. If both end up strict, duplicates vanish silently — which is
+         why <code>qsortDesc "haskell"</code>, with its two <code>l</code>s, is in the tests.` ] },
+
+    { n: 6, name: "thirdIndex, thirdHeads", sig: "[a] -> a", checks: 4,
+      brief: `The third element of a list, twice: once with <code>(!!)</code>, once using
+              nothing but <code>head</code> and <code>tail</code>.`,
+      code: "thirdIndex [1,2,3,4]  ==  3\nthirdHeads [1,2,3,4]  ==  3",
+      hints: [
+        `<code>(!!)</code> is zero-based. The third element is not at index 3.`,
+        `<code>head</code> gives you element one. Each <code>tail</code> shifts the window
+         along by one. So how many <code>tail</code>s before the <code>head</code> you want?`,
+        `Both versions crash on a list that is too short, and that is fine this week. Week 4
+         teaches you to return a <code>Maybe</code> instead, which is how you would really
+         write it.` ] }
+  ]
+}
+};
+
 const KEY = "inf122-drillroom-v1";
-const blank = () => ({ read: {}, drilled: {}, wrong: {} });
+const blank = () => ({ read: {}, drilled: {}, wrong: {}, work: {} });
 let S = blank();
 
 function load() {
@@ -977,7 +1170,7 @@ function load() {
     const raw = localStorage.getItem(KEY);
     if (raw) {
       const p = JSON.parse(raw);
-      S = { read: p.read || {}, drilled: p.drilled || {}, wrong: p.wrong || {} };
+      S = { read: p.read || {}, drilled: p.drilled || {}, wrong: p.wrong || {}, work: p.work || {} };
     }
   } catch (e) { S = blank(); }
 }
@@ -1070,7 +1263,8 @@ function renderHome() {
     const t = el("div", "t", "Week " + w.n + " — " + w.topic);
     const m = el("div", "m", w.chapter + " · lectured in " + w.uke);
     const r = weekRead(w), d = weekDrilled(w);
-    const n = el("div", "n", r + "/" + w.concepts.length + " read   " + d + "/" + w.drills.length + " drilled");
+    const wkd = WORK[w.n] ? "   " + workDone(w.n) + "/" + WORK[w.n].code.length + " coded" : "";
+    const n = el("div", "n", r + "/" + w.concepts.length + " read   " + d + "/" + w.drills.length + " drilled" + wkd);
     const bar = el("div", "bar");
     const fill = el("i");
     const pct = Math.round(((r + d) / (w.concepts.length + w.drills.length)) * 100);
@@ -1087,7 +1281,9 @@ function renderHome() {
   bLearn.onclick = () => setMode("learn");
   const bDrill = el("button", "btn ghost", "Drill week " + week);
   bDrill.onclick = () => { startDrill(wk(week).drills.slice()); };
-  acts.append(bLearn, bDrill);
+  const bWork = el("button", "btn ghost", "Work week " + week);
+  bWork.onclick = () => setMode("work");
+  acts.append(bLearn, bDrill, bWork);
   p1.appendChild(acts);
 
   /* --- weak spots panel --- */
@@ -1131,7 +1327,8 @@ function renderHome() {
     ["Read", "Learn mode, one concept at a time. Each cites the slide it came from, so his handout stays the authority."],
     ["Run it", "Every concept has a GHCi block. Type it. The browser cannot run Haskell and is not pretending to."],
     ["Drill", "Answer before revealing. Getting it wrong on purpose here is cheaper than on 2 December."],
-    ["Then code", "./tutorial/check.sh 2 in the repo — 142 checks across the four weeks are where this actually lands."]
+    ["Work", "The bridge to the repo: paper drills, then the six exercises with a hint ladder that stops short of the answer."],
+    ["Then code", "./tutorial/check.sh 1 in the repo — 142 checks across the four weeks are where this actually lands."]
   ].forEach(([h, b]) => {
     const d = el("div");
     d.innerHTML = "<strong style='color:var(--ink)'>" + esc(h) + ".</strong> " + esc(b);
@@ -1388,21 +1585,189 @@ function renderDrill() {
   view.appendChild(box);
 }
 
+/* -------------------------------------------------------------- workbench -- */
+
+function workKey(w, kind, n) { return w + ":" + kind + ":" + n; }
+function workDone(wn) {
+  const W = WORK[wn];
+  if (!W) return 0;
+  return W.code.filter(x => S.work[workKey(wn, "code", x.n)]).length;
+}
+
+function hintLadder(host, hints) {
+  const row = el("div", "hintrow");
+  const btn = el("button", "btn ghost", "Hint");
+  const count = el("span", "n", hints.length + " available");
+  let shown = 0;
+  const slot = el("div");
+  btn.onclick = () => {
+    const h = el("div", "hint");
+    h.appendChild(el("span", "k", "Hint " + (shown + 1)));
+    const p = el("div");
+    p.innerHTML = hints[shown];
+    h.appendChild(p);
+    slot.appendChild(h);
+    shown++;
+    if (shown >= hints.length) { btn.disabled = true; btn.textContent = "No more hints"; count.textContent = "and that is as far as I go"; }
+    else { btn.textContent = "Another hint"; count.textContent = (hints.length - shown) + " left"; }
+  };
+  row.append(btn, count);
+  host.append(row, slot);
+}
+
+function renderWork() {
+  view.textContent = "";
+  view.appendChild(renderWeekStrip(renderWork));
+
+  const w = wk(week);
+  const W = WORK[week];
+  const wrap = el("div", "wb");
+
+  if (!W) {
+    const p = el("div", "panel");
+    p.appendChild(el("h2", null, "Week " + week + " — not written yet"));
+    p.appendChild(el("p", "empty",
+      "The workbench exists for week 1 so far. The exercises themselves are already in the repo: "
+      + "tutorial/week0" + week + "/Exercises.hs, run with ./check.sh " + week + " from tutorial/."));
+    wrap.appendChild(p);
+    view.appendChild(wrap);
+    return;
+  }
+
+  /* -- header -- */
+  const head = el("div", "panel");
+  const top = el("div", "wbtop");
+  const left = el("div");
+  left.appendChild(el("h2", null, "Work — week " + w.n + ", " + w.chapter));
+  const intro = el("p", "note");
+  intro.innerHTML = W.intro;
+  left.appendChild(intro);
+  const cmd = el("div", "cmd", "cd tutorial && " + W.cmd);
+  top.append(left, cmd);
+  head.appendChild(top);
+
+  const done = workDone(week);
+  const bar = el("div", "bar");
+  const fill = el("i");
+  fill.style.width = Math.round((done / W.code.length) * 100) + "%";
+  if (done === W.code.length) fill.className = "full";
+  bar.appendChild(fill);
+  bar.style.marginTop = "18px";
+  head.appendChild(bar);
+  head.appendChild(el("p", "note", done + " of " + W.code.length + " exercises marked done · "
+    + W.checks + " checks in total · marks are yours, the tests are the truth"));
+  wrap.appendChild(head);
+
+  /* -- paper -- */
+  const pp = el("div", "panel");
+  pp.appendChild(el("h2", null, "On paper first"));
+  pp.appendChild(el("p", "note", "Three hours, handwritten, no aids. Typing fluency is worth "
+    + "nothing on the day and writing Haskell with a pen is worth a lot. Do these with the "
+    + "screen off, then check."));
+  W.paper.forEach(item => {
+    const it = el("div", "wbitem");
+    const row = el("div", "wbrow");
+    row.appendChild(el("h3", null, item.n + " — " + item.t));
+    row.appendChild(el("div", "spacer"));
+    const chk = el("button", "chk", "");
+    const k = workKey(week, "paper", item.n);
+    const paint = () => {
+      const on = !!S.work[k];
+      chk.textContent = on ? "✓ written" : "mark written";
+      chk.className = on ? "chk on" : "chk";
+    };
+    chk.onclick = () => { S.work[k] = !S.work[k]; if (!S.work[k]) delete S.work[k]; save(); paint(); };
+    paint();
+    row.appendChild(chk);
+    it.appendChild(row);
+    const b = el("p");
+    b.innerHTML = item.brief;
+    it.appendChild(b);
+    if (item.code) {
+      const pre = el("pre", "code");
+      pre.textContent = item.code;
+      it.appendChild(pre);
+    }
+    hintLadder(it, item.hints);
+    pp.appendChild(it);
+  });
+  const note = el("div", "wbnote");
+  note.innerHTML = "Worked answers to these four are in <code>tutorial/solutions/week01/PAPER.md</code>"
+    + " — open it after you have written yours down, not before. Reading a solution to a problem "
+    + "you have not fought with feels like learning and is not.";
+  pp.appendChild(note);
+  wrap.appendChild(pp);
+
+  /* -- code -- */
+  const cp = el("div", "panel");
+  cp.appendChild(el("h2", null, "At the keyboard"));
+  cp.appendChild(el("p", "note", "Six exercises in " + W.dir + "/Exercises.hs. Replace each "
+    + "undefined. Unimplemented stubs report as todo rather than FAIL, so do them one at a "
+    + "time and watch the count climb."));
+  W.code.forEach(item => {
+    const it = el("div", "wbitem");
+    const row = el("div", "wbrow");
+    row.appendChild(el("h3", null, item.n + ". " + item.name));
+    row.appendChild(el("span", "sig", ":: " + item.sig));
+    row.appendChild(el("div", "spacer"));
+    row.appendChild(el("span", "sig", item.checks + " checks"));
+    const chk = el("button", "chk", "");
+    const k = workKey(week, "code", item.n);
+    const paint = () => {
+      const on = !!S.work[k];
+      chk.textContent = on ? "✓ green" : "mark green";
+      chk.className = on ? "chk on" : "chk";
+    };
+    chk.onclick = () => {
+      S.work[k] = !S.work[k]; if (!S.work[k]) delete S.work[k];
+      save(); paint();
+      const d = workDone(week);
+      fill.style.width = Math.round((d / W.code.length) * 100) + "%";
+      fill.className = d === W.code.length ? "full" : "";
+    };
+    paint();
+    row.appendChild(chk);
+    it.appendChild(row);
+    const b = el("p");
+    b.innerHTML = item.brief;
+    it.appendChild(b);
+    if (item.code) {
+      const pre = el("pre", "code");
+      pre.textContent = item.code;
+      it.appendChild(pre);
+    }
+    hintLadder(it, item.hints);
+    cp.appendChild(it);
+  });
+  const note2 = el("div", "wbnote");
+  note2.innerHTML = "<strong>When all " + W.checks + " are green</strong>, that is half the skill. "
+    + "Ask for an <em>idiom review</em> — paste the file and get told where a five-line recursion "
+    + "wanted to be one line. The tests cannot tell you that, and it is most of what separates a "
+    + "C from an A here. Reference answers are in <code>tutorial/solutions/week01/</code>, and "
+    + "<code>" + W.cmd + " --solution</code> runs the tests against them.";
+  cp.appendChild(note2);
+  wrap.appendChild(cp);
+
+  view.appendChild(wrap);
+}
+
 /* ------------------------------------------------------------------- shell -- */
 
 function setMode(m) {
   mode = m;
-  ["home", "learn", "drill"].forEach(k => {
+  ["home", "learn", "drill", "work"].forEach(k => {
     $("#m-" + k).setAttribute("aria-selected", String(k === m));
   });
   if (m === "home") { runTag = null; renderHome(); }
   else if (m === "learn") renderLearn();
+  else if (m === "work") renderWork();
   else renderDrill();
 }
 
 $("#m-home").onclick = () => setMode("home");
 $("#m-learn").onclick = () => setMode("learn");
 $("#m-drill").onclick = () => { runTag = null; startDrill(wk(week).drills.slice()); };
+$("#m-work").onclick = () => setMode("work");
 
 $("#themebtn").onclick = () => {
   const cur = document.documentElement.getAttribute("data-theme");

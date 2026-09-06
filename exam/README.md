@@ -53,10 +53,14 @@ ask the person who writes the paper what he expects on it.
   if you would rather not use the hosted copy. Every value and type in it was
   checked against GHC 9.10.3 before publishing.
 
+  A fourth tab, **Work**, is the bridge to the repo: week 1's four paper drills
+  and its six coding exercises, each with a hint ladder that gets more specific
+  and stops where the thinking starts. Written for week 1 so far.
+
   It contains **no answers** to `uke1.txt`, `uke2.txt` or the tutorial
-  exercises — different examples, same ideas, deliberately. It cannot run
-  Haskell either: a browser has no GHC, so every drill ends by telling you what
-  to type into GHCi.
+  exercises — different examples, same ideas, deliberately. The hints name the
+  trap, never the definition. It cannot run Haskell either: a browser has no
+  GHC, so every drill ends by telling you what to type into GHCi.
 
 ## What goes in here
 
