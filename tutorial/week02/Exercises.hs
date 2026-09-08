@@ -18,10 +18,10 @@ module Exercises where
 -- ---------------------------------------------------------------------------
 
 bools :: [Bool]
-bools = undefined
+bools = [True, True, False]
 
 nums :: [[Int]]
-nums = undefined
+nums = [[1, 2, 3], [4, 5, 6]]
 
 -- ---------------------------------------------------------------------------
 -- Exercise 2  (Hutton 3.2 cont.)
@@ -34,7 +34,7 @@ nums = undefined
 -- ---------------------------------------------------------------------------
 
 add3 :: Int -> Int -> Int -> Int
-add3 = 
+add3 a b c = a + b + c
 
 -- ---------------------------------------------------------------------------
 -- Exercise 3  (Hutton 3.2 cont.)
@@ -50,7 +50,7 @@ add3 =
 -- ---------------------------------------------------------------------------
 
 copy :: a -> (a, a)
-copy = undefined
+copy a = (a, a)
 
 -- ---------------------------------------------------------------------------
 -- Exercise 4  (Hutton 3.2 cont.)
@@ -62,7 +62,7 @@ copy = undefined
 -- ---------------------------------------------------------------------------
 
 apply :: (a -> b) -> a -> b
-apply = undefined
+apply a b = a b
 
 -- ---------------------------------------------------------------------------
 -- Exercise 5  (Hutton 3.3)
@@ -81,22 +81,22 @@ apply = undefined
 -- ---------------------------------------------------------------------------
 
 second :: [a] -> a
-second = undefined
+second xs = head (drop 1 xs)
 
 swap :: (a, b) -> (b, a)
-swap = undefined
+swap (a, b) = (b, a)
 
 pair :: a -> b -> (a, b)
-pair = undefined
+pair a b = (a, b)
 
 double :: Num a => a -> a
-double = undefined
+double xs = xs * 2
 
 palindrome :: Eq a => [a] -> Bool
-palindrome = undefined
+palindrome xs = xs == reverse xs
 
 twice :: (a -> a) -> a -> a
-twice = undefined
+twice a b = a (a b)
 
 -- ---------------------------------------------------------------------------
 -- Exercise 6
@@ -112,7 +112,9 @@ twice = undefined
 -- ---------------------------------------------------------------------------
 
 largest :: Ord a => [a] -> a
-largest = undefined
+largest [a] = a
+largest (x:xs) = if x > rest then x else rest
+    where rest = largest xs
 
 -- ---------------------------------------------------------------------------
 -- Exercise 7
@@ -129,7 +131,7 @@ largest = undefined
 -- ---------------------------------------------------------------------------
 
 roundTrip :: (Show a, Read a) => a -> a
-roundTrip = undefined
+roundTrip xs = read (show xs)
 
 -- ---------------------------------------------------------------------------
 -- Exercise 8
@@ -146,4 +148,9 @@ roundTrip = undefined
 -- ---------------------------------------------------------------------------
 
 describe :: (Show a, Ord a) => a -> a -> String
-describe = undefined
+describe a b = if a > b then bigger else if a < b then smaller else equal
+    where
+        bigger = show a ++ " is bigger than " ++ show b
+        smaller = show a ++ " is smaller than " ++ show b
+        equal = show a ++ " is equal to " ++ show b
+
