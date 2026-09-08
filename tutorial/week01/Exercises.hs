@@ -34,7 +34,8 @@ qsort (x:xs) = qsort smaller ++ [x] ++ qsort larger
 -- ---------------------------------------------------------------------------
 
 myLast :: [a] -> a
-myLast = undefined
+myLast [] = []
+myLast [a] = take 1 (reverse [a]) 
 
 -- ---------------------------------------------------------------------------
 -- Exercise 2  (Hutton 2.6)
@@ -49,7 +50,9 @@ myLast = undefined
 -- ---------------------------------------------------------------------------
 
 myInit :: [a] -> [a]
-myInit = undefined
+myInit [] = []
+myInit [a] =  reverse (tail (reverse [a]))
+-- myInit [a] = take length [a]
 
 -- ---------------------------------------------------------------------------
 -- Exercise 3
@@ -66,7 +69,8 @@ myInit = undefined
 -- ---------------------------------------------------------------------------
 
 average :: [Int] -> Double
-average = undefined
+average [] = []
+average [a] = fromIntegral (sum a / length a)
 
 -- ---------------------------------------------------------------------------
 -- Exercise 4  (Hutton 1.1)
@@ -83,7 +87,8 @@ average = undefined
 -- ---------------------------------------------------------------------------
 
 productR :: [Int] -> Int
-productR = undefined
+productR [] = 1
+productR (x:xs) = x * productR xs
 
 -- ---------------------------------------------------------------------------
 -- Exercise 5  (Hutton 1.3)
@@ -94,8 +99,12 @@ productR = undefined
 --   qsortDesc [3,1,2]  ==  [3,2,1]
 -- ---------------------------------------------------------------------------
 
-qsortDesc :: Ord a => [a] -> [a]
-qsortDesc = undefined
+qsortdesc :: Ord a => [a] -> [a]
+qsortdesc []     = []
+qsortdesc (x:xs) = qsortdesc larger ++ [x] ++ qsortdesc smaller
+  where
+    smaller = [a | a <- xs, a <= x]
+    larger  = [b | b <- xs, b >  x]
 
 -- ---------------------------------------------------------------------------
 -- Exercise 6
@@ -111,7 +120,9 @@ qsortDesc = undefined
 -- ---------------------------------------------------------------------------
 
 thirdIndex :: [a] -> a
-thirdIndex = undefined
+thirdIndex [] = []
+result = thirdIndex !! 2
 
 thirdHeads :: [a] -> a
-thirdHeads = undefined
+thirdHeads [] = []
+thirdHeads xs = head (tail (tail xs))
