@@ -34,8 +34,7 @@ qsort (x:xs) = qsort smaller ++ [x] ++ qsort larger
 -- ---------------------------------------------------------------------------
 
 myLast :: [a] -> a
-myLast [] = []
-myLast [a] = take 1 (reverse [a]) 
+myLast xs = head (reverse xs)
 
 -- ---------------------------------------------------------------------------
 -- Exercise 2  (Hutton 2.6)
@@ -50,9 +49,8 @@ myLast [a] = take 1 (reverse [a])
 -- ---------------------------------------------------------------------------
 
 myInit :: [a] -> [a]
-myInit [] = []
-myInit [a] =  reverse (tail (reverse [a]))
--- myInit [a] = take length [a]
+myInit xs =  reverse (tail (reverse xs))
+-- myInit xs = take (length xs - 1) xs
 
 -- ---------------------------------------------------------------------------
 -- Exercise 3
@@ -69,8 +67,7 @@ myInit [a] =  reverse (tail (reverse [a]))
 -- ---------------------------------------------------------------------------
 
 average :: [Int] -> Double
-average [] = []
-average [a] = fromIntegral (sum a / length a)
+average xs = (fromIntegral (sum xs)) / (fromIntegral (length xs))
 
 -- ---------------------------------------------------------------------------
 -- Exercise 4  (Hutton 1.1)
@@ -99,9 +96,9 @@ productR (x:xs) = x * productR xs
 --   qsortDesc [3,1,2]  ==  [3,2,1]
 -- ---------------------------------------------------------------------------
 
-qsortdesc :: Ord a => [a] -> [a]
-qsortdesc []     = []
-qsortdesc (x:xs) = qsortdesc larger ++ [x] ++ qsortdesc smaller
+qsortDesc :: Ord a => [a] -> [a]
+qsortDesc []     = []
+qsortDesc (x:xs) = qsortDesc larger ++ [x] ++ qsortDesc smaller
   where
     smaller = [a | a <- xs, a <= x]
     larger  = [b | b <- xs, b >  x]
@@ -120,9 +117,7 @@ qsortdesc (x:xs) = qsortdesc larger ++ [x] ++ qsortdesc smaller
 -- ---------------------------------------------------------------------------
 
 thirdIndex :: [a] -> a
-thirdIndex [] = []
-result = thirdIndex !! 2
+thirdIndex xs = xs !! 2
 
 thirdHeads :: [a] -> a
-thirdHeads [] = []
 thirdHeads xs = head (tail (tail xs))
