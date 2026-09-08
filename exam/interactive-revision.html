@@ -1,3 +1,5 @@
+<!doctype html>
+<meta charset="utf-8">
 <title>INF122 Drill Room</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -78,6 +80,29 @@ body {
 }
 
 code, kbd, pre, .mono { font-family: var(--f-mono); font-variant-ligatures: none; }
+
+/* The rest of the page's mono text, which the selector above does not reach.
+   Its own rule, so it can only switch ligatures off and cannot disturb the
+   font stack.
+
+   Why this matters most in .answer input: JetBrains Mono ligates -> => <- >=
+   <= :: ++ into single glyphs, so typing "->" in the answer box renders as one
+   arrow and the hyphen appears to vanish mid-word. The characters were always
+   there and grading was never affected -- norm() sees the real string -- but
+   you cannot read back what you typed, which is intolerable in a box whose
+   entire job is typing Haskell operators.
+
+   font-variant-ligatures:none covers this per spec (it disables contextual
+   alternates too); font-feature-settings repeats it at the low level for
+   browsers that treat calt separately. */
+.answer input,
+.answer input::placeholder,
+.verdict .expected,
+.wbrow .sig,
+.wbtop .cmd {
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "clig" 0, "calt" 0;
+}
 
 h1, h2, h3 { font-family: var(--f-display); font-weight: 500; text-wrap: balance; margin: 0; line-height: 1.25; }
 
