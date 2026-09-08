@@ -53,6 +53,11 @@ See [`../docs/setup-notes.md`](../docs/setup-notes.md).
    have been a one-line `foldr`, and that distinction is most of what separates a C
    from an A in this course.
 
+This track is the **only** one with tests in the box. The lecturer's weekly sheets in
+`../weeks/ukeNN/exercises/` come with nothing, and checking those is a skill of its own —
+[`../docs/checking-your-work.md`](../docs/checking-your-work.md) covers it, mostly with
+QuickCheck, which is what his own week-1 slide introduces it for.
+
 ---
 
 ## The plan
@@ -84,14 +89,31 @@ Not all twelve weeks are written yet. Current state:
 | 2 | done | done (31 checks) | done + PAPER.md |
 | 3 | done | done (42 checks) | done + PAPER.md |
 | 4 | done | done (50 checks) | done + PAPER.md |
-| 5–12 | — | — | — |
+| 5 | done | done (63 checks) | done + PAPER.md |
+| 6 | done | done (81 checks) | done + PAPER.md |
+| 7 | done | done (89 checks) | done + PAPER.md |
+| 8 | done | done (76 checks) | done + PAPER.md |
+| 9 | done | done (56 checks) | done + PAPER.md |
+| 10–11 | blocked | blocked | blocked |
+| 12 | — | — | — |
 
-Weeks 1–4 are complete and ready to work through: lesson, exercises, tests, reference
-solutions and paper answers, with every week verified green against its own solution.
-Weeks 5–12 are planned (see the table above) but not built.
+**Weeks 1–9 are complete** — lesson, exercises, tests, reference solutions and paper
+answers, every week verified green against its own solution. **507 checks in total.**
+That is *the whole of Hutton in pensum*: chapters 1–8, 10 and 15.
 
-Weeks 3 and 4 were built against Hutton 4 and 5, which are still those weeks'
-chapters, so nothing already written was invalidated by the pensum arriving.
+Weeks **10 and 11 cannot be written yet**. They are *enkel parsing* and *typeinferens*,
+which appear in no chapter of the book — the lecturer's notes are the only source, and
+they arrive in uke 42–44. Watch `../weeks/uke42/` onward; `python src/find.py parsing`
+will search inside the PDFs the moment they land. Week 12 is exam prep and can be
+written any time.
+
+Two notes on how the later weeks are built. **Week 8 is mostly pure**: an IO action that
+prints has no value to compare, so the exercises are the pure cores of Nim, Hangman and
+Life, with IO left as a thin shell — which is the professional habit the chapter is
+really teaching, and the reason 76 automatic checks over two interactive games are
+possible at all. **Week 9 builds infinite structures**, and every test truncates them, so
+a correct answer always terminates; a hang means a definition that recurses before
+producing a constructor.
 
 ---
 

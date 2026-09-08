@@ -15,12 +15,18 @@ Contact details for the gruppeleiarar are in [`docs/canvas/course.md`](docs/canv
 ```bash
 cd ~/code/haskell-class
 .venv/bin/python src/week.py   # what week is it, what is filed
-cd tutorial && ./check.sh 2    # work this week's tutorial
+cd tutorial && ./check.sh 4    # work this week's tutorial
 ```
 
 Verify the toolchain: `.venv/bin/python src/check_setup.py`. It runs week 1's
 tests against the reference solution, so a green result means GHC, the harness
 and the runner all work — not just that the binaries exist.
+
+The tutorial is the only track with a test harness. The lecturer's weekly sheets
+ship with nothing, and checking your answers to those — with GHCi, with the
+sheet's own examples, and with QuickCheck, which is what his week-1 slide
+introduces it for — is its own skill:
+[`docs/checking-your-work.md`](docs/checking-your-work.md).
 
 The Python side is only for the scripts in `src/`, and this machine has no bare
 `python` on the PATH — only `python3`, without the packages the scripts need.
@@ -57,11 +63,11 @@ truth — re-run the sync and update `PLAN` in `src/week.py` when it changes.
 | 35 | 24.–30. aug | kap. 3–4 | [week02](tutorial/week02/) | [`uke35`](weeks/uke35/) |
 | 36 | 31. aug–6. sep | kap. 4–5 † | [week03](tutorial/week03/) | [`uke36`](weeks/uke36/) |
 | 37 | 7.–13. sep | kap. 5–8 | [week04](tutorial/week04/) | [`uke37`](weeks/uke37/) |
-| 38 | 14.–20. sep | kap. 5–8 | week05 | [`uke38`](weeks/uke38/) |
-| 39 | 21.–27. sep | kap. 5–8 | week06 | [`uke39`](weeks/uke39/) |
-| 40 | 28. sep–4. okt | kap. 5–8 | week07 | [`uke40`](weeks/uke40/) |
-| 41 | 5.–11. okt | kap. 10 | week08 | [`uke41`](weeks/uke41/) |
-| 42 | 12.–18. okt | kap. 10 · enkel parsing | week09 | [`uke42`](weeks/uke42/) |
+| 38 | 14.–20. sep | kap. 5–8 | [week05](tutorial/week05/) | [`uke38`](weeks/uke38/) |
+| 39 | 21.–27. sep | kap. 5–8 | [week06](tutorial/week06/) | [`uke39`](weeks/uke39/) |
+| 40 | 28. sep–4. okt | kap. 5–8 | [week07](tutorial/week07/) | [`uke40`](weeks/uke40/) |
+| 41 | 5.–11. okt | kap. 10 | [week08](tutorial/week08/) | [`uke41`](weeks/uke41/) |
+| 42 | 12.–18. okt | kap. 10 · enkel parsing | [week09](tutorial/week09/) | [`uke42`](weeks/uke42/) |
 | 43 | 19.–25. okt | enkel parsing · typeinferens | week10 | [`uke43`](weeks/uke43/) |
 | 44 | 26. okt–1. nov | typeinferens · **Oblig opens** | week11 | [`uke44`](weeks/uke44/) |
 | 45 | 2.–8. nov | Oblig | — | [`uke45`](weeks/uke45/) |

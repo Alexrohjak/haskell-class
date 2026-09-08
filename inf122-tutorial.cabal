@@ -14,7 +14,7 @@ build-type:      Simple
 -- tutorial/lib. Cabal components express both facts; a loose -i search path
 -- cannot. See docs/setup-notes.md.
 --
--- Adding week05: copy the `sublibrary`/`executable` pair and bump the number.
+-- Adding a week: copy the `executable`/`library` pair and bump the number.
 
 common warnings
   ghc-options:      -Wno-x-partial
@@ -56,6 +56,41 @@ executable week04-tests
   other-modules:  Exercises
   build-depends:  base, inf122-tutorial:check
 
+executable week05-tests
+  import:         warnings
+  hs-source-dirs: tutorial/week05
+  main-is:        Tests.hs
+  other-modules:  Exercises
+  build-depends:  base, inf122-tutorial:check
+
+executable week06-tests
+  import:         warnings
+  hs-source-dirs: tutorial/week06
+  main-is:        Tests.hs
+  other-modules:  Exercises
+  build-depends:  base, inf122-tutorial:check
+
+executable week07-tests
+  import:         warnings
+  hs-source-dirs: tutorial/week07
+  main-is:        Tests.hs
+  other-modules:  Exercises
+  build-depends:  base, inf122-tutorial:check
+
+executable week08-tests
+  import:         warnings
+  hs-source-dirs: tutorial/week08
+  main-is:        Tests.hs
+  other-modules:  Exercises
+  build-depends:  base, inf122-tutorial:check
+
+executable week09-tests
+  import:         warnings
+  hs-source-dirs: tutorial/week09
+  main-is:        Tests.hs
+  other-modules:  Exercises
+  build-depends:  base, inf122-tutorial:check
+
 -- The reference solutions. No Tests.hs of their own, so these are libraries.
 library sol-week01
   import:          warnings
@@ -78,5 +113,35 @@ library sol-week03
 library sol-week04
   import:          warnings
   hs-source-dirs:  tutorial/solutions/week04
+  exposed-modules: Exercises
+  build-depends:   base
+
+library sol-week05
+  import:          warnings
+  hs-source-dirs:  tutorial/solutions/week05
+  exposed-modules: Exercises
+  build-depends:   base
+
+library sol-week06
+  import:          warnings
+  hs-source-dirs:  tutorial/solutions/week06
+  exposed-modules: Exercises
+  build-depends:   base
+
+library sol-week07
+  import:          warnings
+  hs-source-dirs:  tutorial/solutions/week07
+  exposed-modules: Exercises
+  build-depends:   base
+
+library sol-week08
+  import:          warnings
+  hs-source-dirs:  tutorial/solutions/week08
+  exposed-modules: Exercises
+  build-depends:   base
+
+library sol-week09
+  import:          warnings
+  hs-source-dirs:  tutorial/solutions/week09
   exposed-modules: Exercises
   build-depends:   base
