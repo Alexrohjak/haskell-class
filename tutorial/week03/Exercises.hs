@@ -20,7 +20,9 @@ module Exercises where
 -- ---------------------------------------------------------------------------
 
 halve :: [a] -> ([a], [a])
-halve = undefined
+-- halve xs = (take (div (length xs) 2) xs, drop (div (length xs) 2) xs)
+halve xs = (take n xs, drop n xs)
+  where n = div (length xs) 2
 
 -- ---------------------------------------------------------------------------
 -- Exercise 2  (Hutton 4.2)
@@ -36,7 +38,7 @@ halve = undefined
 -- ---------------------------------------------------------------------------
 
 thirdPat :: [a] -> a
-thirdPat = undefined
+thirdPat (_:_:x:_) = x
 
 -- ---------------------------------------------------------------------------
 -- Exercise 3  (Hutton 4.3)
@@ -55,13 +57,16 @@ thirdPat = undefined
 -- ---------------------------------------------------------------------------
 
 safetailCond :: [a] -> [a]
-safetailCond = undefined
+safetailCond xs = if null xs then [] else tail xs
 
 safetailGuard :: [a] -> [a]
-safetailGuard = undefined
+safetailGuard xs
+  | null xs = []
+  | otherwise = tail xs
 
 safetailPat :: [a] -> [a]
-safetailPat = undefined
+safetailPat [] = []
+safetailPat (_:xs) = xs
 
 -- ---------------------------------------------------------------------------
 -- Exercise 4  (Hutton 4.4)
@@ -77,10 +82,14 @@ safetailPat = undefined
 -- ---------------------------------------------------------------------------
 
 myOr :: Bool -> Bool -> Bool
-myOr = undefined
+myOr True True = True
+myOr True False = True
+myOr False False = False
+myOr False True = True
 
 myOr2 :: Bool -> Bool -> Bool
-myOr2 = undefined
+myOr2 True _ = True
+myOr2 False x = x
 
 -- ---------------------------------------------------------------------------
 -- Exercise 5  (Hutton 4.6)
@@ -96,7 +105,7 @@ myOr2 = undefined
 -- ---------------------------------------------------------------------------
 
 myAnd :: Bool -> Bool -> Bool
-myAnd = undefined
+myAnd a b = if a then b else False
 
 -- ---------------------------------------------------------------------------
 -- Exercise 6  (Hutton 4.7)
@@ -113,7 +122,7 @@ myAnd = undefined
 -- ---------------------------------------------------------------------------
 
 mult3 :: Int -> Int -> Int -> Int
-mult3 = undefined
+mult3 = \x -> \y -> \z -> x * y * z
 
 -- ---------------------------------------------------------------------------
 -- Exercise 7  (Hutton 4.8)
@@ -133,10 +142,14 @@ mult3 = undefined
 -- ---------------------------------------------------------------------------
 
 luhnDouble :: Int -> Int
-luhnDouble = undefined
+luhnDouble n
+  | d > 9     = d - 9
+  | otherwise = d
+  where d = n * 2
 
 luhn :: Int -> Int -> Int -> Int -> Bool
-luhn = undefined
+luhn a b c d = total `mod` 10 == 0
+  where total = luhnDouble a + b + luhnDouble c + d
 
 -- ---------------------------------------------------------------------------
 -- Exercise 8
@@ -158,4 +171,10 @@ luhn = undefined
 -- ---------------------------------------------------------------------------
 
 grade :: Int -> Char
-grade = undefined
+grade n
+  | n >= 90   = 'A'
+  | n >= 80   = 'B'
+  | n >= 70   = 'C'
+  | n >= 60   = 'D'
+  | n >= 50   = 'E'
+  | otherwise = 'F'
