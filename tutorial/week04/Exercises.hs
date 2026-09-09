@@ -28,7 +28,7 @@ import Data.Char (chr, isLower, ord)
 -- ---------------------------------------------------------------------------
 
 sumSquares :: Int -> Int
-sumSquares = undefined
+sumSquares n = sum [x ^ 2 | x <- [1..n]]
 
 -- ---------------------------------------------------------------------------
 -- Exercise 2  (Hutton 5.2)
@@ -44,7 +44,7 @@ sumSquares = undefined
 -- ---------------------------------------------------------------------------
 
 grid :: Int -> Int -> [(Int, Int)]
-grid = undefined
+grid m n = [(x, y) | x <- [0..m], y <- [0..n]]
 
 -- ---------------------------------------------------------------------------
 -- Exercise 3  (Hutton 5.3)
@@ -58,7 +58,7 @@ grid = undefined
 -- ---------------------------------------------------------------------------
 
 square :: Int -> [(Int, Int)]
-square = undefined
+square n = [(x, y) | (x, y) <- grid n n, x /= y]
 
 -- ---------------------------------------------------------------------------
 -- Exercise 4  (Hutton 5.4)
@@ -74,7 +74,7 @@ square = undefined
 -- ---------------------------------------------------------------------------
 
 replicate' :: Int -> a -> [a]
-replicate' = undefined
+replicate' n x = [x | _ <- [1..n]]
 
 -- ---------------------------------------------------------------------------
 -- Exercise 5  (Hutton 5.5)
@@ -89,7 +89,8 @@ replicate' = undefined
 -- ---------------------------------------------------------------------------
 
 pyths :: Int -> [(Int, Int, Int)]
-pyths = undefined
+pyths n = [(x, y, z) | x <- [1..n], y <- [1..n], z <- [1..n],
+                       x ^ 2 + y ^ 2 == z ^ 2]
 
 -- ---------------------------------------------------------------------------
 -- Exercise 6  (Hutton 5.6)
@@ -107,10 +108,10 @@ pyths = undefined
 -- ---------------------------------------------------------------------------
 
 factors :: Int -> [Int]
-factors = undefined
+factors n = [x | x <- [1..n], n `mod` x == 0]
 
 perfects :: Int -> [Int]
-perfects = undefined
+perfects n = [x | x <- [1..n], sum (init (factors x)) == x]
 
 -- ---------------------------------------------------------------------------
 -- Exercise 7  (from the chapter text)
@@ -130,10 +131,10 @@ perfects = undefined
 -- ---------------------------------------------------------------------------
 
 pairs :: [a] -> [(a, a)]
-pairs = undefined
+pairs xs = zip xs (tail xs)
 
 sorted :: Ord a => [a] -> Bool
-sorted = undefined
+sorted xs = and [x <= y | (x, y) <- pairs xs]
 
 -- ---------------------------------------------------------------------------
 -- Exercise 8  (Hutton 5.8)
@@ -150,7 +151,7 @@ sorted = undefined
 -- ---------------------------------------------------------------------------
 
 positions :: Eq a => a -> [a] -> [Int]
-positions = undefined
+positions x xs = [i | (y, i) <- zip xs [0..], y == x]
 
 -- ---------------------------------------------------------------------------
 -- Exercise 9  (Hutton 5.9)
@@ -164,7 +165,7 @@ positions = undefined
 -- ---------------------------------------------------------------------------
 
 scalarproduct :: [Int] -> [Int] -> Int
-scalarproduct = undefined
+scalarproduct xs ys = sum [x * y | (x, y) <- zip xs ys]
 
 -- ---------------------------------------------------------------------------
 -- Exercise 10  (the Caesar cipher, from the chapter text)
@@ -190,13 +191,15 @@ scalarproduct = undefined
 -- ---------------------------------------------------------------------------
 
 let2int :: Char -> Int
-let2int = undefined
+let2int c = ord c - ord 'a'
 
 int2let :: Int -> Char
-int2let = undefined
+int2let n = chr (ord 'a' + n)
 
 shift :: Int -> Char -> Char
-shift = undefined
+shift n c
+  | isLower c = int2let ((let2int c + n) `mod` 26)
+  | otherwise = c
 
 encode :: Int -> String -> String
-encode = undefined
+encode n xs = [shift n c | c <- xs]
