@@ -23,7 +23,11 @@
     "editor.wordBasedSuggestions": "off"
   },
 
-  "editor.quickSuggestions": false,
+  "editor.quickSuggestions": {
+    "comments": "off",
+    "strings": "off",
+    "other": "off"
+  },
   "editor.suggestOnTriggerCharacters": false,
   "editor.acceptSuggestionOnEnter": "off",
   "editor.acceptSuggestionOnCommitCharacter": false,
