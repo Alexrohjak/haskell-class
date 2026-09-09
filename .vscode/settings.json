@@ -23,6 +23,12 @@
     "editor.wordBasedSuggestions": "off"
   },
 
+  "editor.quickSuggestions": false,
+  "editor.suggestOnTriggerCharacters": false,
+  "editor.acceptSuggestionOnEnter": "off",
+  "editor.acceptSuggestionOnCommitCharacter": false,
+  "editor.inlineSuggest.enabled": false,
+
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
 

@@ -105,6 +105,11 @@ myOr2 False x = x
 -- ---------------------------------------------------------------------------
 
 myAnd :: Bool -> Bool -> Bool
+-- myAnd True True = True
+-- myAnd True False = False
+-- myAnd False False = False
+-- myAnd False True = False
+
 myAnd a b = if a then b else False
 
 -- ---------------------------------------------------------------------------
@@ -142,14 +147,13 @@ mult3 = \x -> \y -> \z -> x * y * z
 -- ---------------------------------------------------------------------------
 
 luhnDouble :: Int -> Int
-luhnDouble n
-  | d > 9     = d - 9
-  | otherwise = d
-  where d = n * 2
+luhnDouble x = if y > 9 then y - 9 else y
+  where y = x * 2
 
 luhn :: Int -> Int -> Int -> Int -> Bool
-luhn a b c d = total `mod` 10 == 0
-  where total = luhnDouble a + b + luhnDouble c + d
+luhn a b c d = mod total 10 == 0
+  where total = (luhnDouble a) + b + (luhnDouble c) + d
+
 
 -- ---------------------------------------------------------------------------
 -- Exercise 8
@@ -171,10 +175,10 @@ luhn a b c d = total `mod` 10 == 0
 -- ---------------------------------------------------------------------------
 
 grade :: Int -> Char
-grade n
-  | n >= 90   = 'A'
-  | n >= 80   = 'B'
-  | n >= 70   = 'C'
-  | n >= 60   = 'D'
-  | n >= 50   = 'E'
+grade x
+  | x >= 90 = 'A'
+  | x >= 80 = 'B'
+  | x >= 70 = 'C'
+  | x >= 60 = 'D'
+  | x >= 50 = 'E'
   | otherwise = 'F'
