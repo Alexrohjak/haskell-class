@@ -375,6 +375,59 @@ footer strong { color: var(--ink-soft); }
   * { animation: none !important; transition: none !important; }
 }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+
+/* ---- plain-language summary + interactive demos (added later) ---- */
+.plainbox{background:var(--accent-soft);border-left:2px solid var(--accent);
+  padding:13px 17px;margin:0 0 18px;max-width:var(--col)}
+.plainbox .eyebrow{color:var(--accent);display:block;margin:0 0 6px}
+.plainbox p{margin:0;font:400 16px/1.62 var(--f-display);color:var(--ink)}
+.demobox{border:1px solid var(--line);background:var(--surface);padding:18px 20px;
+  margin:22px 0 0;border-radius:var(--r)}
+.demobox > .eyebrow{color:var(--accent);display:block;margin:0 0 15px}
+.hd-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 13px}
+.hd-f{display:flex;flex-direction:column;gap:5px;margin:0 0 13px;
+  font:400 12px/1 var(--f-body);color:var(--ink-faint)}
+.hd-f.wide{max-width:380px}
+.hd-f span b{color:var(--accent);font:500 13px/1 var(--f-mono)}
+.hd-f input{font:400 13.5px/1 var(--f-mono);padding:8px 10px;border-radius:var(--r);
+  border:1px solid var(--line);background:var(--ground);color:var(--ink);
+  width:100%;max-width:44ch}
+.hd-f input[type=range]{padding:0;border:none;background:none;accent-color:var(--accent)}
+.hd-chip{font:400 12.5px/1 var(--f-mono);padding:6px 10px;border-radius:var(--r);cursor:pointer;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink-soft)}
+.hd-chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.hd-btn{font:500 12.5px/1 var(--f-body);padding:8px 12px;border-radius:var(--r);cursor:pointer;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.hd-btn.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.hd-t{width:100%;border-collapse:collapse;margin:0 0 4px;font-size:14px}
+.hd-t th{text-align:left;font:500 11px/1 var(--f-body);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-faint);padding:6px 12px 6px 0;border-bottom:1px solid var(--line)}
+.hd-t td{padding:6px 12px 6px 0;border-bottom:1px solid var(--surface-2);vertical-align:top}
+.hd-t tr.on td{background:var(--accent-soft)}
+.hd-t tr.off td{opacity:.42}
+.hd-m{font-family:var(--f-mono);font-size:13px;color:var(--ink)}
+.hd-ty{color:var(--accent)}
+.hd-m.good,.hd-k.good{color:var(--good)} .hd-m.bad,.hd-k.bad{color:var(--bad)}
+.hd-n{font:400 13px/1.6 var(--f-body);color:var(--ink-faint);margin:11px 0 0;max-width:var(--col)}
+.hd-k{font:500 14px/1.6 var(--f-mono);color:var(--ink);margin:11px 0 0}
+.hd-k b{color:var(--accent)}
+.hd-scroll{overflow-x:auto;max-height:330px;overflow-y:auto}
+.hd-pre{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r);
+  padding:12px 14px;margin:0 0 13px;overflow-x:auto;
+  font:400 13px/1.6 var(--f-mono);color:var(--ink);white-space:pre}
+.hd-tape{display:flex;align-items:center;gap:6px;margin:0 0 7px;overflow-x:auto;padding-bottom:2px}
+.hd-l{font:400 11px/1 var(--f-mono);color:var(--ink-faint);flex:0 0 auto;margin-right:4px}
+.hd-cell{display:inline-grid;place-items:center;min-width:2.2ch;padding:6px 8px;border-radius:var(--r);
+  font:500 13px/1 var(--f-mono);background:var(--surface-2);color:var(--ink-soft);flex:0 0 auto}
+.hd-cell.good{background:var(--good-soft);color:var(--good)}
+.hd-cell.off{opacity:.35}
+.hd-steps{display:grid;gap:3px;margin:0 0 13px}
+.hd-step{display:flex;gap:9px;align-items:baseline;padding:5px 9px;border-radius:var(--r);
+  font-size:14px}
+.hd-step.on{background:var(--accent-soft)}
+.hd-step code{font:400 13.5px/1.55 var(--f-mono);color:var(--ink)}
+.hd-eq{font:400 13.5px/1 var(--f-mono);color:var(--ink-faint);flex:0 0 1ch}
+
 </style>
 
 <header class="topbar">
@@ -1370,6 +1423,614 @@ function renderHome() {
   view.appendChild(p3);
 }
 
+
+/* ==========================================================================
+   Plain-language summaries and interactive demos.
+
+   Keyed by concept title so that nothing in WEEKS above has to change — add a
+   title here and the concept grows a summary box or a demo; leave it out and
+   the concept renders exactly as it did before.
+   ========================================================================== */
+
+const PLAIN = {
+"An equals sign is not an assignment":
+  "In most languages = means 'put this value in this box'. In Haskell it means 'this name IS this thing, permanently'. Nothing is ever a box, so nothing ever changes.",
+"GHCi is the tool you live in":
+  "GHCi is an interactive prompt where you can try expressions and, crucially, ask what type something has without running it. :t is the command you will use more than any other.",
+"Application binds tighter than every operator":
+  "Writing f x means 'apply f to x', and that binding is stronger than any operator. So f x + 1 means (f x) + 1, never f (x + 1).",
+"Backticks and the list toolkit":
+  "Backticks let you write a two-argument function between its arguments, so div 7 2 can be written 7 `div` 2. It reads better and means exactly the same thing.",
+"Indentation is syntax, not style":
+  "How far you indent decides what belongs to what. Get it wrong and the program means something different, or stops compiling. Whitespace is part of the language here.",
+"No loops — recursion instead":
+  "There is no for or while, because those need a counter that changes, and nothing changes. Instead a function calls itself on a smaller input until it hits a case it can answer outright.",
+"Evaluation is lazy: outside in":
+  "Haskell does not compute anything until someone actually needs the answer. That is why you can write an infinite list: only the part you look at ever gets built.",
+"A type is a set of values, checked before anything runs":
+  "A type is just the collection of values something is allowed to be. The compiler checks these before your program starts, so a whole class of mistakes never gets the chance to run.",
+"Lists and tuples differ in two ways at once":
+  "A list can be any length but everything in it must be the same type. A tuple has a fixed length but the parts can be different types. Two differences, not one.",
+"Every function takes exactly one argument":
+  "A 'two-argument' function is really a function that takes one argument and hands back another function waiting for the next. That is why you can apply half the arguments and get something useful.",
+"Polymorphism: a type variable is a promise of ignorance":
+  "A lowercase letter in a type means 'any type at all'. And because the function knows nothing about that type, there is very little it can legally do — which makes the type a strong hint about the code.",
+"`Ord a =>` is a constraint, not an argument":
+  "The bit before => is not something you pass in. It is a requirement: 'this works for any type a, as long as that type can be ordered'.",
+"The two class traps he flags by name":
+  "Two things that surprise everyone: whole numbers you type are not automatically Int, and comparing two floating-point numbers with == is unreliable.",
+"`if` is an expression, so `else` is compulsory":
+  "An if in Haskell must produce a value, so it must have an answer on every branch. There is no 'do nothing' case, which is why else is never optional.",
+"Guards read better than nested ifs":
+  "Guards let you list conditions down the left-hand side with their answers on the right, instead of burying them in nested ifs. Same meaning, far more readable.",
+"Patterns match on shape":
+  "Instead of asking 'is this list empty?' with a condition, you write one equation for the empty case and another for the non-empty case, and Haskell picks the one that fits.",
+"`(x:xs)` needs its parentheses, and matches only non-empty":
+  "(x:xs) splits a list into its first element and the rest — so it only matches lists that HAVE a first element. Drop the parentheses and it parses as something else entirely.",
+"Lambdas are what function definitions are made of":
+  "A lambda is a function with no name, written inline. Every named function is really just a name bound to one of these.",
+"Sections, and the one operator that betrays you":
+  "You can fill in one side of an operator and leave the other blank: (2*) doubles, (*2) also doubles. It works for every operator except subtraction, where (-2) means negative two.",
+"Comprehensions come from set notation":
+  "A list comprehension reads like the set-builder notation from maths: take each x from this list, keep the ones that satisfy this condition, and build this from them.",
+"With several generators, the last one moves fastest":
+  "With two generators it behaves like nested loops, and the RIGHTMOST one is the inner loop — it runs all the way through for each single step of the one on its left.",
+"Empty ranges hand you base cases for free":
+  "[1..0] is not an error, it is the empty list. So a comprehension over it produces nothing, and awkward edge cases often handle themselves.",
+"Patterns on the left of `<-` also filter":
+  "You can put a pattern instead of a plain name on the left of <-, and anything that doesn't match that shape is silently skipped rather than crashing.",
+"`zip` truncates, and two idioms depend on it":
+  "zip pairs up two lists and stops as soon as either runs out. That is not a limitation to work around — two very common tricks rely on it.",
+"Strings are lists, so all of this works on text":
+  "A String is literally a list of characters. Every list function you have learned already works on text, with no new vocabulary."
+};
+
+const DEMO_FOR = {
+"An equals sign is not an assignment":"reduce",
+"GHCi is the tool you live in":"types",
+"Application binds tighter than every operator":"precedence",
+"Backticks and the list toolkit":"prelude",
+"Indentation is syntax, not style":"layout",
+"No loops — recursion instead":"reduce",
+"Evaluation is lazy: outside in":"lazy",
+"Lists and tuples differ in two ways at once":"types",
+"Every function takes exactly one argument":"curry",
+"Polymorphism: a type variable is a promise of ignorance":"types",
+"`Ord a =>` is a constraint, not an argument":"types",
+"`if` is an expression, so `else` is compulsory":"guards",
+"Guards read better than nested ifs":"guards",
+"Patterns match on shape":"patterns",
+"`(x:xs)` needs its parentheses, and matches only non-empty":"patterns",
+"Sections, and the one operator that betrays you":"sections",
+"Comprehensions come from set notation":"comprehension",
+"With several generators, the last one moves fastest":"comprehension",
+"Empty ranges hand you base cases for free":"ranges",
+"Patterns on the left of `<-` also filter":"comprehension",
+"`zip` truncates, and two idioms depend on it":"zip",
+"Strings are lists, so all of this works on text":"prelude"
+};
+
+const DEMO_TITLE = {
+  reduce:"Substitute, step by step", types:"Ask GHCi for the type",
+  precedence:"Where do the brackets go?", prelude:"The list toolkit, live",
+  layout:"What the indentation groups", lazy:"How much actually gets built",
+  curry:"Apply one argument at a time", guards:"Which guard fires?",
+  patterns:"Which equation matches?", sections:"Fill in one side",
+  comprehension:"Watch the generators turn", ranges:"Ranges, including the empty ones",
+  zip:"Where zip stops"
+};
+
+const HD = {};
+const hesc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const hfield = (lab,id,val,extra) =>
+  `<label class="hd-f"><span>${hesc(lab)}</span><input id="${id}" value="${hesc(val)}"
+    spellcheck="false" ${extra||""}></label>`;
+
+/* --- a tiny Haskell expression parser, for the precedence demo ----------- */
+const FIX = {"^":[8,"r"],"*":[7,"l"],"/":[7,"l"],"div":[7,"l"],"mod":[7,"l"],
+  "+":[6,"l"],"-":[6,"l"],":":[5,"r"],"++":[5,"r"],
+  "==":[4,"n"],"/=":[4,"n"],"<":[4,"n"],"<=":[4,"n"],">":[4,"n"],">=":[4,"n"],
+  "&&":[3,"r"],"||":[2,"r"],"$":[0,"r"]};
+function lex(src){
+  const out=[]; let i=0;
+  const ops=Object.keys(FIX).filter(o=>!/^[a-z]/.test(o)).sort((a,b)=>b.length-a.length);
+  while(i<src.length){
+    const c=src[i];
+    if(/\s/.test(c)){i++;continue;}
+    if(c==="("||c===")"){out.push({k:c});i++;continue;}
+    if(c==="`"){ const j=src.indexOf("`",i+1); if(j<0) throw 0;
+      out.push({k:"op",v:src.slice(i+1,j)}); i=j+1; continue; }
+    if(/[0-9]/.test(c)){ let j=i; while(j<src.length&&/[0-9.]/.test(src[j]))j++;
+      out.push({k:"atom",v:src.slice(i,j)}); i=j; continue; }
+    if(/[A-Za-z_]/.test(c)){ let j=i; while(j<src.length&&/[A-Za-z0-9_']/.test(src[j]))j++;
+      const w=src.slice(i,j); i=j;
+      out.push(FIX[w]&&/^[a-z]/.test(w)&&false?{k:"op",v:w}:{k:"atom",v:w}); continue; }
+    const hit=ops.find(o=>src.startsWith(o,i));
+    if(!hit) throw 0;
+    out.push({k:"op",v:hit}); i+=hit.length;
+  }
+  return out;
+}
+function parse(ts){
+  let p=0;
+  const peek=()=>ts[p];
+  function atom(){
+    const t=ts[p];
+    if(!t) throw 0;
+    if(t.k==="("){ p++; const e=expr(0); if(!ts[p]||ts[p].k!==")") throw 0; p++; return e; }
+    if(t.k==="atom"){ p++; return {t:"a",v:t.v}; }
+    throw 0;
+  }
+  function app(){
+    let left=atom();
+    while(peek()&&(peek().k==="atom"||peek().k==="(")) left={t:"ap",l:left,r:atom()};
+    return left;
+  }
+  function expr(min){
+    let left=app();
+    while(peek()&&peek().k==="op"){
+      const f=FIX[peek().v]; if(!f||f[0]<min) break;
+      const op=ts[p].v; p++;
+      const right=expr(f[1]==="l"?f[0]+1:f[0]);
+      left={t:"op",v:op,l:left,r:right};
+    }
+    return left;
+  }
+  const e=expr(0);
+  if(p!==ts.length) throw 0;
+  return e;
+}
+function show(n){
+  if(n.t==="a") return hesc(n.v);
+  if(n.t==="ap") return `(${show(n.l)} ${show(n.r)})`;
+  const op = /^[a-z]/.test(n.v) ? "`"+n.v+"`" : n.v;
+  return `(${show(n.l)} ${hesc(op)} ${show(n.r)})`;
+}
+function evalNode(n){
+  if(n.t==="a"){ const x=parseFloat(n.v); return isNaN(x)?null:x; }
+  if(n.t==="ap") return null;
+  const a=evalNode(n.l), b=evalNode(n.r);
+  if(a===null||b===null) return null;
+  switch(n.v){
+    case "^":return Math.pow(a,b); case "*":return a*b; case "/":return a/b;
+    case "div":return Math.floor(a/b); case "mod":return ((a%b)+b)%b;
+    case "+":return a+b; case "-":return a-b;
+    default:return null;
+  }
+}
+HD.precedence = host => {
+  host.innerHTML = `${hfield("An expression","hd-e","2 ^ 3 * 4")}
+    <div class="hd-row" id="hd-eg"></div><div id="hd-o"></div>`;
+  const egs=["2 ^ 3 * 4","2 * 3 + 4 * 5","2 + 3 * 4 ^ 5","f x + 1","f (x + 1)",
+             "signum x * 2","7 `div` 2 + 1","1 : 2 : [] ++ xs"];
+  document.getElementById("hd-eg").innerHTML =
+    egs.map(e=>`<button class="hd-chip" data-e="${hesc(e)}">${hesc(e)}</button>`).join("");
+  const draw = () => {
+    const src=document.getElementById("hd-e").value;
+    let out;
+    try{
+      const n=parse(lex(src));
+      const v=evalNode(n);
+      out=`<p class="hd-k">${show(n)}</p>
+        ${v!==null?`<p class="hd-n">Value: <b>${Number.isInteger(v)?v:v.toFixed(4)}</b></p>`:""}
+        <p class="hd-n">Fully bracketed. Application — a plain space — always binds tightest, so
+          it is bracketed before any operator gets a look in.</p>`;
+    }catch(e){
+      out=`<p class="hd-n">Cannot parse that. This demo understands numbers, names, brackets,
+        backticked functions, and the operators ^ * / + - : ++ == &lt; &gt; &amp;&amp; || $.</p>`;
+    }
+    document.getElementById("hd-o").innerHTML=out;
+  };
+  host.querySelectorAll("#hd-eg .hd-chip").forEach(b=>b.onclick=()=>{
+    document.getElementById("hd-e").value=b.dataset.e; draw();
+  });
+  document.getElementById("hd-e").oninput=draw; draw();
+};
+
+/* --- currying: apply one argument at a time ----------------------------- */
+function splitArrow(sig){
+  const parts=[]; let d=0, cur="";
+  for(let i=0;i<sig.length;i++){
+    const c=sig[i];
+    if(c==="("||c==="[")d++; if(c===")"||c==="]")d--;
+    if(!d && c==="-" && sig[i+1]===">"){ parts.push(cur.trim()); cur=""; i++; continue; }
+    cur+=c;
+  }
+  parts.push(cur.trim());
+  return parts;
+}
+HD.curry = host => {
+  const EX = {
+    "add :: Int -> Int -> Int":["add","3","4"],
+    "take :: Int -> [a] -> [a]":["take","3","\"abcdef\""],
+    "zip3 :: [a] -> [b] -> [c] -> [(a,b,c)]":["zip3","xs","ys","zs"],
+    "replicate :: Int -> a -> [a]":["replicate","4","'x'"]
+  };
+  const keys=Object.keys(EX);
+  host.innerHTML = `<div class="hd-row" id="hd-c"></div><div id="hd-o"></div>`;
+  document.getElementById("hd-c").innerHTML = keys.map((k,i)=>
+    `<button class="hd-chip" data-k="${hesc(k)}" aria-pressed="${i===0}">${hesc(k.split(" ::")[0])}</button>`).join("");
+  let cur=keys[0], n=0;
+  const draw = () => {
+    const [name,sig]=cur.split(" :: ");
+    const parts=splitArrow(sig), args=EX[cur].slice(1);
+    const rows=[];
+    for(let k=0;k<=args.length;k++){
+      const applied=[name,...args.slice(0,k)].join(" ");
+      const rest=parts.slice(k).join(" -> ");
+      rows.push(`<tr class="${k===n?"on":""}">
+        <td class="hd-m">${hesc(applied)}</td><td class="hd-m hd-ty">:: ${hesc(rest)}</td>
+        <td class="hd-n">${k===0?"the function itself"
+          :k<args.length?`still wants ${parts.length-1-k} more`
+          :"fully applied — this is a value now"}</td></tr>`);
+    }
+    document.getElementById("hd-o").innerHTML = `
+      <table class="hd-t"><tr><th>expression</th><th>type</th><th></th></tr>${rows.join("")}</table>
+      <div class="hd-row">
+        <button class="hd-btn" id="hd-less">← Take one back</button>
+        <button class="hd-btn on" id="hd-more">Apply one more →</button>
+      </div>
+      <p class="hd-n">Each arrow is one application. Feeding an argument does not "call" the
+        function — it removes one arrow and hands you back whatever is left, which is usually
+        another function. That is why partial application costs nothing special.</p>`;
+    document.getElementById("hd-more").onclick=()=>{ if(n<args.length){n++;draw();} };
+    document.getElementById("hd-less").onclick=()=>{ if(n>0){n--;draw();} };
+  };
+  host.querySelectorAll("#hd-c .hd-chip").forEach(b=>b.onclick=()=>{
+    cur=b.dataset.k; n=0;
+    host.querySelectorAll("#hd-c .hd-chip").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+    draw();
+  });
+  draw();
+};
+
+/* --- list comprehensions ------------------------------------------------- */
+HD.comprehension = host => {
+  const EX = {
+    "[x*2 | x <- [1..5]]":{gens:[["x",1,5]],guard:"",out:"x*2"},
+    "[x | x <- [1..10], even x]":{gens:[["x",1,10]],guard:"even x",out:"x"},
+    "[(x,y) | x <- [1..3], y <- [1..3]]":{gens:[["x",1,3],["y",1,3]],guard:"",out:"(x,y)"},
+    "[(x,y) | x <- [1..4], y <- [1..4], x < y]":{gens:[["x",1,4],["y",1,4]],guard:"x < y",out:"(x,y)"},
+    "[x*y | x <- [1..3], y <- [1..3], x /= y]":{gens:[["x",1,3],["y",1,3]],guard:"x /= y",out:"x*y"}
+  };
+  const keys=Object.keys(EX);
+  host.innerHTML = `<div class="hd-row" id="hd-cp"></div><div id="hd-o"></div>`;
+  document.getElementById("hd-cp").innerHTML = keys.map((k,i)=>
+    `<button class="hd-chip" data-k="${hesc(k)}" aria-pressed="${i===0}">${i+1}</button>`).join("")
+    + `<span class="hd-n" id="hd-lbl"></span>`;
+  let cur=keys[0];
+  const draw = () => {
+    const {gens,guard,out}=EX[cur];
+    document.getElementById("hd-lbl").innerHTML=`<code>${hesc(cur)}</code>`;
+    const rows=[], kept=[];
+    const walk=(i,env)=>{
+      if(i===gens.length){
+        let keep=true;
+        if(guard==="even x") keep = env.x%2===0;
+        if(guard==="x < y")  keep = env.x<env.y;
+        if(guard==="x /= y") keep = env.x!==env.y;
+        let val;
+        if(out==="x*2") val=env.x*2; else if(out==="x") val=env.x;
+        else if(out==="x*y") val=env.x*env.y; else val=`(${env.x},${env.y})`;
+        rows.push({env:{...env},keep,val});
+        if(keep) kept.push(val);
+        return;
+      }
+      const [nm,a,b]=gens[i];
+      for(let v=a;v<=b;v++){ env[nm]=v; walk(i+1,env); }
+    };
+    walk(0,{});
+    const names=gens.map(g=>g[0]);
+    document.getElementById("hd-o").innerHTML = `
+      <div class="hd-scroll"><table class="hd-t">
+        <tr>${names.map(n=>`<th>${n}</th>`).join("")}${guard?`<th>${hesc(guard)}</th>`:""}<th>result</th></tr>
+        ${rows.map(r=>`<tr class="${r.keep?"":"off"}">
+          ${names.map(n=>`<td class="hd-m">${r.env[n]}</td>`).join("")}
+          ${guard?`<td class="hd-m ${r.keep?"good":"bad"}">${r.keep?"True":"False"}</td>`:""}
+          <td class="hd-m">${r.keep?hesc(String(r.val)):"—"}</td></tr>`).join("")}
+      </table></div>
+      <p class="hd-k">[${kept.map(v=>hesc(String(v))).join(", ")}]</p>
+      <p class="hd-n">${gens.length>1
+        ? `Read the <b>${names[names.length-1]}</b> column: it runs all the way through for every
+           single step of <b>${names[0]}</b>. The rightmost generator is the inner loop.`
+        : "One generator, so one pass."}${guard?" Greyed rows are the ones the guard threw away.":""}</p>`;
+  };
+  host.querySelectorAll("#hd-cp .hd-chip").forEach(b=>b.onclick=()=>{
+    cur=b.dataset.k;
+    host.querySelectorAll("#hd-cp .hd-chip").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+    draw();
+  });
+  draw();
+};
+
+/* --- ranges, including the empty ones ------------------------------------ */
+HD.ranges = host => {
+  host.innerHTML = `<div class="hd-row">${hfield("from","hd-a","1",'type="number" style="width:8ch"')}
+    ${hfield("to","hd-b","5",'type="number" style="width:8ch"')}</div><div id="hd-o"></div>`;
+  const draw = () => {
+    const a=parseInt(document.getElementById("hd-a").value||"0",10);
+    const b=parseInt(document.getElementById("hd-b").value||"0",10);
+    const xs=[]; for(let v=a;v<=b && xs.length<40;v++) xs.push(v);
+    document.getElementById("hd-o").innerHTML = `
+      <p class="hd-k">[${a}..${b}]  =  [${xs.join(", ")}]</p>
+      <p class="hd-k">length [${a}..${b}]  =  ${xs.length}</p>
+      <p class="hd-k">[x*x | x &lt;- [${a}..${b}]]  =  [${xs.map(x=>x*x).join(", ")}]</p>
+      <p class="hd-n">${xs.length===0
+        ? "Empty — and note it is not an error. A comprehension over it produces nothing, and a sum over it is 0. Base cases you never had to write."
+        : "Now set 'to' below 'from' and watch it become the empty list rather than an error."}</p>`;
+  };
+  document.getElementById("hd-a").oninput=draw; document.getElementById("hd-b").oninput=draw; draw();
+};
+
+/* --- zip truncation ------------------------------------------------------ */
+HD.zip = host => {
+  host.innerHTML = `<div class="hd-row">${hfield("xs","hd-x","1,2,3,4,5")}
+    ${hfield("ys","hd-y","a,b,c")}</div><div id="hd-o"></div>`;
+  const draw = () => {
+    const xs=document.getElementById("hd-x").value.split(",").map(s=>s.trim()).filter(Boolean);
+    const ys=document.getElementById("hd-y").value.split(",").map(s=>s.trim()).filter(Boolean);
+    const n=Math.min(xs.length,ys.length);
+    const pairs=Array.from({length:n},(_,i)=>`(${xs[i]},${ys[i]})`);
+    const cell=(v,on)=>`<span class="hd-cell ${on?"":"off"}">${hesc(v)}</span>`;
+    document.getElementById("hd-o").innerHTML = `
+      <div class="hd-tape"><span class="hd-l">xs</span>${xs.map((v,i)=>cell(v,i<n)).join("")}</div>
+      <div class="hd-tape"><span class="hd-l">ys</span>${ys.map((v,i)=>cell(v,i<n)).join("")}</div>
+      <p class="hd-k">zip xs ys = [${pairs.join(", ")}]</p>
+      <p class="hd-n">Length ${n} — the shorter of ${xs.length} and ${ys.length}. Faded cells are
+        dropped. Two idioms live on this: <code>zip xs [0..]</code> pairs each element with its
+        index without you counting the list first, and <code>zip xs (tail xs)</code> gives every
+        adjacent pair, because <code>tail xs</code> is exactly one shorter.</p>`;
+  };
+  document.getElementById("hd-x").oninput=draw; document.getElementById("hd-y").oninput=draw; draw();
+};
+
+/* --- laziness ------------------------------------------------------------ */
+HD.lazy = host => {
+  host.innerHTML = `<label class="hd-f wide"><span>take <b id="hd-nv">5</b> [1..]</span>
+      <input type="range" id="hd-nr" min="0" max="20" value="5"></label><div id="hd-o"></div>`;
+  const draw = () => {
+    const n=+document.getElementById("hd-nr").value;
+    document.getElementById("hd-nv").textContent=n;
+    const built=Array.from({length:n},(_,i)=>i+1);
+    document.getElementById("hd-o").innerHTML = `
+      <div class="hd-tape"><span class="hd-l">[1..]</span>
+        ${built.map(v=>`<span class="hd-cell good">${v}</span>`).join("")}
+        <span class="hd-cell off">…</span></div>
+      <p class="hd-k">take ${n} [1..] = [${built.join(", ")}]</p>
+      <p class="hd-n">Exactly ${n} element${n===1?"":"s"} ever existed. The list is infinite on
+        paper; in memory only the part someone asked for gets built. Drag to 0 and nothing is
+        built at all — which is why <code>take 0 undefined'</code>-style expressions can still
+        return.</p>`;
+  };
+  document.getElementById("hd-nr").oninput=draw; draw();
+};
+
+/* --- guards: which one fires -------------------------------------------- */
+HD.guards = host => {
+  host.innerHTML = `<label class="hd-f wide"><span>n = <b id="hd-gv">72</b></span>
+      <input type="range" id="hd-gr" min="0" max="100" value="72"></label><div id="hd-o"></div>`;
+  const G=[["n >= 80","\"A\"",n=>n>=80],["n >= 70","\"B\"",n=>n>=70],
+           ["n >= 60","\"C\"",n=>n>=60],["n >= 50","\"D\"",n=>n>=50],
+           ["otherwise","\"F\"",()=>true]];
+  const draw = () => {
+    const n=+document.getElementById("hd-gr").value;
+    document.getElementById("hd-gv").textContent=n;
+    let fired=-1;
+    const rows=G.map((g,i)=>{
+      const val=g[2](n);
+      const isFirst = fired<0 && val;
+      if(isFirst) fired=i;
+      return `<tr class="${isFirst?"on":(fired>=0&&i>fired?"off":"")}">
+        <td class="hd-m">| ${hesc(g[0])}</td><td class="hd-m">= ${hesc(g[1])}</td>
+        <td class="hd-n">${isFirst?"fires":(fired>=0&&i>fired?"never reached":
+          (val?"":"False"))}</td></tr>`;
+    });
+    document.getElementById("hd-o").innerHTML = `
+      <p class="hd-m">grade :: Int -> String</p>
+      <table class="hd-t">${rows.join("")}</table>
+      <p class="hd-k">grade ${n} = ${G[fired][1]}</p>
+      <p class="hd-n">Guards are tried <b>top to bottom</b> and the first True wins — everything
+        below it is never even evaluated. That is why the order matters, and why
+        <code>otherwise</code> (which is just <code>True</code>) goes last. Written as nested
+        <code>if</code>s this would be five levels deep.</p>`;
+  };
+  document.getElementById("hd-gr").oninput=draw; draw();
+};
+
+/* --- pattern matching: which equation ----------------------------------- */
+HD.patterns = host => {
+  host.innerHTML = `${hfield("A list, comma separated (leave empty for [])","hd-p","1,2,3")}
+    <div id="hd-o"></div>`;
+  const draw = () => {
+    const raw=document.getElementById("hd-p").value.trim();
+    const xs=raw?raw.split(",").map(s=>s.trim()).filter(Boolean):[];
+    const eqs=[
+      ["describe []","\"empty\"",xs.length===0],
+      ["describe [x]","\"one: \" ++ show x",xs.length===1],
+      ["describe (x:xs)","\"first \" ++ show x ++ \", rest \" ++ show xs",xs.length>=1]
+    ];
+    let fired=eqs.findIndex(e=>e[2]);
+    const val = fired===0?'"empty"'
+      : fired===1?`"one: ${xs[0]}"`
+      : `"first ${xs[0]}, rest [${xs.slice(1).join(",")}]"`;
+    document.getElementById("hd-o").innerHTML = `
+      <p class="hd-m">describe :: Show a => [a] -> String</p>
+      <table class="hd-t">${eqs.map((e,i)=>`<tr class="${i===fired?"on":(i>fired?"off":"")}">
+        <td class="hd-m">${hesc(e[0])}</td><td class="hd-m">= ${hesc(e[1])}</td>
+        <td class="hd-n">${i===fired?"matches":(i>fired?"never reached":"shape does not fit")}</td>
+      </tr>`).join("")}</table>
+      <p class="hd-k">describe [${xs.join(",")}] = ${hesc(val)}</p>
+      <p class="hd-n">The list <code>[${xs.join(",")}]</code> has ${xs.length} element${xs.length===1?"":"s"}.
+        Equations are tried top to bottom and the first whose <em>shape</em> fits wins — no
+        conditions written anywhere. Note <code>(x:xs)</code> would also match a one-element list,
+        but the equation above it got there first.</p>`;
+  };
+  document.getElementById("hd-p").oninput=draw; draw();
+};
+
+/* --- sections ------------------------------------------------------------ */
+HD.sections = host => {
+  host.innerHTML = `<label class="hd-f wide"><span>applied to <b id="hd-sv">10</b></span>
+      <input type="range" id="hd-sr" min="-10" max="20" value="10"></label><div id="hd-o"></div>`;
+  const S=[["(2*)","2 * x",x=>2*x,"left section — the gap is on the right"],
+           ["(*2)","x * 2",x=>x*2,"right section — same answer here, because * commutes"],
+           ["(2^)","2 ^ x",x=>Math.pow(2,x),"2 to the power of x"],
+           ["(^2)","x ^ 2",x=>x*x,"x squared — not the same as (2^)"],
+           ["(10-)","10 - x",x=>10-x,"left section of minus: fine"],
+           ["subtract 2","x - 2",x=>x-2,"what you must write, because (-2) is negative two"]];
+  const draw = () => {
+    const x=+document.getElementById("hd-sr").value;
+    document.getElementById("hd-sv").textContent=x;
+    document.getElementById("hd-o").innerHTML = `
+      <table class="hd-t"><tr><th>section</th><th>means</th><th>at x = ${x}</th><th></th></tr>
+      ${S.map(s=>`<tr><td class="hd-m">${hesc(s[0])}</td><td class="hd-m">${hesc(s[1])}</td>
+        <td class="hd-m good">${s[2](x)}</td><td class="hd-n">${hesc(s[3])}</td></tr>`).join("")}
+      <tr class="off"><td class="hd-m bad">(-2)</td><td class="hd-m">−2</td>
+        <td class="hd-m bad">−2</td><td class="hd-n">a negative number, not a section. This is
+        the one that betrays you.</td></tr></table>
+      <p class="hd-n">Compare <code>(2^)</code> and <code>(^2)</code> as you drag — they only
+        agree at x = 2. Which side the gap is on is the whole content of a section.</p>`;
+  };
+  document.getElementById("hd-sr").oninput=draw; draw();
+};
+
+/* --- the list toolkit ---------------------------------------------------- */
+HD.prelude = host => {
+  host.innerHTML = `${hfield("A list (or a string in quotes)","hd-ls","[1,2,3,4,5]")}
+    <div id="hd-o"></div>`;
+  const draw = () => {
+    const raw=document.getElementById("hd-ls").value.trim();
+    let xs, str=false;
+    if(/^".*"$/.test(raw)){ xs=[...raw.slice(1,-1)]; str=true; }
+    else xs=raw.replace(/^\[|\]$/g,"").split(",").map(s=>s.trim()).filter(Boolean);
+    const nums=xs.every(v=>!isNaN(parseFloat(v)));
+    const sh=a=>str?`"${a.join("")}"`:`[${a.join(",")}]`;
+    const one=v=>str?`'${v}'`:v;
+    const F=[
+      ["length xs",xs.length],["null xs",xs.length===0?"True":"False"],
+      ["head xs",xs.length?one(xs[0]):"*** exception"],
+      ["tail xs",xs.length?sh(xs.slice(1)):"*** exception"],
+      ["last xs",xs.length?one(xs[xs.length-1]):"*** exception"],
+      ["init xs",xs.length?sh(xs.slice(0,-1)):"*** exception"],
+      ["reverse xs",sh([...xs].reverse())],
+      ["take 3 xs",sh(xs.slice(0,3))],["drop 3 xs",sh(xs.slice(3))],
+      ["sum xs",nums?xs.reduce((a,b)=>a+parseFloat(b),0):"— needs numbers"],
+      ["product xs",nums?xs.reduce((a,b)=>a*parseFloat(b),1):"— needs numbers"],
+      ["maximum xs",xs.length?(nums?Math.max(...xs.map(parseFloat)):one([...xs].sort().pop())):"*** exception"],
+      ["xs ++ xs",sh([...xs,...xs])]
+    ];
+    document.getElementById("hd-o").innerHTML = `
+      <table class="hd-t">${F.map(f=>`<tr><td class="hd-m">${hesc(f[0])}</td>
+        <td class="hd-m ${String(f[1]).startsWith("***")?"bad":"good"}">${hesc(String(f[1]))}</td></tr>`).join("")}</table>
+      <p class="hd-n">${str
+        ? "A String is a list of Char, so every one of these works on text unchanged — that is the whole point."
+        : "Try replacing the list with <code>&quot;hello&quot;</code>. Every function still applies, because a String <em>is</em> a list."}
+        <code>head</code> and <code>tail</code> throw on the empty list; pattern matching does not,
+        which is why it is preferred.</p>`;
+  };
+  document.getElementById("hd-ls").oninput=draw; draw();
+};
+
+/* --- reduction stepper --------------------------------------------------- */
+HD.reduce = host => {
+  const EX = {
+    "double 3 + double 3":["double x = x * 2","double 3 + double 3","(3 * 2) + double 3",
+      "6 + double 3","6 + (3 * 2)","6 + 6","12"],
+    "length' [1,2,3]":["length' [] = 0\nlength' (_:xs) = 1 + length' xs",
+      "length' [1,2,3]","1 + length' [2,3]","1 + (1 + length' [3])",
+      "1 + (1 + (1 + length' []))","1 + (1 + (1 + 0))","1 + (1 + 1)","1 + 2","3"],
+    "fac 4":["fac 0 = 1\nfac n = n * fac (n-1)","fac 4","4 * fac 3","4 * (3 * fac 2)",
+      "4 * (3 * (2 * fac 1))","4 * (3 * (2 * (1 * fac 0)))","4 * (3 * (2 * (1 * 1)))",
+      "4 * (3 * (2 * 1))","4 * (3 * 2)","4 * 6","24"]
+  };
+  const keys=Object.keys(EX);
+  host.innerHTML = `<div class="hd-row" id="hd-rs"></div><div id="hd-o"></div>`;
+  document.getElementById("hd-rs").innerHTML = keys.map((k,i)=>
+    `<button class="hd-chip" data-k="${hesc(k)}" aria-pressed="${i===0}">${hesc(k)}</button>`).join("");
+  let cur=keys[0], step=1;
+  const draw = () => {
+    const seq=EX[cur], def=seq[0], steps=seq.slice(1);
+    step=Math.min(step,steps.length);
+    document.getElementById("hd-o").innerHTML = `
+      <pre class="hd-pre">${hesc(def)}</pre>
+      <div class="hd-steps">${steps.slice(0,step).map((s,i)=>
+        `<div class="hd-step ${i===step-1?"on":""}">${i?'<span class="hd-eq">=</span>':'<span class="hd-eq"> </span>'}
+          <code>${hesc(s)}</code></div>`).join("")}</div>
+      <div class="hd-row">
+        <button class="hd-btn" id="hd-b1">← Back</button>
+        <button class="hd-btn on" id="hd-b2">Substitute →</button>
+        <button class="hd-btn" id="hd-b3">All the way</button>
+      </div>
+      <p class="hd-n">Every line is the one above it with a definition substituted in. Nothing is
+        assigned, nothing changes — each line simply <em>is</em> the one before. That is what
+        referential transparency buys you, and it is exactly how the exam's "evaluate this by
+        hand" questions are marked.</p>`;
+    document.getElementById("hd-b2").onclick=()=>{ if(step<steps.length){step++;draw();} };
+    document.getElementById("hd-b1").onclick=()=>{ if(step>1){step--;draw();} };
+    document.getElementById("hd-b3").onclick=()=>{ step=steps.length; draw(); };
+  };
+  host.querySelectorAll("#hd-rs .hd-chip").forEach(b=>b.onclick=()=>{
+    cur=b.dataset.k; step=1;
+    host.querySelectorAll("#hd-rs .hd-chip").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+    draw();
+  });
+  draw();
+};
+
+/* --- :t lookups ---------------------------------------------------------- */
+HD.types = host => {
+  const T=[
+    [":t True","Bool","a value of the two-element set"],
+    [":t 'a'","Char","single quotes are a Char, double quotes a String"],
+    [":t \"abc\"","[Char]","a String IS a list of Char"],
+    [":t [1,2,3]","Num a => [a]","not [Int] — the literals stay polymorphic until forced"],
+    [":t (1,'a')","(Num a) => (a, Char)","a tuple: fixed length, mixed types"],
+    [":t reverse","[a] -> [a]","works on any list, and cannot inspect the elements"],
+    [":t length","Foldable t => t a -> Int","the a never appears in the result — it is ignored"],
+    [":t (+)","Num a => a -> a -> a","the constraint is a requirement, not an argument"],
+    [":t (<)","Ord a => a -> a -> Bool","needs a type that can be ordered"],
+    [":t take","Int -> [a] -> [a]","two arrows, so two arguments — one at a time"],
+    [":t head","[a] -> a","promises an a for EVERY list, including the empty one"],
+    [":t fst","(a, b) -> a","two type variables: the parts may differ"]
+  ];
+  host.innerHTML = `<table class="hd-t"><tr><th>in GHCi</th><th>answers</th><th></th></tr>
+    ${T.map(t=>`<tr><td class="hd-m">${hesc(t[0])}</td><td class="hd-m hd-ty">${hesc(t[1])}</td>
+      <td class="hd-n">${hesc(t[2])}</td></tr>`).join("")}</table>
+    <p class="hd-n">These are the real answers GHCi gives. <code>:t</code> does not evaluate, so
+      you can ask about things that would crash — <code>:t head []</code> is fine,
+      <code>head []</code> is not. Build the reflex: when confused, ask for the type.</p>`;
+};
+
+/* --- layout -------------------------------------------------------------- */
+HD.layout = host => {
+  host.innerHTML = `<div class="hd-row" id="hd-ly">
+      <button class="hd-chip" data-v="ok" aria-pressed="true">Correct</button>
+      <button class="hd-chip" data-v="bad" aria-pressed="false">Mis-indented</button>
+    </div><div id="hd-o"></div>`;
+  let v="ok";
+  const draw = () => {
+    const ok = v==="ok";
+    document.getElementById("hd-o").innerHTML = `
+      <pre class="hd-pre">${ok
+        ? "n = a `div` length xs\n  where\n    a  = 10\n    xs = [1,2,3,4,5]"
+        : "n = a `div` length xs\n  where\n    a  = 10\n   xs = [1,2,3,4,5]"}</pre>
+      <p class="hd-k ${ok?"good":"bad"}">${ok
+        ? "Both definitions start in the same column, so both belong to the same where block."
+        : "xs starts one column to the LEFT of a — so the where block is considered finished, and xs is not in scope."}</p>
+      <p class="hd-n">Nothing about the characters changed; one space did. The rule: definitions in
+        the same block must start in the same column, and anything further left ends the block.
+        This is why the compiler's complaint is often "Variable not in scope" rather than anything
+        about indentation.</p>`;
+  };
+  host.querySelectorAll("#hd-ly .hd-chip").forEach(b=>b.onclick=()=>{
+    v=b.dataset.v;
+    host.querySelectorAll("#hd-ly .hd-chip").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+    draw();
+  });
+  draw();
+};
+
+
 function renderLearn() {
   view.textContent = "";
   const w = wk(week);
@@ -1397,6 +2058,13 @@ function renderLearn() {
   art.appendChild(cite);
   art.appendChild(el("h2", null, c.t));
 
+  if (PLAIN[c.t]) {
+    const pb = el("div", "plainbox");
+    pb.appendChild(el("span", "eyebrow", "In plain words"));
+    pb.appendChild(el("p", null, PLAIN[c.t]));
+    art.appendChild(pb);
+  }
+
   const body = el("div");
   body.innerHTML = c.body;
   art.appendChild(body);
@@ -1413,6 +2081,17 @@ function renderLearn() {
     pre.textContent = c.ghci.split("\n").map(l => "ghci> " + l).join("\n");
     g.appendChild(pre);
     art.appendChild(g);
+  }
+
+  const dname = DEMO_FOR[c.t];
+  let pendingDemo = null;
+  if (dname && HD[dname]) {
+    const box = el("div", "demobox");
+    box.appendChild(el("span", "eyebrow", DEMO_TITLE[dname] || "Try it"));
+    const inner = el("div");
+    box.appendChild(inner);
+    art.appendChild(box);
+    pendingDemo = () => HD[dname](inner);
   }
 
   if (c.cp) {
@@ -1448,6 +2127,12 @@ function renderLearn() {
 
   wrap.append(rail, art);
   view.appendChild(wrap);
+
+  // Now that the article is in the document, the demo's getElementById calls resolve.
+  if (pendingDemo) {
+    try { pendingDemo(); }
+    catch (err) { console.error("demo failed:", err); }
+  }
 }
 
 function startDrill(pool) {

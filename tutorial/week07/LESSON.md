@@ -10,6 +10,21 @@ point at which Haskell stops being a language for pushing lists around and becom
 language for **modelling a problem** — and it is where the type system finally starts
 working for you rather than at you.
 
+
+## The short version
+
+The whole week in ordinary language, before any of the detail.
+
+- **`type` is a nickname; `data` makes something genuinely new.** Only `data` gives you
+  a value the compiler will keep separate from everything else.
+- **A `data` declaration lists the ways a value can be built,** and each way gets a name
+  you can pattern match on.
+- **Types can be recursive,** which is how you get trees — and the code that walks a tree
+  looks exactly like the type that describes it.
+- **A class is a list of things a type must be able to do;** an instance is one type
+  proving it can.
+- **This is learning outcome #3 — your own immutable data structures.**
+
 ---
 
 ## 1. `type` — a new name for an old type

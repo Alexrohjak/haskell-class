@@ -13,6 +13,21 @@ version says what the loop *meant* rather than how it was carried out.
 This chapter is also where the course starts feeling productive: by the end of the
 week you will have written the Caesar cipher in nine lines.
 
+
+## The short version
+
+The whole week in ordinary language, before any of the detail.
+
+- **A comprehension reads like set notation from maths:** take each x from this list,
+  keep the ones that pass this test, build this out of them.
+- **With two generators the rightmost is the inner loop** — it runs all the way through
+  for each single step of the one to its left.
+- **`[1..0]` is the empty list, not an error,** so awkward edge cases often handle
+  themselves and you get base cases for free.
+- **A pattern on the left of `<-` filters as well as binds:** anything that does not fit
+  the shape is skipped silently rather than crashing.
+- **`zip` stops at the shorter list,** and two very common idioms depend on exactly that.
+
 ---
 
 ## 1. The notation, and where it comes from

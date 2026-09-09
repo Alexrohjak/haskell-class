@@ -7,6 +7,20 @@
 > is the first. Everything in weeks 6 to 9 is built on top of it. If you only have time
 > to do one week of this tutorial properly, do this one.
 
+
+## The short version
+
+The whole week in ordinary language, before any of the detail.
+
+- **Recursion here is not a technique, it is the only loop there is.**
+- **Every recursive function has the same two parts:** a base case that answers outright,
+  and a step that calls itself on something smaller.
+- **"Smaller" is what makes it stop.** If the recursive call is not on a smaller input,
+  you have written a program that runs forever.
+- **On lists, the shape writes itself:** one equation for `[]`, one for `(x:xs)`, and the
+  recursive call is almost always on `xs`.
+- **This is learning outcome #1,** and weeks 6–9 are all built on top of it.
+
 ---
 
 ## 1. Recursion is not a technique here. It is the only loop.

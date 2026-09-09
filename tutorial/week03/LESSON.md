@@ -12,6 +12,20 @@ function using guards, or using pattern matching, or as a lambda. You are not be
 tested on whether you can solve the problem — you already solved it — but on whether
 you can move fluently between the forms. That is drill, and drill is this week.
 
+
+## The short version
+
+The whole week in ordinary language, before any of the detail.
+
+- **`if` must produce a value on every branch,** so `else` is never optional.
+- **Guards are a tidy list of conditions** down the left with answers on the right,
+  instead of ifs nested five deep.
+- **Pattern matching asks about shape, not conditions.** Write one equation for the empty
+  list and another for the non-empty one, and Haskell picks the one that fits.
+- **Equations are tried top to bottom** and the first match wins, so order matters.
+- **Sections let you fill in one side of an operator** — `(2*)`, `(*2)`. Every operator
+  works this way except subtraction, where `(-2)` is just negative two.
+
 ---
 
 ## 1. New from old

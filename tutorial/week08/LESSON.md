@@ -10,6 +10,21 @@ This chapter is how the language has it both ways. The resolution is genuinely e
 and it is a favourite exam question precisely because it is the place where the
 paradigm has to justify itself.
 
+
+## The short version
+
+The whole week in ordinary language, before any of the detail.
+
+- **`IO a` is a *description* of an action, not the action itself.** Nothing happens
+  until the runtime performs it.
+- **That is how purity survives:** a value describing "print this" is still a value, and
+  building it changes nothing.
+- **`do` blocks sequence actions**, and `<-` names the result of one so you can use it.
+- **Keep the pure core separate from the IO shell.** The interesting logic should be
+  ordinary functions you can test; IO should be a thin layer around them.
+- **That separation is also why this week is testable at all** — the exercises are the
+  pure cores of Nim, Hangman and Life.
+
 ---
 
 ## 1. The problem, stated properly

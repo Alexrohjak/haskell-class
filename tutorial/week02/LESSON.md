@@ -5,6 +5,22 @@
 Last week you learned the syntax. This week you learn the thing that actually makes
 Haskell Haskell. **If you understand types, the rest of this course is downhill.**
 
+
+## The short version
+
+The whole week in ordinary language, before any of the detail.
+
+- **A type is just the set of values something is allowed to be,** and the compiler
+  checks it before your program runs at all.
+- **Lists are any length but all one type; tuples are a fixed length but mixed types.**
+  Two differences at once, which is why they feel similar and are not.
+- **Every function really takes one argument** and hands back a function waiting for the
+  next. That is why you can supply half the arguments and get something useful.
+- **A lowercase letter in a type means "any type",** and because the function knows
+  nothing about it, there is very little it can legally do — the type tells you a lot.
+- **`Ord a =>` is a requirement, not an argument.** It says "works for any `a`, provided
+  that `a` can be ordered".
+
 ---
 
 ## 1. What a type is, and when it's checked

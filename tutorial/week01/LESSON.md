@@ -2,6 +2,21 @@
 
 **Hutton chapters 1–2.** Budget: ~30 min reading, ~30 min GHCi play, ~90 min exercises.
 
+
+## The short version
+
+The whole week in ordinary language, before any of the detail.
+
+- **`=` does not mean "store this".** It means "this name *is* this thing", permanently.
+  Nothing is ever a box, so nothing ever changes.
+- **A space means "apply".** `f x` is f applied to x, and that binds tighter than any
+  operator — so `f x + 1` is `(f x) + 1`.
+- **There are no loops,** because loops need a counter that changes. A function calls
+  itself on a smaller input instead.
+- **Nothing is computed until someone needs it,** which is why an infinite list is a
+  perfectly reasonable thing to write down.
+- **`:t` is the command you will use most.** When you are confused, ask for the type.
+
 ---
 
 ## 1. Why this language feels wrong at first

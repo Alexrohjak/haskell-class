@@ -9,6 +9,21 @@ Last week you wrote a dozen list recursions by hand. This week you discover that
 all of them were **three patterns** wearing different clothes, that those three patterns
 have names, and that once you can see them you stop writing the recursion at all.
 
+
+## The short version
+
+The whole week in ordinary language, before any of the detail.
+
+- **Functions are values.** You can pass one to another function, return one, or keep
+  one in a list — nothing special is required to do it.
+- **`map` transforms every element; `filter` keeps some of them.** Between them they
+  replace most of the recursion you wrote last week.
+- **`foldr` collapses a list to a single value** by replacing every `:` with your function
+  and `[]` with your starting value. That sentence *is* the definition.
+- **The difference between `foldr` and `foldl` is which way the brackets go,** and for a
+  non-associative operator that changes the answer.
+- **This is learning outcome #2.**
+
 ---
 
 ## 1. What "higher-order" means, and why it costs nothing

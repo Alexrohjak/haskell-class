@@ -12,6 +12,20 @@ things you have been using without knowing why they worked:
 None of these should work. This chapter is why they do — and, just as importantly, when
 laziness turns round and costs you.
 
+
+## The short version
+
+The whole week in ordinary language, before any of the detail.
+
+- **Nothing is evaluated until something needs it,** and then only as far as needed.
+- **That is why infinite lists work.** `[1..]` never gets built; `take 5 [1..]` builds
+  exactly five elements.
+- **Evaluation goes outside in,** which is the opposite of what most languages do, and it
+  is why an argument that would crash can be safely ignored.
+- **`seq` is the escape hatch** when you need something forced now rather than later.
+- **The cost is unpredictability:** laziness can hold on to memory you expected to be
+  freed, which is the one real downside.
+
 ---
 
 ## 1. Redexes, and the freedom to choose
