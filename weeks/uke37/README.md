@@ -6,12 +6,15 @@ Tutorial week: [`tutorial/week04/`](../../tutorial/week04/) — `cd tutorial && 
 
 ## Posted by the lecturer
 
-*Nothing published for this week yet.* Re-run `.venv/bin/python src/canvas_sync.py` once it appears.
+- `slides/4-rekursjon-handout.pdf` — from Canvas `course files/forelesningsnotater`, updated 2026-09-01
+- `exercises/uke4.txt` — from Canvas `course files/oppgaver`, updated 2026-09-09
 
 ## In this folder
 
-- `slides/` — empty
-- `exercises/` — empty
+- `slides/` — 1 item(s), 559 KB
+  - `4-rekursjon-handout.pdf`
+- `exercises/` — 1 item(s), 3 KB
+  - `uke4.txt`
 - `code/` — empty
 
 ---

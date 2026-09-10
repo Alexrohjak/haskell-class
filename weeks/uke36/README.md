@@ -7,12 +7,16 @@ Tutorial week: [`tutorial/week03/`](../../tutorial/week03/) — `cd tutorial && 
 ## Posted by the lecturer
 
 - `slides/3-func+list-handoutpdf.pdf` — from Canvas `course files/forelesningsnotater`, updated 2026-08-25
+- `slides/3-func+list-konversjon.pdf` — from Canvas `course files/forelesningsnotater`, updated 2026-09-01
+- `exercises/uke3.txt` — from Canvas `course files/oppgaver`, updated 2026-08-31
 
 ## In this folder
 
-- `slides/` — 1 item(s), 144 KB
+- `slides/` — 2 item(s), 225 KB
   - `3-func+list-handoutpdf.pdf`
-- `exercises/` — empty
+  - `3-func+list-konversjon.pdf`
+- `exercises/` — 1 item(s), 1 KB
+  - `uke3.txt`
 - `code/` — empty
 
 ---
