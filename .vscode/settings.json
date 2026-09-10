@@ -29,8 +29,9 @@
   // ---- The explorer shows the work, and nothing else ----------------------
   //
   // The reading material lives in the browser drill room and in this repo's
-  // markdown; the editor is the workbench. So the tree is cut down to the one
-  // thing you actually type into: tutorial/weekNN/Exercises.hs.
+  // markdown; the editor is the workbench. So the tree is cut down to the two
+  // things you actually type into: tutorial/weekNN/Exercises.hs (the book) and
+  // tutorial/weekNN/Oppgaver.hs (the lecturer's weekly sheet).
   //
   // Nothing here is deleted or unreachable -- a hidden file still opens by
   // path from the terminal (`code exam/README.md`), still loads in HLS, and is
@@ -77,12 +78,13 @@
     "tutorial/solutions": true
   },
 
-  // Each week collapses to a single row -- Exercises.hs -- with the lesson and
-  // the test spec one chevron away underneath it.
+  // Each week collapses to two rows -- Exercises.hs and Oppgaver.hs -- each
+  // with its test spec one chevron away underneath it.
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
-    "Exercises.hs": "LESSON.md, Tests.hs"
+    "Exercises.hs": "LESSON.md, Tests.hs",
+    "Oppgaver.hs": "OppgaverTests.hs"
   },
 
   // Ctrl+Shift+F searches your work, not the answers to it.

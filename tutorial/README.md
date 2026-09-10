@@ -13,23 +13,36 @@ and 11–14 are *not* pensum.
 
 ## How to use this
 
-Every week is a folder with the same four things:
+Every week is a folder holding **two sets of exercises side by side**: the book's,
+and the lecturer's weekly sheet. Both count, and both get done.
 
 | File | What it is |
 |---|---|
 | `LESSON.md` | Read this first. Concepts, worked examples, paper drills. |
-| `Exercises.hs` | Stubs to fill in. Every `undefined` is a task. |
-| `Tests.hs` | The checks. You don't edit this. |
-| `../solutions/weekNN/` | Reference answers. Open **after** you've tried. |
+| `Exercises.hs` | The **book** exercises — stubs to fill in. Every `undefined` is a task. |
+| `Tests.hs` | The checks for `Exercises.hs`. You don't edit this. |
+| `Oppgaver.hs` | The **lecturer's weekly sheet** (`oppgaver ukeN`), task text copied verbatim, as stubs. |
+| `OppgaverTests.hs` | The checks for `Oppgaver.hs`. You don't edit this either. |
+| `../solutions/weekNN/` | Reference answers to the **book** exercises. Open **after** you've tried. |
+
+The lecturer's sheets have **no reference answers, deliberately.** His first slide
+asks students not to have AI solve them, and the groups don't hand out solutions
+either. Their tests pin down only what the sheet actually specifies — where the sheet
+asks *you* a question ("what should happen when the input is longer?"), or says *how*
+to solve it (one traversal, tail recursion, a list comprehension), the tests stay out
+of it and the idiom review picks it up.
 
 The loop:
 
 ```bash
 cd tutorial
 
-./check.sh 3              # run week 3's tests against your code
-./check.sh 3 --repl       # GHCi with your week-3 code loaded
-./check.sh 3 --solution   # run the tests against the reference answers
+./check.sh 3                 # both: the book, then the lecturer's sheet
+./check.sh 3 --book          # just the book exercises
+./check.sh 3 --oppg          # just the lecturer's sheet
+./check.sh 3 --repl          # GHCi with your week-3 book code loaded
+./check.sh 3 --oppg --repl   # GHCi with your week-3 sheet code loaded
+./check.sh 3 --solution      # the book tests against the reference answers
 ```
 
 Unimplemented stubs report as `todo`, not `FAIL`, so you can work one exercise at a
@@ -40,23 +53,25 @@ time and watch the count climb. Exit status is 0 only when everything passes.
 
 There *is* an `inf122-tutorial.cabal` at the repo root, but it is not a build
 system and you never run `cabal build`. It exists only so haskell-language-server
-can load this code in an editor: every week defines a module called `Exercises`,
-so they need separate components, and `Tests.hs` imports `Check` from `lib/`, so
-importer and imported must share one. `check.sh` is unaffected — still `runghc`.
+can load this code in an editor: every week defines modules called `Exercises`
+and `Oppgaver`, so they need separate components, and the tests import `Check`
+from `lib/`, so importer and imported must share one. `check.sh` is unaffected —
+still `runghc`.
 See [`../docs/setup-notes.md`](../docs/setup-notes.md).
 
 ### The two feedback loops
 
 1. **Tests** — instant, mechanical, correctness only.
-2. **Me** — when a week's tests are green, paste your `Exercises.hs` and ask for an
-   **idiom review**. The tests can't tell you that your five-line recursion should
-   have been a one-line `foldr`, and that distinction is most of what separates a C
-   from an A in this course.
+2. **Me** — when a week's tests are green, paste your `Exercises.hs` or
+   `Oppgaver.hs` and ask for an **idiom review**. The tests can't tell you that your
+   five-line recursion should have been a one-line `foldr`, and that distinction is
+   most of what separates a C from an A in this course.
 
-This track is the **only** one with tests in the box. The lecturer's weekly sheets in
-`../weeks/ukeNN/exercises/` come with nothing, and checking those is a skill of its own —
+Everything outside those two files — the Hutton exercises this tutorial didn't pick
+up (pensum point C), and the oblig — still comes with no tests in the box. Checking
+those is a skill of its own —
 [`../docs/checking-your-work.md`](../docs/checking-your-work.md) covers it, mostly with
-QuickCheck, which is what his own week-1 slide introduces it for.
+QuickCheck, which is what the lecturer's week-1 slide introduces it for.
 
 ---
 
@@ -83,19 +98,27 @@ QuickCheck, which is what his own week-1 slide introduces it for.
 
 Not all twelve weeks are written yet. Current state:
 
-| Week | LESSON.md | Exercises + Tests | Solutions |
-|:--:|:--:|:--:|:--:|
-| 1 | done | done (19 checks) | done + PAPER.md |
-| 2 | done | done (31 checks) | done + PAPER.md |
-| 3 | done | done (42 checks) | done + PAPER.md |
-| 4 | done | done (50 checks) | done + PAPER.md |
-| 5 | done | done (63 checks) | done + PAPER.md |
-| 6 | done | done (81 checks) | done + PAPER.md |
-| 7 | done | done (89 checks) | done + PAPER.md |
-| 8 | done | done (76 checks) | done + PAPER.md |
-| 9 | done | done (56 checks) | done + PAPER.md |
-| 10–11 | blocked | blocked | blocked |
-| 12 | — | — | — |
+| Week | LESSON.md | Exercises + Tests | Solutions | Lecturer's sheet |
+|:--:|:--:|:--:|:--:|:--:|
+| 1 | done | done (19 checks) | done + PAPER.md | uke1 (29 checks) |
+| 2 | done | done (31 checks) | done + PAPER.md | uke2 (5 checks, rest is paper) |
+| 3 | done | done (42 checks) | done + PAPER.md | uke3 (30 checks) |
+| 4 | done | done (50 checks) | done + PAPER.md | uke4 (47 checks) |
+| 5 | done | done (63 checks) | done + PAPER.md | not published yet |
+| 6 | done | done (81 checks) | done + PAPER.md | not published yet |
+| 7 | done | done (89 checks) | done + PAPER.md | not published yet |
+| 8 | done | done (76 checks) | done + PAPER.md | not published yet |
+| 9 | done | done (56 checks) | done + PAPER.md | not published yet |
+| 10–11 | blocked | blocked | blocked | not published yet |
+| 12 | — | — | — | — |
+
+**Lecturer's sheets** arrive one a week on Mitt UiB, and sheet *N* belongs to
+tutorial week *N* — the same course week, so `uke3.txt` is `week03/Oppgaver.hs`.
+When a new one lands, run the sync (it files the original under
+`../weeks/ukeNN/exercises/`), then ask me to scaffold it: `Oppgaver.hs` stubs with the
+task text verbatim, `OppgaverTests.hs`, one `weekNN-oppgaver` component in the
+`.cabal` file, and a row in this table. The tests get verified against a throwaway
+implementation that is deleted afterwards and never committed.
 
 **Weeks 1–9 are complete** — lesson, exercises, tests, reference solutions and paper
 answers, every week verified green against its own solution. **507 checks in total.**
@@ -144,8 +167,9 @@ From the emneplan and his own first-lecture notes:
   a rejected submission* — see `../assignments/`.
 - Grading A–F; the oblig and the exam must pass independently.
 - Pensum point (C) is **all exercises from the chapters covered**, assumed
-  solved. The weekly sheets in `../weeks/ukeNN/exercises/` are separate work
-  again — this tutorial is a third track on top of both.
+  solved. The lecturer's weekly sheets are separate work again — the sheet itself
+  says the book's exercises are solved *uavhengig* of it. Both live in each
+  tutorial week now: the book in `Exercises.hs`, the sheet in `Oppgaver.hs`.
 
 The stated learning outcomes name three concepts explicitly — **rekursjon, høgre
 ordens funksjonar, ikkje-muterbare datastrukturar** — plus being able to *discuss*
@@ -162,17 +186,20 @@ tutorial/
   README.md           this file
   check.sh            the test runner
   lib/Check.hs        the harness (don't edit)
-  week01/ ... week12/ LESSON.md, Exercises.hs, Tests.hs
+  week01/ ... week12/ LESSON.md, Exercises.hs, Tests.hs            -- the book
+                      Oppgaver.hs, OppgaverTests.hs                -- the lecturer's sheet
   solutions/
-    week01/ ...       Exercises.hs and PAPER.md per week
+    week01/ ...       Exercises.hs and PAPER.md per week (book only)
 ```
 
 The repo's other folders are yours: `../weeks/ukeNN/code/` for code written in
-class, `../assignments/` for the oblig, `../scratch/` for experiments.
+class, `../assignments/` for the oblig, `../scratch/` for experiments. The
+lecturer's original sheet text stays in `../weeks/ukeNN/exercises/`, where the sync
+files it — `Oppgaver.hs` is where you answer it.
 
-In VS Code the explorer hides all of that on purpose, and nests `LESSON.md` and
-`Tests.hs` under each `Exercises.hs`, so the sidebar shows the work and nothing
-else. Nothing is deleted — it is one `files.exclude` block in
+In VS Code the explorer hides all of that on purpose, nests `LESSON.md` and
+`Tests.hs` under each `Exercises.hs`, and nests `OppgaverTests.hs` under each
+`Oppgaver.hs`, so the sidebar shows the work and nothing else. Nothing is deleted — it is one `files.exclude` block in
 `../.vscode/settings.json`.
 
 ---

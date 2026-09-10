@@ -6,13 +6,16 @@ This repo holds two kinds of exercise, and they have completely different answer
 | What you're working on | Where it lives | How you check it |
 |---|---|---|
 | Tutorial exercises | `tutorial/weekNN/Exercises.hs` | `./check.sh NN` — tests ship with them |
-| The lecturer's weekly sheets | `weeks/ukeNN/exercises/` | **No tests exist.** You write the checks. This doc is about that. |
-| Hutton's book exercises | the book | Same as the weekly sheets |
+| The lecturer's weekly sheets | `tutorial/weekNN/Oppgaver.hs` (original text in `weeks/ukeNN/exercises/`) | `./check.sh NN` too — but the tests only cover what the sheet specifies. The rest is yours to check. |
+| Hutton's book exercises the tutorial doesn't cover | the book | **No tests exist.** You write the checks. This doc is about that. |
 | The oblig | `assignments/` | Read the spec twice, then the same techniques as below |
 
-The tutorial is the only track with a feedback loop built in. That is deliberate — it
-is the track designed for self-study. The other three are the ones that count, and for
-those, **being able to check your own answer is part of the skill being examined.**
+The sheet tests are deliberately thin. Wherever a sheet asks *you* a question ("what
+happens when the input is longer than the width?"), leaves something open (the order
+of `letterFreq`'s result), or dictates a *method* (one traversal, tail recursion, a list
+comprehension), the tests say nothing — a green run there means "correct", not "done".
+And the whole of uke2 is types, which only you and GHCi can check. So even with tests
+in the box, **being able to check your own answer is part of the skill being examined.**
 
 ---
 
@@ -20,9 +23,11 @@ those, **being able to check your own answer is part of the skill being examined
 
 ```bash
 cd tutorial
-./check.sh 3              # run week 3's tests against YOUR Exercises.hs
-./check.sh 3 --repl       # GHCi with your week-3 code loaded
-./check.sh 3 --solution   # run them against the reference answers
+./check.sh 3                 # week 3: the book, then the lecturer's sheet
+./check.sh 3 --oppg          # just the sheet (--book for just the book)
+./check.sh 3 --repl          # GHCi with your week-3 book code loaded
+./check.sh 3 --oppg --repl   # GHCi with your week-3 sheet code loaded
+./check.sh 3 --solution      # the book tests against the reference answers
 ```
 
 You'll see three outcomes per check:
@@ -42,7 +47,8 @@ Two things it deliberately does **not** tell you:
 
 - **Whether your answer is idiomatic.** A five-line recursion and a one-line `foldr`
   both go green. Closing that gap is what the idiom review in §5 is for.
-- **Anything about the weekly sheets.** `check.sh` only knows about `tutorial/`.
+- **Anything the lecturer's sheet leaves to you.** The sheet tests cover what the
+  sheet specifies and stop there — §2 is about the rest.
 
 If `check.sh` misbehaves rather than your code, run `.venv/bin/python src/check_setup.py`. It
 runs week 1's tests against the reference solution, so a green result proves GHC, the
@@ -51,27 +57,32 @@ harness and the runner all work end to end — not merely that the binaries are 
 
 ---
 
-## 2. The weekly sheets: nothing ships with them
+## 2. The weekly sheets: the tests stop where the sheet does
 
 Open `weeks/uke34/exercises/uke1.txt` and you'll find five problems, a type signature
-each, and an example or two. No tests, no `Tests.hs`, and none coming — the gruppetimar
-serve no solutions either, by the lecturer's own rule.
+each, and an example or two. The lecturer ships no tests and no answers — the
+gruppetimar serve no solutions either, by his own rule.
 
-So you build the loop yourself, in four layers, cheapest first.
+Each sheet is copied into its tutorial week as `Oppgaver.hs`, with an
+`OppgaverTests.hs` holding the sheet's own examples plus the obvious edge cases. That
+is the floor. It is deliberately not the ceiling: no reference answers exist, and the
+tests don't touch anything the sheet leaves open, asks *you*, or dictates the method
+for. For all of that you build the loop yourself, in four layers, cheapest first.
 
-### Layer 0 — write the type down and let GHC check it
+### Layer 0 — the type is already written; let GHC check it
 
-The sheet gives you the signature. **Type it in first, before the body.**
+`Oppgaver.hs` gives you every signature the sheet gives, with an `undefined` body:
 
 ```haskell
 plu :: [Int] -> Int -> [Int]
 plu = undefined
 ```
 
-Load it (`ghci Uke1.hs`) and you have already caught a whole class of error for free.
-Once the body is written, GHC checking it against the signature you declared is your
-first and cheapest test. If you leave the signature off, GHC infers something —
-possibly more general than you meant — and silently agrees with you.
+Load it (`./check.sh 1 --oppg --repl`) and you have already caught a whole class of
+error for free. Once the body is written, GHC checking it against the declared
+signature is your first and cheapest test — so don't delete the signature. Without
+it, GHC infers something, possibly more general than you meant, and silently agrees
+with you.
 
 Then interrogate it:
 
@@ -96,24 +107,22 @@ odds "abcde" = "bd"
 evensOdds xs = (evens xs, odds xs)
 ```
 
-Every one of those is an assertion. Paste them into GHCi and compare, or — better —
-put them in the file so they survive:
+Every one of those is an assertion, and every one is already in
+`week01/OppgaverTests.hs` — `./check.sh 1 --oppg` re-runs them on every save. This is
+the minimum acceptable amount of checking, and here it costs nothing.
+
+When a sheet *doesn't* give an example for a case you care about, write your own the
+same way, in `Oppgaver.hs` itself, so it survives:
 
 ```haskell
--- in weeks/uke34/code/Uke1.hs
-examples :: [Bool]
-examples =
-  [ plu [1,2,5] 4  == [5,6,9]
-  , evens "abcde"  == "ace"
-  , odds  "abcde"  == "bd"
+myExamples :: [Bool]
+myExamples =
+  [ hjuster 2 "word" == ...   -- whatever you decided it should be
   ]
 
-ghci> and examples
+ghci> and myExamples
 True
 ```
-
-Ten seconds of typing, and now the examples re-run every time you reload. This is the
-minimum acceptable amount of checking, and it costs nothing.
 
 ### Layer 2 — QuickCheck, which is what the lecturer taught you for exactly this
 
@@ -121,8 +130,9 @@ His week-1 slide `weeks/uke34/slides/1QuickCheck.pdf` exists for this reason and
 other. He introduces `quickCheck` in the *first week*, before recursion, before
 higher-order functions — that is not an accident of ordering.
 
-It is already installed (QuickCheck 2.18) and works with plain `runghc`. No project
-file, no cabal:
+It is already installed (QuickCheck 2.18) and works with plain `runghc`, so
+`check.sh` picks it up. The editor sees it too — the `.cabal` file lists it for every
+`weekNN-oppgaver` component. Add one line under `module Oppgaver where`:
 
 ```haskell
 import Test.QuickCheck
@@ -179,8 +189,9 @@ prop_evensOdds_spec :: [Int] -> Bool
 prop_evensOdds_spec xs = evensOdds xs == (evens xs, odds xs)
 ```
 
-Write your fast one-pass version, check it against the slow obvious one, done. This
-pattern — **a simple reference implementation as the oracle for a clever one** — is the
+`OppgaverTests.hs` checks exactly that on ten small lists; QuickCheck checks it on a
+hundred random ones. Write your fast one-pass version, check it against the slow
+obvious one, done. This pattern — **a simple reference implementation as the oracle for a clever one** — is the
 most valuable property style there is, and it will serve you again in the oblig.
 
 ### Layer 3 — the group session
@@ -192,46 +203,35 @@ don't understand.
 
 ---
 
-## 3. A file to copy
+## 3. Where your own checks go
 
-Put this in `weeks/ukeNN/code/UkeN.hs` and run it with `runghc`:
+In `Oppgaver.hs`, underneath your answers. The file is yours; only `OppgaverTests.hs`
+is off limits.
 
 ```haskell
-module Main where
+module Oppgaver where
 
 import Test.QuickCheck
 
--- ---- answers -------------------------------------------------------------
-
 plu :: [Int] -> Int -> [Int]
-plu = undefined
+plu = ...                                   -- your answer
 
--- ---- examples from the sheet ---------------------------------------------
-
-examples :: [Bool]
-examples =
-  [ plu [1,2,5] 4 == [5,6,9]
-  ]
-
--- ---- properties ----------------------------------------------------------
+-- ---- my own checks -------------------------------------------------------
 
 prop_plu_length :: [Int] -> Int -> Bool
 prop_plu_length xs k = length (plu xs k) == length xs
-
--- ---- the loop ------------------------------------------------------------
-
-main :: IO ()
-main = do
-  print (and examples)
-  quickCheck prop_plu_length
 ```
 
-```bash
-runghc weeks/uke35/code/Uke2.hs
+```
+$ ./check.sh 1 --oppg          # the shipped tests
+$ ./check.sh 1 --oppg --repl   # then, in GHCi:
+ghci> quickCheck prop_plu_length
++++ OK, passed 100 tests.
 ```
 
-Nothing to install, nothing to configure. `weeks/ukeNN/code/` is yours — the generated
-`README.md` next to it is not, so don't edit that.
+Nothing to install, nothing to configure. Code you write in class still goes in
+`weeks/ukeNN/code/`, which is also yours — the generated `README.md` next to it is
+not, so don't edit that.
 
 ---
 
@@ -298,11 +298,12 @@ be asked to reason about correctness on paper, where neither is available.
 warning: [GHC-63394] [-Wx-partial] In the use of 'tail'
 ```
 
-It's a warning, not an error, and your code runs. The tutorial harness passes
-`-Wno-x-partial` to keep its output clean; add the same flag if it bothers you:
+It's a warning, not an error, and your code runs. `check.sh` passes
+`-Wno-x-partial` to keep its output clean; add the same flag when you run a file of
+your own by hand:
 
 ```bash
-runghc -Wno-x-partial weeks/uke35/code/Uke2.hs
+runghc -Wno-x-partial weeks/uke35/code/Scratch.hs
 ```
 
 Don't switch it off reflexively, though — on the oblig it is worth listening to.
@@ -331,14 +332,13 @@ lecturer's own first slide says it more bluntly:
 ## 6. Quick reference
 
 ```bash
-# tutorial
-cd tutorial && ./check.sh 4          # test one week
-./check.sh 4 --repl                  # GHCi with your code loaded
-./check.sh 4 --solution              # test the reference answers
-
-# weekly sheets
-runghc weeks/uke35/code/Uke2.hs      # examples + properties
-ghci weeks/uke35/code/Uke2.hs        # poke at it by hand
+# a week: the book and the lecturer's sheet
+cd tutorial && ./check.sh 4          # test both
+./check.sh 4 --book                  # just the book exercises
+./check.sh 4 --oppg                  # just the lecturer's sheet
+./check.sh 4 --repl                  # GHCi with your book code loaded
+./check.sh 4 --oppg --repl           # GHCi with your sheet code (then quickCheck ...)
+./check.sh 4 --solution              # the book tests against the reference answers
 
 # the toolchain itself  (no bare `python` on this machine -- use the venv)
 .venv/bin/python src/check_setup.py  # is GHC + harness actually working?
