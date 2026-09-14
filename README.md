@@ -220,11 +220,19 @@ what `check.sh` prints.
 | `Shift+Alt+F` | format — deliberately **not** on save |
 | `Ctrl+K Ctrl+/` | fold every comment block, when the file feels wordy |
 
-The explorer is cut down to `tutorial/weekNN/Exercises.hs` and nothing else,
-with `LESSON.md` and `Tests.hs` nested underneath. That is a display setting in
-`.vscode/settings.json` — hidden files still compile, still load, still show in
-git, and still open by path (`code exam/README.md`). The reading material is
-meant to be read in the browser; the editor is the workbench.
+The explorer is cut down to the two files you type into — `tutorial/weekNN/Exercises.hs`
+for the book track and `weeks/ukeNN/code/UkeN.hs` for the lecturer's, with the
+sheet itself alongside it — and `LESSON.md` and `Tests.hs` nested under each
+`Exercises.hs`. That is a display setting in `.vscode/settings.json`; hidden
+files still compile, still load, still show in git, and still open by path
+(`code exam/README.md`). The reading material is meant to be read in the
+browser; the editor is the workbench.
+
+> **This bit was wrong until 14 September.** The block hid `weeks/` outright.
+> It was written before the second track existed and nobody revisited it when
+> the sheets arrived, so `uke1.txt`–`uke4.txt` sat in the repo and never
+> appeared in the sidebar. If you are ever sure you filed something and cannot
+> find it, check `files.exclude` before you check your memory.
 
 Two pieces of plumbing make this work, and neither is a build system you run:
 `hie.yaml` and `inf122-tutorial.cabal` exist **only** so the language server can

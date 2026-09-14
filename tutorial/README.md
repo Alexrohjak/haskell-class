@@ -170,10 +170,12 @@ tutorial/
 The repo's other folders are yours: `../weeks/ukeNN/code/` for code written in
 class, `../assignments/` for the oblig, `../scratch/` for experiments.
 
-In VS Code the explorer hides all of that on purpose, and nests `LESSON.md` and
-`Tests.hs` under each `Exercises.hs`, so the sidebar shows the work and nothing
-else. Nothing is deleted — it is one `files.exclude` block in
-`../.vscode/settings.json`.
+In VS Code the explorer hides the parts you never type into and nests
+`LESSON.md` and `Tests.hs` under each `Exercises.hs`, so the sidebar shows the
+work and little else. Both tracks are visible — this one and
+`../weeks/ukeNN/code/UkeN.hs` — because hiding `weeks/` is what kept the
+lecturer's sheets out of sight for a month. Nothing is deleted either way; it is
+one `files.exclude` block in `../.vscode/settings.json`.
 
 ---
 
