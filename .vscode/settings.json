@@ -65,6 +65,7 @@
     "**/*.o": true,
     "**/*.dyn_hi": true,
     "**/*.dyn_o": true,
+    "**/dist-newstyle": true,
     "**/.venv": true,
     "**/__pycache__": true,
     "**/.searchcache": true,
