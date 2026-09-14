@@ -47,15 +47,28 @@ ask the person who writes the paper what he expects on it.
   what was actually taught (with slide pages), the practice attached to them,
   and a six-hour route through it. Written 31 August.
 - [`interactive-revision.html`](interactive-revision.html) — the drill room.
-  25 concepts across Hutton 1–5, each cited to the slide it came from, and 54
+  34 concepts across Hutton 1–6, each cited to the slide it came from, and 71
   drills. Published at <https://claude.ai/code/artifact/e3c608e9-c5c4-471a-b1c3-b710d40c945c>
   (private); open the local file with `xdg-open exam/interactive-revision.html`
   if you would rather not use the hosted copy. Every value and type in it was
   checked against GHC 9.10.3 before publishing.
 
-  A fourth tab, **Work**, is the bridge to the repo: week 1's four paper drills
-  and its six coding exercises, each with a hint ladder that gets more specific
-  and stops where the thinking starts. Written for week 1 so far.
+  Each concept is a **reading page** with the same five parts: *In plain words*
+  (the idea in ordinary language, before any notation), the precise version, a
+  code listing, a second block that says what the rule costs you when you get it
+  wrong and where it turns up again later, and a checkpoint question. Most also
+  carry an interactive demo.
+
+  **Week 5 — recursive functions, Hutton 6 — is uke38's material**, and it is the
+  first week where the demos do real work: drag an input below zero and watch
+  which definitions of `fac` still reach a base case, step `merge` one comparison
+  at a time and switch its base case to `[]` to watch it silently lose half the
+  data, or run `qsort` and `msort` over the same list and see the comparisons
+  move from the split to the combine.
+
+  A fourth tab, **Work**, is the bridge to the repo: the week's paper drills and
+  its coding exercises, each with a hint ladder that gets more specific and stops
+  where the thinking starts. Written for weeks 1 and 5 so far.
 
   It contains **no answers** to `uke1.txt`, `uke2.txt` or the tutorial
   exercises — different examples, same ideas, deliberately. The hints name the

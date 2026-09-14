@@ -435,7 +435,7 @@ footer strong { color: var(--ink-soft); }
     <div class="brand">
       <span class="lam">λ</span>
       <span class="nm">Drill Room</span>
-      <span class="sub">INF122 · uke 34–36</span>
+      <span class="sub">INF122 · uke 34–38</span>
     </div>
     <div class="modes" role="tablist" aria-label="Mode">
       <button role="tab" id="m-home" aria-selected="true">Overview</button>
@@ -1081,6 +1081,364 @@ const WEEKS = [
       choices: ["Binding the value for later use", "Marking the generator as lazy", "Drawing values that are deliberately ignored", "Nothing — it is a typo for x"], answer: 2,
       explain: "The generator is used only for its length. The wildcard says the omission is deliberate, which also silences GHC's unused-binding warning." }
   ]
+},
+{
+  n: 5, uke: "uke38", chapter: "Hutton 6", topic: "Recursive functions",
+  blurb: "Learning outcome #1. Base cases, the five-step recipe, and the one skeleton every list function shares.",
+  concepts: [
+    { t: "Recursion is not a technique here — it is the only loop",
+      cite: "uke38 · Hutton 6.1",
+      body: `<p>In Python you reach for <code>for</code> or <code>while</code> first, and recursion
+        is the exotic thing you keep for trees. Here that ranking is inverted, and not by taste.
+        A <code>while</code> loop needs a counter that is one value on this pass and a different
+        value on the next. Nothing in Haskell is ever a different value later — that was week 1's
+        point about <code>=</code>. So there is no counter to advance, and therefore no loop to
+        write.</p>
+        <p>What replaces it is a definition that mentions itself. Read this the way you read
+        <code>n! = n × (n−1)!</code> in a maths textbook, not the way you read a procedure:</p>`,
+      code: `fac :: Int -> Int\nfac 0 = 1\nfac n = n * fac (n - 1)`,
+      body2: `<p>That is not a machine stepping through states. It is a <em>claim</em>: whatever
+        <code>fac 3</code> is, it equals <code>3 * fac 2</code>. And because it is a claim rather
+        than a procedure, you can check it the way you check algebra — substitute and see whether
+        both sides still agree:</p>
+        <pre class="code">  fac 3
+= 3 * fac 2
+= 3 * (2 * fac 1)
+= 3 * (2 * (1 * fac 0))
+= 3 * (2 * (1 * 1))
+= 6</pre>
+        <p>Every line there is the line above it with one definition substituted in. No state
+        changed; nothing was assigned. This is the same equational reasoning from week 1, and it
+        is what the exam means when it says <em>"evaluate by hand, showing your steps"</em> — the
+        marks are for the substitutions, not the 6.</p>
+        <p>The discomfort most people feel at this point is a suspicion that the definition is
+        circular and therefore cheating. It is not, and the reason is worth naming: the right-hand
+        side does not mention <code>fac n</code>, it mentions <code>fac (n - 1)</code>. Every
+        appeal is to a <em>strictly smaller</em> problem, and a chain of strictly smaller problems
+        over the naturals has to stop. That is the whole argument, and it is also exactly what
+        goes wrong when a recursion hangs.</p>`,
+      ghci: `:t fac`,
+      cp: { q: "Why can a recursive definition mention itself without being circular?",
+            a: `Because the recursive call is on a <strong>smaller</strong> argument, not the same
+                one. <code>fac n</code> is defined in terms of <code>fac (n-1)</code>, and a
+                descending chain of naturals must terminate. Remove the "smaller" and it really
+                is circular — <code>k n = k n</code> compiles fine and never answers.` } },
+
+    { t: "Every recursive definition is a base case and a step",
+      cite: "uke38 · Hutton 6.1–6.2",
+      body: `<p>There is one skeleton, and once you can see it you can write these without
+        thinking:</p>
+        <ul>
+          <li>A <strong>base case</strong> — an input the function can answer outright, with no
+            recursive call at all.</li>
+          <li>A <strong>recursive case</strong> — an answer given in terms of the same function
+            applied to something <em>smaller</em>.</li>
+        </ul>
+        <p>Both halves have their own failure mode, and between them they account for almost every
+        bug you will write this week:</p>
+        <table class="hd-t">
+          <tr><th>What is wrong</th><th>What you see</th></tr>
+          <tr><td>No base case at all</td><td>Hangs, or a stack overflow</td></tr>
+          <tr><td>A base case that is never reached</td><td>Hangs — indistinguishable from the above</td></tr>
+          <tr><td>Recursive call not on a smaller input</td><td>Hangs</td></tr>
+          <tr><td>Base case returns the wrong value</td><td>Silently wrong answers, usually off by the identity element</td></tr>
+        </table>`,
+      body2: `<p>Notice that three of the four look identical from the outside. When
+        <code>./check.sh 5</code> stops printing instead of failing, you have one of the first
+        three, and the diagnostic question is always the same: <em>starting from the input I gave
+        it, does the chain of recursive calls ever land exactly on a case I have written?</em></p>
+        <p>The fourth is the dangerous one, because nothing hangs and nothing crashes. It shows up
+        as an answer that is off by one multiplication, or a list with one element too few, and
+        the tests catch it where an eyeball would not. That is the case the next-but-one concept
+        is about.</p>`,
+      code: `-- base case, then step. Always in that order on the page.\nsumdown :: Int -> Int\nsumdown 0 = 0                    -- answered outright\nsumdown n = n + sumdown (n - 1)  -- smaller`,
+      cp: { q: "A definition compiles, and calling it never returns. Name the three possible causes.",
+            a: `No base case; a base case that this input never reaches; or a recursive call that
+                is not on a smaller argument. All three look the same from outside, so diagnose by
+                asking what chain of calls your input actually produces.` } },
+
+    { t: "The real question is whether the base case is reachable",
+      cite: "uke38 · Hutton 6.1, exercise 1",
+      body: `<p>Hutton's <code>fac</code> above is correct for <code>3</code> and broken for
+        <code>-1</code>, and the reason is precise enough to be worth stating carefully. The base
+        case <code>fac 0 = 1</code> <em>exists</em>. It is simply not on the road from
+        <code>-1</code>: the calls go <code>-1</code>, <code>-2</code>, <code>-3</code>, and step
+        past zero without ever matching it.</p>
+        <p>So "does this function have a base case?" is the wrong question, and asking it is why
+        people stare at a hanging program for twenty minutes with the base case visible on screen.
+        The question that actually diagnoses things is:</p>
+        <p><strong>From every input this function accepts, does the chain of recursive calls land
+        exactly on a case I have written?</strong></p>`,
+      body2: `<p>Two habits fall out of that, and both are cheap:</p>
+        <ul>
+          <li>When the recursion counts <em>down</em>, guard the bottom with an inequality rather
+            than an equality. <code>n &lt;= 0</code> catches everything below; <code>n == 0</code>
+            catches one point, and a step of 2 can jump straight over it.</li>
+          <li>When the recursion steps by more than one, you need as many base cases as the step
+            size. <code>fib</code> reaches back two, so it needs both <code>fib 0</code> and
+            <code>fib 1</code> — with only <code>fib 0</code>, evaluating <code>fib 1</code> asks
+            for <code>fib (-1)</code> and is gone.</li>
+        </ul>
+        <p>Exercise 1 is this lesson in miniature and it is deliberately first. The fix is one
+        guard; the thing you are meant to keep is the question.</p>`,
+      code: `fac n | n < 0     = 0        -- the guard makes the bottom reachable\n      | n == 0    = 1\n      | otherwise = n * fac (n - 1)\n\n-- and the shape that catches everything below at once:\nh n | n <= 0    = 0\n    | otherwise = h (n - 1)`,
+      cp: { q: "`g 0 = 0; g n = g (n - 2)`. Does it terminate for every Int?",
+            a: `No. It terminates for even naturals and hangs for every odd one — <code>g 5</code>
+                goes 3, 1, −1, −3, … past the base case forever. It also hangs for every negative
+                input. Written as <code>g n | n &lt;= 0 = 0</code> it is total.` } },
+
+    { t: "Hutton's five-step recipe",
+      cite: "uke38 · Hutton 6.6",
+      body: `<p>Section 6.6 is the most immediately useful page in the book: a procedure for when
+        you do not know how to start. Do it on paper, in order, without skipping the steps that
+        feel too obvious to write — those are the ones that stop being obvious under exam
+        conditions.</p>
+        <p><strong>1. Write down the type.</strong> First, not last. The type tells you how many
+        arguments there are and therefore how many shapes the cases can take.</p>
+        <p><strong>2. Enumerate the cases.</strong> One line per combination of shapes. A number
+        and a list means four lines, and you write all four even though you can already see that
+        two of them will collapse.</p>
+        <p><strong>3. Fill in the simple cases</strong> — the ones needing no recursive call.</p>
+        <p><strong>4. Fill in the rest</strong>, each in terms of a smaller problem.</p>
+        <p><strong>5. Generalise and simplify.</strong> Collapse cases that agree, replace unused
+        variables with <code>_</code>, and widen the type if the definition never actually needed
+        the constraint.</p>`,
+      body2: `<p>Step 5 is where the marks are, and it is the step people skip because step 4
+        already produced something that passes the tests. Step 4 gets you a correct answer; step 5
+        gets you the answer a Haskell programmer would have written, and the difference between
+        those two is most of the gap between a C and an A in this course. It is also invisible to
+        <code>./check.sh</code>, which is exactly why an idiom review after the tests go green is
+        worth asking for.</p>
+        <p>Two specific things to look for in step 5. If two equations have the same right-hand
+        side, they want to be one equation with a variable or a wildcard where they differed. And
+        if a variable is bound on the left but never used on the right, <code>_</code> says so —
+        which is not tidiness, it is a claim about the function that the reader can rely on.</p>`,
+      code: `-- 1. the type\ndrop' :: Int -> [a] -> [a]\n\n-- 2. the cases\ndrop' 0 []     = ...\ndrop' 0 (x:xs) = ...\ndrop' n []     = ...\ndrop' n (x:xs) = ...\n\n-- 3+4. fill them in\ndrop' 0 []     = []\ndrop' 0 (x:xs) = x:xs\ndrop' n []     = []\ndrop' n (x:xs) = drop' (n - 1) xs\n\n-- 5. generalise and simplify\ndrop' 0 xs     = xs        -- first two cases agreed\ndrop' _ []     = []        -- n was never used\ndrop' n (_:xs) = drop' (n - 1) xs`,
+      cp: { q: "Why is 'write down the type' step one rather than step five?",
+            a: `Because the type is what tells you how many cases there are and what shape each
+                one is. <code>Int -> [a] -> [a]</code> says two arguments, one of which is a list
+                — so the case analysis is a number-shape crossed with a list-shape, and you can
+                enumerate before you have any idea what the answers are.` } },
+
+    { t: "On lists, the two cases are handed to you",
+      cite: "uke38 · Hutton 6.3",
+      body: `<p>A list is either <code>[]</code> or <code>x : xs</code>. That is not a useful fact
+        about lists — it is the <em>definition</em> of one, and there is no third possibility. So
+        the case analysis for any function over a list is decided before you know what the
+        function does:</p>
+        <pre class="code">f []     = &lt;the answer for the empty list&gt;
+f (x:xs) = &lt;combine x with (f xs)&gt;</pre>
+        <p>Almost every function in this chapter is that skeleton with two blanks filled in. Once
+        you have written six of them in a row the skeleton stops being something you recall and
+        becomes something your hand does, which is the entire reason exercise 5 is eight small
+        functions rather than two interesting ones.</p>`,
+      body2: `<p>Read the three below as the same shape, not as three definitions. In each, the
+        second equation does exactly one thing to <code>x</code>, and hands <code>xs</code> back
+        to the function unchanged:</p>
+        <pre class="code">product' []     = 1
+product' (x:xs) = x * product' xs
+
+length'  []     = 0
+length'  (_:xs) = 1 + length' xs
+
+reverse' []     = []
+reverse' (x:xs) = reverse' xs ++ [x]</pre>
+        <p><code>length'</code> writes <code>_</code> rather than <code>x</code>, and that is step
+        5 of the recipe showing up already: the element's value is genuinely irrelevant, and the
+        wildcard is how you say so. The type agrees — <code>[a] -&gt; Int</code> with no
+        constraint on <code>a</code> means the definition <em>cannot</em> have looked at an
+        element even if it wanted to.</p>
+        <p><code>reverse'</code> is the one worth staring at, because the recursive call comes
+        first and <code>x</code> is appended after it. That is the general move: the recursive
+        call is a value like any other, and you may put it wherever the answer needs it.</p>`,
+      ghci: `:t (:)\n:t (++)`,
+      cp: { q: "Why does `length'` use `(_:xs)` rather than `(x:xs)`?",
+            a: `Because it never looks at the element. The wildcard states that, GHC stops warning
+                about an unused binding, and the type <code>[a] -> Int</code> already promised it
+                — there is no constraint on <code>a</code>, so nothing can be done with an
+                <code>a</code> anyway.` } },
+
+    { t: "The base case is an identity element, and that is not a coincidence",
+      cite: "uke38 · Hutton 6.3, exercise 5",
+      body: `<p>Look again at those three base cases: <code>1</code>, <code>0</code>,
+        <code>[]</code>. They are not a vague notion of "empty". Each is the <strong>identity</strong>
+        for the operator its recursive case uses — <code>1</code> for <code>*</code>,
+        <code>0</code> for <code>+</code>, <code>[]</code> for <code>++</code>. Combine anything
+        with the identity and you get the anything back unchanged.</p>
+        <p>That is a rule you can apply rather than a pattern you have noticed. When you are stuck
+        on a base case, ask: <strong>what value would leave the recursive step unchanged?</strong>
+        For <code>&amp;&amp;</code> that is <code>True</code>, for <code>||</code> it is
+        <code>False</code>, for <code>max</code> over naturals it is <code>0</code>.</p>`,
+      body2: `<p>Exercise 5 asks the question outright: <code>and' [] == True</code> — why not
+        <code>False</code>? "It is vacuously true" is a correct answer and a weak one. The
+        argument that earns the mark is the algebraic one. You want this to hold for
+        <em>every</em> pair of lists:</p>
+        <pre class="code">and' (xs ++ ys)  ==  and' xs &amp;&amp; and' ys</pre>
+        <p>Now put <code>xs = []</code> into it. The left-hand side is <code>and' ys</code>, so
+        the right-hand side must be <code>and' [] &amp;&amp; and' ys</code> and still equal
+        <code>and' ys</code> — which pins <code>and' []</code> to <code>True</code> and nothing
+        else. Choose <code>False</code> and the whole thing collapses to <code>False</code> for
+        every list on earth.</p>
+        <p>The identical argument gives <code>sum' [] = 0</code> and <code>product' [] = 1</code>,
+        and it is why <code>sum []</code> is <code>0</code> rather than an error. Keep this one:
+        from week 6 onward every <code>foldr</code> you write has exactly this question sitting in
+        its second argument.</p>`,
+      code: `and' []     = True     -- identity of (&&)\nor'  []     = False    -- identity of (||)\nsum' []     = 0        -- identity of (+)\nproduct' [] = 1        -- identity of (*)\nconcat' []  = []       -- identity of (++)`,
+      cp: { q: "What base case would `maximum'` want, and why is it awkward?",
+            a: `<code>max</code> has no identity in a general <code>Ord a</code> — there is no
+                value smaller than every other <code>a</code>. So <code>maximum'</code> cannot use
+                the empty list as its base case at all; it bases on <code>[x] = x</code> instead,
+                and is partial on <code>[]</code>. Same reason the Prelude's <code>maximum []</code>
+                is an error rather than a number.` } },
+
+    { t: "Two arguments means two ways to run out",
+      cite: "uke38 · Hutton 6.3, exercises 6 and 8",
+      body: `<p>Some functions walk two things at once, and then there is more than one way for
+        the walk to finish. <code>zip</code> is the clean example: it stops as soon as
+        <em>either</em> list is empty, so it needs a base case for each.</p>`,
+      code: `zip' :: [a] -> [b] -> [(a,b)]\nzip' [] _          = []\nzip' _ []          = []\nzip' (x:xs) (y:ys) = (x,y) : zip' xs ys`,
+      body2: `<p>Exercise 8's <code>take'</code> is the same shape with a number in place of the
+        second list: it can run out of count or run out of list, and both must be written.
+        Exercise 6's <code>merge</code> is the same shape again — and this is where the week's
+        best trap lives, because there the two base cases <strong>do different things</strong>:</p>
+        <pre class="code">merge []     ys     = ys      -- ys still has elements to emit
+merge xs     []     = xs      -- and symmetrically
+merge (x:xs) (y:ys)
+  | x &lt;= y    = x : merge xs (y:ys)
+  | otherwise = y : merge (x:xs) ys</pre>
+        <p>Write <code>merge _ _ = []</code> for either base case and the function still typechecks,
+        still terminates, and still returns a <em>sorted</em> list. It just quietly drops
+        everything left in the other one. <code>msort</code> built on top of it will return
+        plausible sorted output of the wrong length, which is precisely the bug that survives a
+        careless eyeball test — and precisely why <code>merge [] [1,2]</code> is one of the
+        checks.</p>
+        <p>Note also what the recursive cases do with the list they did <em>not</em> take from:
+        they hand it back whole, as <code>(y:ys)</code>, not as <code>ys</code>. Re-consing the
+        untouched head is the commonest slip in this exercise, and it loses exactly one element
+        per comparison.</p>`,
+      cp: { q: "Why must `merge`'s two base cases return `ys` and `xs` rather than `[]`?",
+            a: `Because reaching <code>[]</code> in one list does not mean the other is finished.
+                Returning <code>[]</code> silently discards the remainder — the result is still
+                sorted, just short, so it passes a glance and fails a length check.` } },
+
+    { t: "Multiple recursion: where the work happens",
+      cite: "uke38 · Hutton 6.4, exercise 7",
+      body: `<p>A definition may call itself more than once. <code>fib</code> is the small case,
+        and it is also the second base-case lesson: the recursive line reaches back <em>two</em>
+        steps, so two base cases are needed, or <code>fib 1</code> falls through to
+        <code>fib (-1)</code>.</p>`,
+      code: `fib :: Int -> Int\nfib 0 = 0\nfib 1 = 1\nfib n = fib (n - 2) + fib (n - 1)`,
+      body2: `<p>The interesting pair is <code>qsort</code> and <code>msort</code>. Both split the
+        problem in two, recurse on each half and combine, so structurally they are the same
+        algorithm. What differs is <em>which end of that sentence does the thinking</em>, and that
+        contrast is a good exam answer in three lines:</p>
+        <table class="hd-t">
+          <tr><th></th><th>Splits by</th><th>Combines with</th></tr>
+          <tr><td class="hd-m">qsort</td><td>value — the comprehensions do the work</td><td><code>++</code>, which is trivial</td></tr>
+          <tr><td class="hd-m">msort</td><td>position — <code>halve</code> is trivial</td><td><code>merge</code>, which does the work</td></tr>
+        </table>
+        <p>One does its thinking on the way down, the other on the way back up. Neither is free;
+        the labour is conserved and only moves.</p>
+        <blockquote><p><strong>The msort trap.</strong> You need <em>both</em>
+        <code>msort [] = []</code> and <code>msort [x] = [x]</code>. Without the second,
+        <code>halve [x]</code> gives <code>([], [x])</code>, so <code>msort [x]</code> calls
+        <code>msort [x]</code> — the input never got smaller. If <code>./check.sh 5</code> hangs
+        rather than failing, this is almost certainly why.</p></blockquote>
+        <p>That trap is the reachability rule from earlier, in disguise: the base case
+        <code>[]</code> exists, and a one-element list never reaches it.</p>`,
+      cp: { q: "qsort and msort both divide and conquer. Where does each do the real work?",
+            a: `<code>qsort</code> on the way down — the two comprehensions decide by value which
+                half each element belongs to, and recombining is a bare <code>++</code>.
+                <code>msort</code> on the way back up — splitting by position is trivial, and
+                <code>merge</code> carries the whole ordering argument.` } },
+
+    { t: "Mutual recursion replaces the index",
+      cite: "uke38 · Hutton 6.5, exercise 9",
+      body: `<p>Two functions may be defined in terms of each other. Neither is recursive alone;
+        together they are, and the pair terminates for the same reason a single one does — each
+        call passes on something smaller.</p>`,
+      code: `even' :: Int -> Bool\neven' 0 = True\neven' n = odd' (n - 1)\n\nodd' :: Int -> Bool\nodd' 0 = False\nodd' n = even' (n - 1)`,
+      body2: `<p>Exercise 9 does this for <code>evens</code> and <code>odds</code> on lists, and
+        the reason it is worth doing is the comparison with how week 4 would have attacked the
+        same problem:</p>
+        <pre class="code">-- week 4: describe the result, and compute an index to filter on
+evens xs = [x | (x,i) &lt;- zip xs [0..], even i]
+
+-- week 5: alternate which function is in charge
+evens []     = []
+evens (x:xs) = x : odds xs
+odds  []     = []
+odds  (_:xs) = evens xs</pre>
+        <p>The second version never computes an index at all. "Every other element" is not
+        expressed as a property of a position — it is expressed by <em>whose turn it is</em>, and
+        the alternation carries the information the index was carrying. Week 4's
+        <code>positions</code> had to reach for <code>zip xs [0..]</code> to get at positions;
+        this needs nothing of the kind, and it works on an infinite list where the index version
+        also does but for a less obvious reason.</p>
+        <p>Both are correct and you should be able to write either. Noticing that they are
+        different <em>ideas</em> about the same problem, rather than two spellings of one idea, is
+        worth more than either definition — and it is exactly the sort of thing the "discuss the
+        imperative and functional paradigms" question is fishing for.</p>
+        <p>This is also exercise 4 on the lecturer's <code>uke1.txt</code> sheet. You now have two
+        answers to it and a reason to prefer one.</p>`,
+      cp: { q: "What makes the mutually recursive `evens`/`odds` terminate?",
+            a: `Each equation passes <code>xs</code> — one element shorter — to the other
+                function. The pair descends the list exactly once, and both have an
+                <code>[]</code> case, so every finite list reaches one of them.` } }
+  ],
+  drills: [
+    { tag: "recursion", kind: "value", prompt: "What is the value of this expression?", code: "fac 4  where  fac 0 = 1; fac n = n * fac (n-1)",
+      answer: "24", accept: ["24"],
+      explain: "4 * 3 * 2 * 1 * 1. Expand it on paper one line at a time — the exam awards the substitutions, not the number." },
+    { tag: "basecase", kind: "choice", prompt: "`fac 0 = 1; fac n = n * fac (n-1)`. What does `fac (-1)` do?", code: "",
+      choices: ["Returns 1", "Returns 0", "Type error", "Never terminates"], answer: 3,
+      explain: "The base case exists but is unreachable from -1: the calls go -1, -2, -3, straight past zero. 'Is there a base case' is the wrong question; 'is it reachable' is the right one." },
+    { tag: "basecase", kind: "choice", prompt: "`g 0 = 0; g n = g (n - 2)`. For which Int inputs does it terminate?", code: "",
+      choices: ["All of them", "Even naturals only", "All naturals", "None"], answer: 1,
+      explain: "A step of 2 jumps over an equality test at 0. Odd inputs and every negative input run away. `n <= 0` as a guard catches the lot." },
+    { tag: "basecase", kind: "choice", prompt: "Why does `fib` need two base cases?", code: "fib n = fib (n-2) + fib (n-1)",
+      choices: ["For speed", "The step reaches back two, so one base case can be jumped", "Because it returns Int", "It does not — one is enough"], answer: 1,
+      explain: "With only `fib 0`, evaluating `fib 1` asks for `fib (-1)`. As many base cases as the step size." },
+    { tag: "identity", kind: "value", prompt: "What must `and' []` be?", code: "and' []     = ?\nand' (x:xs) = x && and' xs",
+      answer: "True", accept: ["true"],
+      explain: "True is the identity of (&&), and it is the only value keeping `and' (xs ++ ys) == and' xs && and' ys` true when xs is empty. Pick False and every list answers False." },
+    { tag: "identity", kind: "value", prompt: "What is `product []` in the Prelude?", code: "",
+      answer: "1", accept: ["1"],
+      explain: "The identity of (*). Same argument as `sum [] == 0` — the base case is whatever leaves the recursive step unchanged." },
+    { tag: "identity", kind: "choice", prompt: "Stuck on a base case. Which question settles it?", code: "",
+      choices: ["What is the smallest input?", "What value leaves the recursive step unchanged?", "What does the type default to?", "What does the Prelude return?"], answer: 1,
+      explain: "The identity element of the operator in the recursive case. From week 6 this becomes foldr's second argument, and the question is identical." },
+    { tag: "recursion", kind: "value", prompt: "What is the value of this expression?", code: "length' [1,2,3]  where  length' [] = 0; length' (_:xs) = 1 + length' xs",
+      answer: "3", accept: ["3"],
+      explain: "1 + (1 + (1 + 0)). Note the wildcard: the element's value is never consulted, and the type [a] -> Int already promised that." },
+    { tag: "recursion", kind: "choice", prompt: "Which is `reverse'` on `(x:xs)`?", code: "",
+      choices: ["x : reverse' xs", "reverse' xs ++ [x]", "reverse' (xs ++ [x])", "[x] ++ reverse' xs"], answer: 1,
+      explain: "The recursive call is a value like any other, so it can go on the left of ++ with x appended after it. The first choice is the identity function in disguise." },
+    { tag: "sorting", kind: "value", prompt: "What is the value of this expression?", code: "merge [2,5,6] [1,3,4]",
+      answer: "[1,2,3,4,5,6]", accept: ["[1,2,3,4,5,6]"],
+      explain: "Take the smaller head each time and recurse on what is left. Both inputs must already be sorted — merge does not sort, it interleaves." },
+    { tag: "sorting", kind: "choice", prompt: "`merge [] ys = []` instead of `= ys`. What breaks?", code: "",
+      choices: ["A type error", "It hangs", "Output is still sorted but too short", "Nothing"], answer: 2,
+      explain: "The remainder of ys is silently discarded. msort on top of it returns a sorted list of the wrong length — the bug that passes an eyeball test, which is why `merge [] [1,2]` is a check." },
+    { tag: "sorting", kind: "choice", prompt: "Why does `msort` need `msort [x] = [x]`?", code: "",
+      choices: ["Speed", "halve [x] is ([], [x]), so the input never gets smaller", "To fix the type", "It does not"], answer: 1,
+      explain: "msort [x] would call msort [x] forever. The [] base case exists and a singleton never reaches it — the reachability rule again." },
+    { tag: "sorting", kind: "choice", prompt: "Where does `msort` do its real work?", code: "",
+      choices: ["In the split", "In the merge", "In both equally", "In the base case"], answer: 1,
+      explain: "halve is trivial and merge carries the ordering. qsort is the mirror image: the comprehensions split by value and ++ recombines for free." },
+    { tag: "recursion", kind: "value", prompt: "What is the value of this expression?", code: "take' 5 [1,2]  where take' is your own take",
+      answer: "[1,2]", accept: ["[1,2]"],
+      explain: "Asking for more than there is gives everything, not an error. That needs a base case for the list running out as well as for the count reaching zero." },
+    { tag: "mutual", kind: "value", prompt: "What is the value of this expression?", code: "evens \"abcde\"  where evens (x:xs) = x : odds xs; odds (_:xs) = evens xs",
+      answer: "\"ace\"", accept: ["ace", "\"ace\""],
+      explain: "No index is ever computed. Alternating which function is in charge carries the information that `zip xs [0..]` was carrying in week 4." },
+    { tag: "mutual", kind: "choice", prompt: "What makes a mutually recursive pair terminate?", code: "",
+      choices: ["One of them is not recursive", "Each hands a smaller argument to the other, and both have a base case", "GHC detects the cycle", "Nothing — they always terminate"], answer: 1,
+      explain: "Exactly the single-function rule, spread over two definitions. Each equation must both shrink the argument and have somewhere to stop." },
+    { tag: "recursion", kind: "choice", prompt: "Step 5 of Hutton's recipe is 'generalise and simplify'. Why does it matter?", code: "",
+      choices: ["It makes the code faster", "It is where cases collapse and unused arguments become _ — invisible to the tests", "It is required to compile", "It fixes base cases"], answer: 1,
+      explain: "Step 4 gets a correct answer; step 5 gets the answer a Haskell programmer would write. check.sh cannot see the difference, which is why the idiom review exists." }
+  ]
 }
 ];
 
@@ -1236,6 +1594,231 @@ const WORK = {
          teaches you to return a <code>Maybe</code> instead, which is how you would really
          write it.` ] }
   ]
+},
+
+5: {
+  dir: "tutorial/week05", cmd: "./check.sh 5", checks: 63, exercises: 9,
+  intro: `<strong>Learning outcome #1.</strong> Sixty-three checks, the biggest week so far, and
+          everything in weeks 6 to 9 is built on top of it. Two standing rules for this one:
+          <strong>no list comprehensions</strong> — week 4 was about <em>describing</em> a list and
+          this week is about <em>building</em> one, so reaching for a comprehension skips the
+          chapter — and <strong>if it hangs, it is a base-case bug</strong>. Ctrl-C, then ask which
+          input fails to reach a base case.`,
+  paper: [
+    { n: "P1", t: "Expand by hand",
+      brief: `One step per line, all the way down to a value. No computer, and no skipping the
+              boring middle — the exam marks the substitutions, not the answer.`,
+      code: "fac 4\nsumdown 3",
+      hints: [
+        `Each line is the one above it with a definition substituted in. Write the parentheses
+         even when they look redundant; they are what stops you losing track.`,
+        `<code>fac 4</code> takes five lines going down and five coming back up. If yours is
+         shorter you have collapsed two steps into one, which is where arithmetic slips in.`,
+        `Then do it once more without looking at the definition. That is the version you will
+         have on 2 December.` ] },
+
+    { n: "P2", t: "Counting the multiplications",
+      brief: `Hutton 6.5. Given <code>x ^ 0 = 1</code> and <code>x ^ n = x * (x ^ (n - 1))</code>,
+              show how <code>2 ^ 3</code> is evaluated, one step per line. Then say how many
+              multiplications happen, in terms of <code>n</code>.`,
+      hints: [
+        `Expand it fully before you count anything. The count is a property of the expansion, not
+         something to reason about in the abstract.`,
+        `Watch the base case: <code>x ^ 0</code> produces a <code>1</code> that is then multiplied
+         by something. Is that multiplication in your count?`,
+        `The answer is a linear function of <code>n</code>, and the interesting part is whether it
+         is <code>n</code> or <code>n + 1</code>. Your expansion settles it — trust the paper over
+         the intuition.` ] },
+
+    { n: "P3", t: "Why those base cases",
+      brief: `In two or three sentences: why is <code>and' [] = True</code> and
+              <code>product' [] = 1</code>, and what breaks if they are <code>False</code> and
+              <code>0</code>? Write it out in full — this is an exam answer, not a thought.`,
+      hints: [
+        `"Vacuously true" is a restatement, not a reason. The word you want is
+         <strong>identity</strong>.`,
+        `Frame it as a law that must hold for every pair of lists:
+         <code>and' (xs ++ ys) == and' xs &amp;&amp; and' ys</code>. Now put <code>xs = []</code>
+         into it and see what the base case is forced to be.`,
+        `Finish with the consequence: with <code>False</code>, every list on earth answers
+         <code>False</code>. The demo on the identity concept runs exactly this check if you want
+         to watch it fail.` ] },
+
+    { n: "P4", t: "The recipe, written out in full",
+      brief: `Run Hutton's five steps on paper for <code>elem' :: Eq a =&gt; a -&gt; [a] -&gt; Bool</code>.
+              All five, including the ones that feel too obvious to write down.`,
+      hints: [
+        `Step 2 is the one people skip. Enumerate the cases before you know any of the answers —
+         the first argument has no shape to match on, so how many lines is that?`,
+        `Step 5 has something to find here, and it is small. One of your two equations binds a
+         variable it never uses.`,
+        `Then ask what the <code>Eq a</code> constraint is <em>for</em>. Delete it and see which
+         line stops compiling; that line is the only reason it is in the type.` ] },
+
+    { n: "P5", t: "Which of these terminate?",
+      brief: `For each, say whether it terminates for <strong>every</strong> <code>Int</code>
+              input, and if not, give an input where it does not.`,
+      code: "f 0 = 0\nf n = f (n - 1)\n\ng 0 = 0\ng n = g (n - 2)\n\nh n | n <= 0    = 0\n    | otherwise = h (n - 1)\n\nk n = k n",
+      hints: [
+        `For each one, pick a hostile input and follow the chain of calls out loud. Negative
+         numbers are the obvious hostile input; for one of them, an odd number is worse.`,
+        `Two of the four have a base case that some inputs step straight over. One has a base case
+         that catches everything below it. One has no base case at all.`,
+        `Write the general rule down at the end, because it is the one you are meant to keep: when
+         a recursion counts down, guard the bottom with <code>&lt;=</code> rather than testing for
+         equality with <code>==</code>.` ] }
+  ],
+  code: [
+    { n: 1, name: "fac", sig: "Int -> Int", checks: 5,
+      brief: `Hutton 6.1. Factorial, <strong>guarded against negative input</strong>. The book's
+              version is correct for 3 and never terminates for −1, and fixing that is the whole
+              exercise. <code>fac (-1) == 0</code>.`,
+      code: "fac 0    ==  1\nfac 5    ==  120\nfac (-1) ==  0",
+      hints: [
+        `Write the book's two-equation version first and satisfy yourself that
+         <code>fac (-1)</code> really does hang. Knowing the failure by having caused it is worth
+         more than being warned about it.`,
+        `The base case <code>fac 0 = 1</code> exists. What it is not, from −1, is
+         <em>reachable</em> — the calls go −1, −2, −3, past zero forever.`,
+        `Guards give you three clean cases. Put the negative one first; order matters, and the
+         first guard that holds wins.`,
+        `Keep the question, not the fix: "is there a base case" is the wrong question, and "can
+         this input reach one" is the right one. Every hang you meet this week is that question
+         unanswered.` ] },
+
+    { n: 2, name: "sumdown", sig: "Int -> Int", checks: 4,
+      brief: `Hutton 6.2. Sum every number from <code>n</code> down to 0. Recursion on a
+              <em>number</em>, not a list — same shape as <code>fac</code>, and the base case is
+              different for a reason.`,
+      code: "sumdown 3  ==  6      -- 3 + 2 + 1 + 0\nsumdown 0  ==  0",
+      hints: [
+        `Take <code>fac</code>, swap <code>*</code> for <code>+</code>, and then look hard at the
+         base case. It does not stay 1.`,
+        `Ask the identity question: what value can you add to something and leave it unchanged?`,
+        `That is the same reasoning as <code>and' [] = True</code>, and you will use it once per
+         exercise from here to week 9.` ] },
+
+    { n: 3, name: "expo", sig: "Int -> Int -> Int", checks: 5,
+      brief: `Hutton 6.3. Exponentiation, recursively — and without <code>(^)</code>, since that
+              is what you are defining. Mirror the structure of <code>mult</code> from the
+              chapter.`,
+      code: "expo 2 3  ==  8\nexpo 5 0  ==  1\nexpo 0 3  ==  0",
+      hints: [
+        `Two arguments, but only one of them is shrinking. Which one does the recursion count
+         down?`,
+        `The base case is on the second argument reaching 0, and its value is the identity of the
+         operator in the recursive case — the same question as exercise 2, different operator.`,
+        `<code>expo 0 0 == 1</code> is in the tests. Check that yours agrees, and notice that it
+         falls out of the base case rather than needing a special line.`,
+        `Then expand <code>expo 2 3</code> on paper and count the multiplications. That is P2, and
+         doing it here saves you doing it twice.` ] },
+
+    { n: 4, name: "euclid", sig: "Int -> Int -> Int", checks: 6,
+      brief: `Hutton 6.4. Greatest common divisor by Euclid's algorithm. Write the
+              <strong>subtraction</strong> version — the <code>mod</code> one is faster and also
+              correct, but the subtraction one is what the exam asks for.`,
+      code: "euclid 6 27  ==  3\neuclid 12 8  ==  4\neuclid 5 0   ==  5",
+      hints: [
+        `The rule in one line: if the two numbers are equal, that <em>is</em> the answer.
+         Otherwise replace the larger by their difference and go again.`,
+        `Guards, three of them, and the equality case first. Notice that "replace the larger"
+         needs two cases because you do not know which one is larger.`,
+        `<code>euclid 5 0</code> and <code>euclid 0 5</code> are both in the tests. Follow your
+         definition through <code>euclid 5 0</code> by hand — if it subtracts forever, you have
+         the reachability bug from exercise 1 in a new costume.`,
+        `Termination argument, worth being able to state: the sum of the two arguments strictly
+         decreases on every call and cannot go below the answer.` ] },
+
+    { n: 5, name: "and', concat', replicate', nth, elem'", sig: "five of them", checks: 14,
+      brief: `Hutton 6.6. Five Prelude functions from scratch. They are here as a block, and doing
+              them in a row is the point — the list skeleton should be automatic by the fifth one.
+              <strong>No list comprehensions.</strong>`,
+      code: "and'  [True,True]   ==  True\nand'  []            ==  True\nconcat' [[1,2],[3]] ==  [1,2,3]\nreplicate' 3 'x'    ==  \"xxx\"\nnth [1,2,3] 1       ==  2\nelem' 3 [1,2,3]     ==  True",
+      hints: [
+        `All five have the same two equations: one for <code>[]</code>, one for
+         <code>(x:xs)</code>, with the recursive call on <code>xs</code>. Write the skeleton down
+         five times before filling any of it in.`,
+        `The base cases are the interesting part, and four of them are identity elements.
+         <code>and' []</code> is <code>True</code>, <code>concat' []</code> is <code>[]</code>.`,
+        `<code>replicate'</code> and <code>nth</code> recurse on a <em>number</em>, so their base
+         cases are numeric — and <code>nth</code> is the one with no sensible empty-list answer at
+         all, which is why it is partial exactly like <code>(!!)</code>.`,
+        `Step 5 pass at the end: how many of your five bind a variable they never use? Each of
+         those wants a <code>_</code>, and the type usually told you so in advance —
+         <code>[a] -&gt; Int</code> cannot look at an element.` ] },
+
+    { n: 6, name: "merge", sig: "Ord a => [a] -> [a] -> [a]", checks: 5,
+      brief: `Hutton 6.7. Merge two <strong>already sorted</strong> lists into one sorted list,
+              with no sorting function anywhere. Get this right before you touch exercise 7 —
+              <code>msort</code> is only as correct as this is.`,
+      code: "merge [2,5,6] [1,3,4]  ==  [1,2,3,4,5,6]\nmerge [] [1,2]         ==  [1,2]\nmerge [1,1] [1]        ==  [1,1,1]",
+      hints: [
+        `Two base cases, because there are two ways to run out — and they do <em>not</em> both
+         return <code>[]</code>. Think about what is still waiting in the other list.`,
+        `The recursive case splits on a comparison. Take the smaller head, emit it, and recurse.`,
+        `The slip to watch for: the list you did <em>not</em> take from must be handed back whole.
+         If you wrote <code>merge xs ys</code> where you meant <code>merge xs (y:ys)</code>, you
+         are losing exactly one element per comparison.`,
+        `Use <code>&lt;=</code> rather than <code>&lt;</code> in the guard and check
+         <code>merge [1,1] [1]</code>. Duplicates are where a merge quietly goes wrong, and that
+         test is in the file for that reason.`,
+        `Before moving on, run the three empty-list cases in GHCi. The demo on "two arguments means
+         two ways to run out" has a toggle that shows what returning <code>[]</code> costs you.` ] },
+
+    { n: 7, name: "halve, msort", sig: "Ord a => [a] -> [a]", checks: 8,
+      brief: `Hutton 6.8. Merge sort: split in half, sort each half, merge the results.
+              <code>halve</code> is one line and is repeated from week 3.`,
+      code: "msort [4,1,3,2]  ==  [1,2,3,4]\nmsort \"\"         ==  \"\"\nmsort [1]        ==  [1]",
+      hints: [
+        `<code>halve</code> wants <code>length</code>, <code>div</code>, and one of
+         <code>splitAt</code> or a <code>take</code>/<code>drop</code> pair. It is not the
+         exercise.`,
+        `<strong>The trap:</strong> you need both <code>msort [] = []</code> <em>and</em>
+         <code>msort [x] = [x]</code>. Without the second, <code>halve [x]</code> gives
+         <code>([], [x])</code> and <code>msort [x]</code> calls <code>msort [x]</code> forever.`,
+        `If <code>./check.sh 5</code> stops printing rather than failing, that is what happened.
+         Ctrl-C and add the singleton case.`,
+        `<code>msort "haskell"</code> and <code>msort [20,19..1]</code> are both checked. The
+         second is there to catch a definition that is correct but splits unevenly enough to
+         recurse forever on one side.`,
+        `Then answer the exam question while it is in your hands: <code>qsort</code> splits by
+         value and combines with <code>++</code>; <code>msort</code> splits by position and puts
+         all the work in <code>merge</code>. Where does each one do its thinking?` ] },
+
+    { n: 8, name: "sum', take', last'", sig: "three of them", checks: 10,
+      brief: `Hutton 6.9. Three more from scratch. <code>take'</code> is the one worth slowing
+              down for — it recurses on two things at once.`,
+      code: "sum' [1,2,3]     ==  6\ntake' 2 [1,2,3]  ==  [1,2]\ntake' 5 [1,2]    ==  [1,2]\nlast' [1,2,3]    ==  3",
+      hints: [
+        `<code>sum'</code> is the skeleton again, with the identity of <code>(+)</code> at the
+         bottom. Two minutes.`,
+        `<code>take'</code> can run out of <em>count</em> or run out of <em>list</em>, so it needs
+         a base case for each. <code>take' 5 [1,2] == [1,2]</code> is the second one, and
+         <code>take' (-1) [1,2] == []</code> is in the tests too — guard with <code>&lt;=</code>.`,
+        `<code>last'</code> is the odd one out: its base case is a <em>one-element</em> list, not
+         the empty one. There is no honest answer for <code>last' []</code>, which is why the
+         Prelude's <code>last</code> is partial.`,
+        `Run the recipe's step 5 over all three. <code>take'</code> in particular usually has a
+         case that can be collapsed and an argument that wants a <code>_</code>.` ] },
+
+    { n: 9, name: "evens, odds", sig: "[a] -> [a]", checks: 6,
+      brief: `Mutual recursion, from the chapter text. Two functions that call each other. No
+              comprehensions, no <code>zip</code>, no index arithmetic — and a five-minute finish
+              to the week.`,
+      code: "evens \"abcde\"  ==  \"ace\"\nodds  \"abcde\"  ==  \"bd\"",
+      hints: [
+        `<code>evens</code> keeps the head and hands the tail to <code>odds</code>;
+         <code>odds</code> drops the head and hands the tail to <code>evens</code>. Each needs its
+         own <code>[]</code> case.`,
+        `<code>odds</code> never looks at the element it drops, so that pattern wants a
+         <code>_</code>.`,
+        `Now compare it with how week 4 would have done it —
+         <code>[x | (x,i) &lt;- zip xs [0..], even i]</code>. This version computes no index at
+         all; the alternation carries what the index was carrying.`,
+        `Same problem appears as exercise 4 on the lecturer's <code>uke1.txt</code>. You now have
+         two answers and a reason to prefer one, which is exactly the kind of thing the
+         "imperative versus functional" essay question is fishing for.` ] }
+  ]
 }
 };
 
@@ -1285,13 +1868,15 @@ const TAGS = {
   types: "reading types", listtuple: "lists vs tuples", currying: "currying",
   classes: "type classes", defaulting: "numeric defaulting", conditionals: "if-expressions",
   guards: "guards and where", patterns: "pattern matching", lambda: "lambdas",
-  sections: "operator sections", comprehension: "comprehensions", generators: "generators", zip: "zip idioms"
+  sections: "operator sections", comprehension: "comprehensions", generators: "generators", zip: "zip idioms",
+  basecase: "base cases", identity: "identity elements", sorting: "merge and msort",
+  mutual: "mutual recursion"
 };
 
 /* ------------------------------------------------------------------ state -- */
 
 let mode = "home";
-let week = 3;          // uke36 is today's lecture
+let week = 5;          // uke38 is this week
 let ci = 0;            // concept index
 let queue = [], qi = 0, answered = false, runScore = 0, runTotal = 0, runTag = null;
 
@@ -1334,7 +1919,7 @@ function renderHome() {
   /* --- progress panel --- */
   const p1 = el("div", "panel");
   p1.appendChild(el("h2", null, "Where you are"));
-  p1.appendChild(el("p", "note", "Four weeks of material, tracked in this browser only. Nothing here is submitted anywhere."));
+  p1.appendChild(el("p", "note", "Five weeks of material, tracked in this browser only. Nothing here is submitted anywhere."));
 
   WEEKS.forEach(w => {
     const row = el("div", "wrow");
@@ -1405,8 +1990,8 @@ function renderHome() {
     ["Read", "Learn mode, one concept at a time. Each cites the slide it came from, so his handout stays the authority."],
     ["Run it", "Every concept has a GHCi block. Type it. The browser cannot run Haskell and is not pretending to."],
     ["Drill", "Answer before revealing. Getting it wrong on purpose here is cheaper than on 2 December."],
-    ["Work", "The bridge to the repo: paper drills, then the six exercises with a hint ladder that stops short of the answer."],
-    ["Then code", "./tutorial/check.sh 1 in the repo — 142 checks across the four weeks are where this actually lands."]
+    ["Work", "The bridge to the repo: paper drills, then the week's exercises with a hint ladder that stops short of the answer."],
+    ["Then code", "./tutorial/check.sh 5 in the repo — 205 checks across the five weeks are where this actually lands."]
   ].forEach(([h, b]) => {
     const d = el("div");
     d.innerHTML = "<strong style='color:var(--ink)'>" + esc(h) + ".</strong> " + esc(b);
@@ -1482,7 +2067,25 @@ const PLAIN = {
 "`zip` truncates, and two idioms depend on it":
   "zip pairs up two lists and stops as soon as either runs out. That is not a limitation to work around — two very common tricks rely on it.",
 "Strings are lists, so all of this works on text":
-  "A String is literally a list of characters. Every list function you have learned already works on text, with no new vocabulary."
+  "A String is literally a list of characters. Every list function you have learned already works on text, with no new vocabulary.",
+"Recursion is not a technique here — it is the only loop":
+  "There is no for and no while, because a loop needs a counter that changes and nothing here ever changes. A function that calls itself on a smaller input is the replacement, and it is not the clever option — it is the only one.",
+"Every recursive definition is a base case and a step":
+  "Two parts, always. One case you can answer outright with no further calls, and one case that answers in terms of a smaller version of the same problem. Miss either and the program hangs.",
+"The real question is whether the base case is reachable":
+  "Having a base case is not enough — the chain of calls has to actually land on it. Count down by two straight over a test for zero and the program runs forever, with the base case sitting right there on screen.",
+"Hutton's five-step recipe":
+  "A procedure for when you have no idea how to start: write the type, list the cases, fill in the easy ones, fill in the rest, then tidy. Do it on paper, and do not skip the tidying — that is where the marks are.",
+"On lists, the two cases are handed to you":
+  "A list is either empty or a first element followed by the rest. There is no third option, so every list function has the same two cases before you even know what it does.",
+"The base case is an identity element, and that is not a coincidence":
+  "The empty-list answer is never arbitrary. It is whatever value leaves the recursive step unchanged — 1 for multiplication, 0 for addition, True for and. Ask that question and the base case answers itself.",
+"Two arguments means two ways to run out":
+  "When a function walks two lists at once, either can finish first, so it needs a base case for each. And those two cases often do different things — returning the empty list from both is how merge quietly loses half your data.",
+"Multiple recursion: where the work happens":
+  "Some functions call themselves twice. qsort and msort both split, recurse and combine, but one does the thinking while splitting and the other while combining. The labour is conserved; it only moves.",
+"Mutual recursion replaces the index":
+  "Two functions that call each other. For every-other-element that means you never compute a position at all — you alternate whose turn it is, and the alternation carries the information."
 };
 
 const DEMO_FOR = {
@@ -1507,7 +2110,16 @@ const DEMO_FOR = {
 "Empty ranges hand you base cases for free":"ranges",
 "Patterns on the left of `<-` also filter":"comprehension",
 "`zip` truncates, and two idioms depend on it":"zip",
-"Strings are lists, so all of this works on text":"prelude"
+"Strings are lists, so all of this works on text":"prelude",
+"Recursion is not a technique here — it is the only loop":"reduce",
+"Every recursive definition is a base case and a step":"basecase",
+"The real question is whether the base case is reachable":"basecase",
+"Hutton's five-step recipe":"recipe",
+"On lists, the two cases are handed to you":"listrec",
+"The base case is an identity element, and that is not a coincidence":"identity",
+"Two arguments means two ways to run out":"merge",
+"Multiple recursion: where the work happens":"msort",
+"Mutual recursion replaces the index":"mutual"
 };
 
 const DEMO_TITLE = {
@@ -1517,7 +2129,584 @@ const DEMO_TITLE = {
   curry:"Apply one argument at a time", guards:"Which guard fires?",
   patterns:"Which equation matches?", sections:"Fill in one side",
   comprehension:"Watch the generators turn", ranges:"Ranges, including the empty ones",
-  zip:"Where zip stops"
+  zip:"Where zip stops",
+  basecase:"Does it reach the base case?", recipe:"The five steps, one at a time",
+  listrec:"The list skeleton, unfolding", identity:"Which base case survives?",
+  merge:"Merge, one comparison at a time", msort:"Where the work happens",
+  mutual:"Whose turn is it?"
+};
+
+
+/* ==========================================================================
+   A second prose block, shown after the code listing.
+
+   Keyed by concept title, exactly like PLAIN above, so nothing in WEEKS has to
+   change. The first block says what the rule is; this one says what it costs
+   you when you get it wrong, and where it turns up again later. A concept
+   without an entry renders as it always did.
+   ========================================================================== */
+
+const MORE = {
+"An equals sign is not an assignment":
+  `<p>The practical consequence arrives sooner than you expect, and it arrives as a
+   <em>missing</em> feature. There is no <code>x++</code>, no <code>+=</code>, no swapping two
+   variables, no accumulator you nudge along inside a loop. Every one of those is a change to a
+   box, and there are no boxes. When you catch yourself reaching for one, the question to ask is
+   "what is the value I want, described in terms of a smaller version of itself?" — and that
+   question is week 5's whole syllabus.</p>
+   <p>The compensation is that a Haskell program can be reasoned about the way you reason about
+   algebra. If <code>double 3</code> is 6 here, it is 6 everywhere, in every order, on every run,
+   no matter what else the program has done first. Nothing can have quietly changed underneath
+   you, because there is no underneath. That property has a name — <strong>referential
+   transparency</strong> — and the reason it is worth the missing features is that it is what
+   makes the exam's "evaluate this by hand" questions answerable at all. You cannot hand-evaluate
+   a language where the answer depends on what happened earlier.</p>
+   <p>It also explains a GHCi oddity you will hit within the hour. At the prompt you may write
+   <code>x = 5</code> and then <code>x = 6</code>, and it appears to work. It is not
+   reassignment: the second line <em>shadows</em> the first with a new binding in a new scope, and
+   the old one is still there, unreachable. In a file, two definitions of the same name at the
+   same level is an error — <em>Multiple declarations of 'x'</em> — and that error is the honest
+   version of what GHCi is politely hiding.</p>`,
+
+"GHCi is the tool you live in":
+  `<p>Beyond the four commands, three habits are worth installing deliberately, because they are
+   what separates ten minutes of confusion from ten seconds.</p>
+   <p><strong>Ask before you run.</strong> <code>:t</code> does not evaluate, so you can
+   interrogate an expression that would crash or loop. <code>:t head []</code> answers happily;
+   <code>head []</code> throws. When a definition will not compile, asking for the type of each
+   piece separately localises the disagreement faster than reading the error.</p>
+   <p><strong>Read errors from the bottom.</strong> GHC states the context first and the actual
+   complaint last, which is the opposite of how you want to read it. The final two lines are
+   almost always "expected this type, got that one", and that pair is the whole message.</p>
+   <p><strong>Use <code>:i</code> for fixity.</strong> <code>:i (^)</code> prints
+   <code>infixr 8</code> and <code>:i (*)</code> prints <code>infixl 7</code>. Those numbers
+   <em>are</em> the answer to "which binds tighter", and looking them up settles a precedence
+   argument in four seconds rather than by experiment. Also note <code>it</code>, bound to the
+   last result: <code>reverse "abc"</code> then <code>length it</code> saves retyping while you
+   are poking at something.</p>
+   <p>One caution about GHCi as a source of truth. It defaults ambiguous numeric types to
+   <code>Integer</code> and prints types slightly more generally than Hutton does —
+   <code>length :: Foldable t =&gt; t a -&gt; Int</code> rather than the book's
+   <code>[a] -&gt; Int</code>. On paper, write the book's version; that is what the exam is
+   marked against.</p>`,
+
+"Application binds tighter than every operator":
+  `<p>Three places this rule bites, in rough order of how often it will cost you:</p>
+   <ul>
+     <li><code>xs !! length xs - 1</code> parses as <code>(xs !! length xs) - 1</code>, which
+       indexes one past the end and crashes. You meant
+       <code>xs !! (length xs - 1)</code>.</li>
+     <li><code>f x : xs</code> parses as <code>(f x) : xs</code>. Usually that is what you wanted
+       — but in an <em>argument</em> position, <code>g x:xs</code> is not a cons pattern at all,
+       which is why <code>(x:xs)</code> always carries its parentheses.</li>
+     <li><code>negate x + 1</code> is <code>(negate x) + 1</code>. Anything of the shape
+       "function applied to something, then an operator" groups the application first, every
+       time, with no exceptions to memorise.</li>
+   </ul>
+   <p>The rule has a positive use as well, and it is worth adopting early: because application
+   binds tightest, you almost never need parentheses around a plain argument.
+   <code>f (x) </code> and <code>f x</code> are the same thing, and the first marks you out as
+   still thinking in C. Parenthesise <em>compound</em> arguments — <code>f (x + 1)</code>,
+   <code>f (g x)</code> — and nothing else.</p>
+   <p>Related and easy to miss: <code>f a b</code> is not <code>f(a, b)</code>. The first applies
+   <code>f</code> to two arguments in turn; the second applies it to one argument that happens to
+   be a pair. They have genuinely different types, and the Prelude's <code>curry</code> and
+   <code>uncurry</code> exist precisely to convert between them.</p>`,
+
+"Backticks and the list toolkit":
+  `<p>Two things about backticks that are not obvious from the syntax. First, they are purely
+   notational — <code>div 7 2</code> and <code>7 &#96;div&#96; 2</code> compile to the same thing, so the
+   choice is entirely about which reads better at the call site. For <code>div</code>,
+   <code>mod</code>, <code>elem</code> and <code>max</code> the infix form usually wins; for
+   anything with more than two arguments it is not available at all.</p>
+   <p>Second, a backticked function gets a fixity, and by default that fixity is
+   <code>infixl 9</code> — tighter than every arithmetic operator. So
+   <code>a &#96;div&#96; b + c</code> is <code>(a &#96;div&#96; b) + c</code>, which is almost always what you
+   meant, but is worth knowing rather than assuming.</p>
+   <p>On the toolkit itself, the distinction to fix in your head now is <strong>total</strong>
+   versus <strong>partial</strong>, because it decides which of these functions can crash:</p>
+   <ul>
+     <li><strong>Total</strong> — <code>take</code>, <code>drop</code>, <code>length</code>,
+       <code>reverse</code>, <code>null</code>, <code>elem</code>, <code>++</code>. These answer
+       for every input, including <code>[]</code>. <code>drop 9 [1,2,3]</code> is <code>[]</code>,
+       not an error.</li>
+     <li><strong>Partial</strong> — <code>head</code>, <code>tail</code>, <code>last</code>,
+       <code>init</code>, <code>(!!)</code>. Each promises something the empty list cannot supply,
+       so each throws at runtime. The type checker does not help you here, and that is the point
+       of the concept two along.</li>
+   </ul>
+   <p>Learn the toolkit by hand rather than by autocomplete. On 2 December there is no editor, and
+   the difference between remembering that <code>init</code> drops the <em>last</em> element and
+   guessing is a mark.</p>`,
+
+"Indentation is syntax, not style":
+  `<p>The layout rule is doing something specific: it is inserting the braces and semicolons that
+   the language actually runs on. You may write them yourself —
+   <code>where { a = 10; xs = [1,2] }</code> is legal — and nobody does, which means the
+   indentation is not decoration over the real syntax, it <em>is</em> how you write the real
+   syntax.</p>
+   <p>The failure mode is what makes it worth a concept of its own. Mis-indent a definition inside
+   a <code>where</code> and GHC does not say "bad indentation". It closes the block early, and
+   then complains that a name is <em>not in scope</em> — usually several lines away from the space
+   you got wrong. Once you know that "Variable not in scope" often means "your layout closed a
+   block you thought was still open", a whole category of baffling error goes away.</p>
+   <p>Two practical rules cover almost everything. Definitions in the same block start in the same
+   column; anything starting further left ends the block. And a continuation of a line must be
+   indented <em>more</em> than the line it continues. Set your editor to insert spaces rather than
+   tabs before you meet the third rule the hard way — GHC counts a tab as eight columns and your
+   editor probably does not.</p>
+   <p>The naming rules travel with this because they are the other thing that is enforced rather
+   than conventional: functions and variables begin lowercase, types and data constructors begin
+   uppercase. <code>Total = 5</code> is not bad style, it is a parse error.</p>`,
+
+"No loops — recursion instead":
+  `<p>Two things to take from this now, both of which week 5 will spend a whole chapter on.</p>
+   <p><strong>The base case is not an afterthought.</strong> Write it first, on the line above the
+   recursive case, every time. A recursion without one type-checks perfectly and then fails at
+   runtime with a pattern-match error — and the error names the function, not the missing case, so
+   the diagnosis is on you. Getting into the habit of writing the stopping condition before the
+   step costs nothing and removes an entire class of bug.</p>
+   <p><strong>The recursive call must be on something smaller.</strong> This is the half people
+   forget, because it is not visible in the shape of the definition. <code>k n = k n</code> has no
+   base case at all; <code>g 0 = 0; g n = g (n - 2)</code> has one and steps straight over it for
+   every odd input. From the outside both look identical to a hang, so the diagnostic question is
+   always the same: from this input, does the chain of calls land exactly on a case I wrote?</p>
+   <p>It is also worth noticing why the list type fits this so neatly. A list is
+   <em>defined</em> as either <code>[]</code> or <code>x : xs</code> where <code>xs</code> is a
+   shorter list — so the data structure and the recursion have the same two cases, and the case
+   analysis for a list function is decided before you know what the function does.
+   <code>[1,2,3]</code> really is <code>1:(2:(3:[]))</code>; try it in GHCi.</p>`,
+
+"Evaluation is lazy: outside in":
+  `<p>Laziness is usually introduced as a party trick — infinite lists — and the trick is real, but
+   the everyday consequences matter more.</p>
+   <p><strong>Definitions cost nothing until used.</strong> A <code>where</code> clause may define
+   five helpers and compute only the two a given call needs. That is why guards with a shared
+   <code>where</code> are cheap even when most guards never fire.</p>
+   <p><strong>Boolean operators short-circuit for free.</strong> <code>(&amp;&amp;)</code> and
+   <code>(||)</code> are ordinary functions here, not special syntax; they short-circuit because
+   the right argument is simply never demanded. Which is why <code>elem' y (x:xs) = x == y || elem' y xs</code>
+   stops at the first match rather than walking the whole list.</p>
+   <p><strong>You can write the producer and the consumer separately.</strong>
+   <code>take 5 (filter even [1..])</code> composes an infinite generator with a filter and a
+   limit, and only ever builds what the limit asked for. In an eager language you would have to
+   fuse the three into one loop by hand.</p>
+   <p>There is a cost, and it is fair to know it now even though chapter 15 is where it is
+   examined: an unevaluated expression is stored as a <em>thunk</em>, and a long chain of thunks
+   uses memory that an eager evaluation would not. That is the whole reason <code>seq</code> and
+   strict folds exist. For this course, the thing to be able to state is the rule — outermost
+   first, arguments only when demanded — and to recognise <code>zip xs [0..]</code> in week 4 as
+   the first place you rely on it.</p>`,
+
+"A type is a set of values, checked before anything runs":
+  `<p>It is worth being precise about what the guarantee is, because it is easy to over- or
+   under-sell it in an exam answer.</p>
+   <p>What the type checker <strong>does</strong> promise: the program will never apply a function
+   to a value of the wrong shape at runtime. No "undefined is not a function", no silent coercion
+   of a string into a number, no method missing on an object. That class of bug is not caught
+   early — it is made unrepresentable.</p>
+   <p>What it does <strong>not</strong> promise: that your function is defined for every input of
+   the right type. <code>last :: [a] -&gt; a</code> is a promise the author cannot keep for
+   <code>[]</code>, and the compiler accepts it. Such a function is <strong>partial</strong>, and
+   Haskell's answer — from chapter 8 onward — is to make the failure part of the type by returning
+   <code>Maybe a</code>. Until then, the practical defence is pattern matching, which forces you
+   to look at the empty case rather than hope.</p>
+   <p>Two more things type checking cannot catch, both worth naming: non-termination
+   (<code>k n = k n</code> has a perfectly good type), and being wrong (<code>sum</code> that
+   multiplies still has type <code>[Int] -&gt; Int</code>). Types constrain <em>shape</em>. They
+   are astonishingly good at it, and that is all they do.</p>
+   <p>Reading the errors is a skill in itself. <em>No instance for (Num Bool)</em> is not about
+   instances as such — it says an operator wanted a number and got a <code>Bool</code>. Translate
+   every type error into that form, "wanted X, got Y, at this spot", and most of them stop being
+   cryptic.</p>`,
+
+"Lists and tuples differ in two ways at once":
+  `<p>The consequence of "length is not part of a list's type" is that a function over a list can
+   never know in advance how many elements it will see — which is exactly why list functions are
+   recursive and tuple functions are not. <code>fst</code> needs no recursion because a pair has
+   two components, always, and the type says so.</p>
+   <p>It also means the two are not interchangeable in ways that catch people out. There is no
+   general "length of a tuple" function, because a 2-tuple and a 3-tuple are unrelated types with
+   nothing in common — not a family with a parameter. Likewise you cannot map over a tuple's
+   components in the way you map over a list, because the components need not share a type.</p>
+   <p>Where they meet is the list of tuples, <code>[(a, b)]</code>, and it is the workhorse shape
+   of this course. <code>zip</code> produces one, list comprehensions destructure one on the left
+   of <code>&lt;-</code>, and lookup tables are one. Read the type outside in:
+   <code>[(Bool, Char)]</code> is a list, whose elements are pairs, of a <code>Bool</code> and a
+   <code>Char</code>.</p>
+   <p>And keep <code>String = [Char]</code> in the front of your mind. It is a plain synonym, not
+   a distinct type, so every list function applies to text with nothing extra imported. In week 4
+   that is what makes the Caesar cipher a comprehension rather than a project.</p>`,
+
+"Every function takes exactly one argument":
+  `<p>The two associativity rules are worth writing down together, because currying only makes
+   sense as the pair:</p>
+   <pre class="code">a -> b -> c   means   a -> (b -> c)     types associate RIGHT
+f x y         means   (f x) y           application associates LEFT</pre>
+   <p>They interlock: each application peels exactly one arrow off the front of the type. Count
+   the top-level arrows in a signature and you know how many arguments it takes; apply
+   <code>n</code> of them and <code>n</code> arrows are gone. That is a mechanical procedure you
+   can run on paper, and it answers most "what is the type of this partial application" questions
+   without thinking.</p>
+   <p>Parentheses on the left of an arrow are therefore load-bearing.
+   <code>(a -&gt; b) -&gt; [a] -&gt; [b]</code> takes a <em>function</em> and then a list — that is
+   <code>map</code>. Drop the parentheses and <code>a -&gt; b -&gt; [a] -&gt; [b]</code> is a
+   three-argument function that has nothing to do with it. When you meet a confusing higher-order
+   type in week 6, count the top-level arrows first and read the parenthesised groups as single
+   arguments.</p>
+   <p>The payoff is that partial application needs no special support in the language — it is what
+   the types already meant. <code>add 1</code>, <code>(2*)</code>, <code>map double</code> and
+   <code>take 3</code> are all just functions that have been given some of their arguments. From
+   week 6 that stops being a curiosity and becomes how you write everything.</p>`,
+
+"Polymorphism: a type variable is a promise of ignorance":
+  `<p>The useful trick here is to read a polymorphic type as a limit on what the definition is
+   <em>allowed</em> to do, and then count the possibilities. It is a surprisingly sharp tool.</p>
+   <ul>
+     <li><code>a -&gt; a</code> — the function knows nothing about <code>a</code>, cannot make one,
+       and must return one. It can only return the argument. There is exactly one total function
+       with this type, and it is <code>id</code>.</li>
+     <li><code>a -&gt; b -&gt; a</code> — must return an <code>a</code>, and has exactly one to
+       hand. It must be <code>const</code>.</li>
+     <li><code>[a] -&gt; Int</code> — cannot inspect an element, since it knows nothing about
+       <code>a</code>. So the answer can depend only on the <em>shape</em> of the list. Counting is
+       the obvious such function.</li>
+     <li><code>[a] -&gt; [a]</code> — may drop, duplicate and reorder, but cannot invent an
+       element or change one. <code>reverse</code>, <code>tail</code>, <code>id</code> and
+       <code>take 3</code> all live here.</li>
+   </ul>
+   <p>This is why a polymorphic signature is such a strong hint when you are stuck on an exercise:
+   it tells you what cannot be in the answer. If a definition you are writing needs to compare two
+   elements and the type has no <code>Eq a =&gt;</code> on it, you are writing the wrong function —
+   or the signature is wrong, and adding the constraint is the honest fix.</p>
+   <p>One practical wrinkle: GHC 9.10 reports several of these more generally than Hutton does,
+   because they work on any <code>Foldable</code>, not just lists. <code>:t length</code> answers
+   <code>Foldable t =&gt; t a -&gt; Int</code>. That is not a different function; it is the same
+   one at a wider type. Write the book's version on paper.</p>`,
+
+"`Ord a =>` is a constraint, not an argument":
+  `<p>The clearest way to see that a constraint is not an argument is to count arrows.
+   <code>qsort :: Ord a =&gt; [a] -&gt; [a]</code> has one top-level arrow, so it takes one
+   argument. <code>=&gt;</code> is not <code>-&gt;</code>, and you never pass anything for it —
+   GHC works out at each call site which type <code>a</code> is and supplies the right
+   comparison operators itself.</p>
+   <p>Read constraints as a description of what the function does. <code>Eq a =&gt;</code> means it
+   compares elements for equality somewhere. <code>Ord a =&gt;</code> means it orders them.
+   <code>Show a =&gt;</code> means it turns them into text. A function with no constraint at all
+   cannot look at its elements — which is the polymorphism argument from the previous concept,
+   arriving from the other side. When you write a signature, the constraints you need are exactly
+   the operations you used; adding more is a claim you cannot cash, and GHC will tell you if you
+   need one you left out.</p>
+   <p>Two details about the class hierarchy worth carrying into the exam. <code>Ord</code>
+   <em>requires</em> <code>Eq</code> — you cannot have ordering without equality, so an
+   <code>Ord a =&gt;</code> constraint silently gives you <code>==</code> as well. And several
+   constraints are written as a tuple:
+   <code>(Show a, Ord a) =&gt; a -&gt; a -&gt; String</code>. There is no limit on how many, but a
+   signature needing four of them is usually a sign the function is doing four things.</p>`,
+
+"The two class traps he flags by name":
+  `<p>Take the numeric one seriously, because it is the error you will hit in week 1's
+   <code>average</code> and again in every statistics-shaped exercise after that. The chain is:
+   <code>Num</code> gives you <code>+ - *</code> and no division at all; <code>Integral</code>
+   adds <code>div</code> and <code>mod</code> for whole numbers; <code>Fractional</code> adds
+   <code>/</code> and does not contain <code>Int</code>. So <code>sum xs / length xs</code> cannot
+   typecheck for <code>xs :: [Int]</code> — not because of a missing cast, but because
+   <code>length</code> hands back an <code>Int</code> and <code>/</code> has never heard of it.
+   <code>fromIntegral</code> is the bridge, and both operands usually need it.</p>
+   <p>The floating-point one is quieter and worse. <code>0.1 + 0.2 == 0.3</code> is
+   <code>False</code>, here as everywhere else, because binary floating point cannot represent
+   those decimals exactly. Compare with a tolerance —
+   <code>abs (x - y) &lt; 1e-9</code> — and never use <code>==</code> on a
+   <code>Double</code> you have computed.</p>
+   <p>The third trap, polymorphic literals, is the one that produces the strangest error messages.
+   <code>:t 1</code> answers <code>Num a =&gt; a</code>, not <code>Int</code>: a literal stays
+   undecided until something in context pins it down. When nothing does, you get
+   <em>Ambiguous type variable</em>, which is what <code>read "3"</code> on its own produces —
+   the result type appears only in the output, so there is nothing to infer from. The annotation
+   <code>read "3" :: Int</code> supplies the missing half. At the GHCi prompt an undecided numeric
+   type quietly defaults to <code>Integer</code>, which is convenient and occasionally
+   misleading.</p>
+   <p>And functions are in none of <code>Eq</code>, <code>Show</code> or <code>Read</code>.
+   Deciding whether two functions agree on every input is undecidable in general, so Haskell
+   declines to guess: <code>(+1) == (+1)</code> is a type error rather than <code>False</code>.
+   That is also why GHCi cannot print a function — <em>No instance for (Show (Int -&gt; Int))</em>
+   is not a bug, it is the same refusal.</p>`,
+
+"`if` is an expression, so `else` is compulsory":
+  `<p>"Expression, not statement" sounds like terminology until you notice what it takes away and
+   what it gives back.</p>
+   <p>What it takes away: there is no early return, no <code>if</code> that does something on one
+   path and nothing on the other, and no branch that falls off the end. Every path must produce a
+   value of the same type, so the imperative habit of "handle the special case and bail out" has
+   no expression here. What replaces it is guards, which say the same thing far more legibly.</p>
+   <p>What it gives back is that an <code>if</code> can appear anywhere a value can — inside a
+   list, as an argument, on the right of a comprehension, nested in another expression:</p>
+   <pre class="code">[if even x then "e" else "o" | x &lt;- [1..4]]
+  = ["o","e","o","e"]
+
+max3 x y z = if x &gt;= y then (if x &gt;= z then x else z)
+                      else (if y &gt;= z then y else z)</pre>
+   <p>That second one also shows why nobody writes nested <code>if</code> in Haskell for long: it
+   is correct, and it is unreadable, and guards say it in four lines you can check at a glance.
+   Chapter 4's real message is that <code>if</code> exists and you will rarely reach for it.</p>
+   <p>On the exam, the two errors to be able to spot cold are a missing <code>else</code> and
+   branches of different types. Both appear in past papers as "what is wrong with this
+   definition", and both are worth one sentence each: <em>an if must produce a value on every
+   path</em>, and <em>the whole expression has one type, so both branches must have it</em>.</p>`,
+
+"Guards read better than nested ifs":
+  `<p>Three details that decide marks rather than style.</p>
+   <p><strong>Order is meaning.</strong> Guards are tried top to bottom and the first true one
+   wins, so <code>grade</code> works only because 90 is tested before 80. Reverse those two lines
+   and every score above 80 becomes a B, silently and without a warning. Write the most specific
+   condition first and read them downward as "otherwise" steps.</p>
+   <p><strong><code>otherwise</code> is a value, not syntax.</strong> It is defined in the Prelude
+   as <code>otherwise = True</code>, which is why it always matches and why it belongs last. You
+   could write <code>True</code> in its place and it would work identically. Put it anywhere but
+   last and everything below becomes dead code — GHC warns about the overlap if you ask for
+   warnings, and says nothing if you do not.</p>
+   <p><strong>Falling off the end is a runtime failure.</strong> Guards are not required to be
+   exhaustive. If none holds and there is no further equation, you get
+   <em>Non-exhaustive patterns in function f</em> when that input turns up — not at compile time.
+   Ending with <code>otherwise</code> is how you promise there is always an answer.</p>
+   <p>On <code>where</code> versus <code>let</code>: <code>where</code> attaches to the whole
+   equation, so a name bound there is in scope in every guard — which is exactly what you want for
+   a value several guards test. <code>let</code> belongs to a single expression, so it cannot be
+   shared across guards. Prefer <code>where</code> for anything a definition uses more than once;
+   it computes lazily, so a helper no guard reaches costs nothing.</p>`,
+
+"Patterns match on shape":
+  `<p>Pattern matching and guards answer different questions, and knowing which you need is half of
+   chapter 4. A pattern asks <em>what shape is this value?</em> and can bind the pieces. A guard
+   asks <em>is this condition true?</em> and binds nothing. Empty-or-not is a shape question;
+   bigger-than-90 is a condition. Most definitions want both, and the idiomatic form puts the
+   shapes on the left and the conditions in guards.</p>
+   <p>Two consequences of "first match wins" worth having ready. Overlapping equations are legal
+   here — some functional languages reject them — and they are resolved purely by order, so
+   <code>isZero 0 = True; isZero _ = False</code> is correct and the same two lines swapped is
+   always <code>True</code>. And a value matching <em>no</em> equation is a runtime error, not a
+   compile-time one, unless you have asked GHC for the incomplete-patterns warning. In this course
+   the safe habit is to write the <code>[]</code> case explicitly every single time.</p>
+   <p>The patterns available to you now are worth listing, because chapter 8 adds to this list and
+   nothing else does: literals (<code>0</code>, <code>'a'</code>, <code>True</code>), variables
+   (match anything, bind it), the wildcard <code>_</code> (match anything, bind nothing), tuples
+   <code>(x, y)</code>, and the two list constructors <code>[]</code> and <code>x:xs</code>. Fixed
+   lists like <code>[x, y]</code> are shorthand for <code>x:y:[]</code>, which is why
+   <code>describe [_]</code> matches exactly one element and not "at least one".</p>
+   <p>Prefer <code>_</code> over a named variable you do not use. It silences a warning, but more
+   usefully it is a claim to the reader that this part of the value is genuinely irrelevant — and
+   in week 5 that claim is half of the recipe's final step.</p>`,
+
+"`(x:xs)` needs its parentheses, and matches only non-empty":
+  `<p>The naming convention is doing more work than it looks. <code>xs</code> is read "exes" — the
+   plural of <code>x</code> — so <code>(x:xs)</code> is "one x, then the rest of the exes", and
+   <code>(y:ys)</code>, <code>(c:cs)</code> follow the same rule. It is not compulsory and it is
+   universal; following it makes your code readable to anyone marking it.</p>
+   <p>Cons is right-associative, which is why nesting works without parentheses:
+   <code>1:2:3:[]</code> is <code>1:(2:(3:[]))</code>, and that <em>is</em> <code>[1,2,3]</code> —
+   the bracket notation is sugar for the cons chain. You can pattern-match deeper into it when you
+   need to: <code>(x:y:rest)</code> matches a list of at least two and gives you both heads, which
+   is how "compare adjacent elements" is written without <code>zip</code>.</p>
+   <p>On the parentheses: in an argument position they are compulsory, because application binds
+   tighter than any operator. Written bare, <code>f x:xs = ...</code> parses as
+   <code>(f x) : xs</code>, and GHC's complaint will be about something else entirely.</p>
+   <p>The linearity rule — a variable at most once per pattern — is worth being able to justify
+   rather than just obey. <code>same (x, x)</code> would require matching to compare the two
+   components, and comparison is not available for every type; it needs <code>Eq</code>. Patterns
+   are defined to work by structure alone, so Haskell makes you write the comparison as a guard,
+   which has the side effect of putting the <code>Eq a =&gt;</code> where it belongs — in the
+   type, visible to the caller.</p>`,
+
+"Lambdas are what function definitions are made of":
+  `<p>The reason lambdas are introduced here rather than in the higher-order chapter is that they
+   explain currying rather than merely using it. <code>f x y = e</code> is not a two-argument
+   definition that Haskell handles specially; it is <em>shorthand</em> for
+   <code>f = \\x -&gt; \\y -&gt; e</code>. Once you can see that, the type
+   <code>a -&gt; (b -&gt; c)</code> stops needing an explanation and partial application stops
+   being a feature — both are just what the shorthand already meant.</p>
+   <p>Being able to move between the three forms fluently is the actual skill, and it is what makes
+   chapter 7 painless:</p>
+   <pre class="code">add x y = x + y
+add x   = \\y -&gt; x + y
+add     = \\x -&gt; \\y -&gt; x + y      -- also written \\x y -&gt; x + y</pre>
+   <p>Where an anonymous function earns its place is as an argument to another function, which
+   from week 6 is most of the time: <code>map (\\x -&gt; x * x) [1..5]</code> beats inventing a
+   named <code>square</code> that nothing else uses. Where it does <em>not</em> earn its place is
+   when a section says the same thing — <code>(*2)</code> is better than
+   <code>\\x -&gt; x * 2</code>, and a reviewer will say so.</p>
+   <p>Two syntax notes. The backslash is meant to look like a λ with one leg. And the body of a
+   lambda extends as far right as it possibly can, so
+   <code>\\x -&gt; x + 1 * 2</code> is <code>\\x -&gt; (x + 1 * 2)</code> and a lambda inside a
+   larger expression almost always needs parentheses around it.</p>`,
+
+"Sections, and the one operator that betrays you":
+  `<p>Sections are the smallest possible partial application, and their whole value is that they
+   let you name a one-argument function without inventing a lambda. In week 6, when everything
+   takes a function as an argument, <code>filter (&gt;3)</code> and <code>map (*2)</code> are how
+   that code reads.</p>
+   <p>The rule for which side is which: the argument fills the <strong>empty</strong> slot.
+   <code>(2^)</code> fixes the base and takes the exponent, so <code>(2^) 10</code> is 1024;
+   <code>(^2)</code> fixes the exponent and takes the base, so <code>(^2) 10</code> is 100. For
+   <code>+</code> and <code>*</code> the two coincide because those are commutative, which is
+   exactly why practising on <code>^</code>, <code>/</code> and <code>-</code> is the only useful
+   practice.</p>
+   <p>And then <code>-</code>. It is the one operator that is also unary negation, and negation
+   wins, so <code>(-3)</code> is the number minus three and there is no right section of
+   subtraction at all. The three ways out, in order of preference:</p>
+   <pre class="code">subtract 3        -- the Prelude function, and the one to write
+\\x -&gt; x - 3       -- explicit, always correct
+(+ (-3))          -- works, and nobody will thank you
+
+(3-)              -- fine: the LEFT section is unambiguous, = \\x -&gt; 3 - x</pre>
+   <p>His slides flag this by name and it is a standing favourite on past papers, usually as
+   "what is the value of <code>(-3) 10</code>" — which is a type error, because you are applying a
+   number to an argument. Being able to say <em>why</em> in one sentence is the mark.</p>`,
+
+"Comprehensions come from set notation":
+  `<p>A comprehension is not new machinery — it is notation for things you could already write, and
+   from week 6 you will see it desugar into <code>map</code> and <code>filter</code>. Knowing that
+   in advance makes both chapters easier: <code>[f x | x &lt;- xs]</code> is
+   <code>map f xs</code>, and <code>[x | x &lt;- xs, p x]</code> is <code>filter p xs</code>. When
+   a comprehension has both, it is a <code>map</code> over a <code>filter</code>.</p>
+   <p>Three rules about the parts, all of which past papers have tested:</p>
+   <ul>
+     <li><strong>Order matters, left to right.</strong> A guard may only mention variables bound to
+       its <em>left</em>. <code>[x | even x, x &lt;- xs]</code> does not compile, because
+       <code>x</code> is not in scope yet.</li>
+     <li><strong>Several guards are ANDed.</strong> <code>[x | x &lt;- xs, even x, x &gt; 5]</code>
+       keeps only what satisfies both. Writing them as separate guards reads better than
+       <code>&amp;&amp;</code> and means the same.</li>
+     <li><strong>The output expression is arbitrary.</strong> It may be a tuple, a nested
+       comprehension, an <code>if</code>, or just <code>x</code> — it is evaluated once per
+       surviving combination.</li>
+   </ul>
+   <p>The one place the mathematical analogy breaks is worth saying explicitly, because it is a
+   good short exam answer: a set is unordered and has no duplicates; a list is ordered and keeps
+   them. So <code>[x | x &lt;- [1,1,2]]</code> is <code>[1,1,2]</code>, and swapping two generators
+   produces a genuinely different list rather than the same set written differently.</p>`,
+
+"With several generators, the last one moves fastest":
+  `<p>The nested-loop analogy is exact, and writing the equivalent out once makes the order
+   permanent:</p>
+   <pre class="code">[(x,y) | x &lt;- [1,2], y &lt;- [3,4]]
+
+for x in [1,2]:          # outer — the LEFT generator
+    for y in [3,4]:      # inner — the RIGHT generator, turns fastest
+        emit (x, y)</pre>
+   <p>Which makes the exam question — "write out the value of this comprehension" — a mechanical
+   procedure rather than a memory test: take the leftmost generator's first value, run everything
+   to its right to exhaustion, then advance it.</p>
+   <p>The dependent generator is the part that is genuinely useful rather than merely predictable.
+   <code>[(x,y) | x &lt;- [1..3], y &lt;- [x..3]]</code> produces six pairs, not nine, because
+   <code>y</code> starts wherever <code>x</code> currently is. That is not a filter — the
+   unwanted pairs are never generated at all, which is both faster and a cleaner statement of
+   "each unordered pair once". Compare it with
+   <code>[(x,y) | x &lt;- [1..3], y &lt;- [1..3], x &lt;= y]</code>, which gets the same answer by
+   building nine and discarding three.</p>
+   <p>One consequence to keep for week 4's exercises: because a later generator may mention an
+   earlier variable, a comprehension can express a triangular or nested structure that a single
+   <code>map</code> cannot. That is when a comprehension is the right tool rather than a matter of
+   taste.</p>`,
+
+"Empty ranges hand you base cases for free":
+  `<p>Ranges have a little more to them than <code>[1..10]</code>, and all of it turns up in
+   exercises:</p>
+   <pre class="code">[1..10]      = [1,2,3,4,5,6,7,8,9,10]
+[1,3..9]     = [1,3,5,7,9]      -- the step is the gap between the first two
+[10,9..1]    = [10,9,8,...,1]   -- counting down needs the second element
+[10..1]      = []               -- no step given, so it never starts
+['a'..'e']   = "abcde"          -- any Enum type, not just numbers
+[1..]        = 1,2,3,...        -- infinite, and fine, because of laziness</pre>
+   <p>The one that catches people is the fourth line. <code>[10..1]</code> is <em>not</em> a
+   countdown; a bare range only ever ascends, so a start above the end gives the empty list. To
+   count down you must give the second element and let the step be inferred:
+   <code>[10,9..1]</code>.</p>
+   <p>Which makes the emptiness rather than an error genuinely load-bearing. A comprehension over
+   an empty range produces <code>[]</code>, so <code>[x | _ &lt;- [1..n]]</code> handles
+   <code>n = 0</code> without a special case, and any definition driven by a range gets its
+   base case for free. In week 5 you will write those base cases by hand and appreciate the
+   difference.</p>
+   <p>The wildcard in <code>[x | _ &lt;- [1..n]]</code> deserves its own note: the generator is
+   being used purely for its <em>length</em>, and the values are deliberately thrown away. Writing
+   <code>_</code> rather than an unused name says that on purpose, and silences the
+   unused-binding warning as a side effect rather than as the reason.</p>`,
+
+"Patterns on the left of `<-` also filter":
+  `<p>The silent skip is the whole point, and it is worth contrasting the three places a pattern can
+   fail so the difference is permanent:</p>
+   <ul>
+     <li><strong>In a function equation</strong> — if no equation matches, you get a runtime
+       error: <em>Non-exhaustive patterns</em>.</li>
+     <li><strong>Left of <code>&lt;-</code> in a comprehension</strong> — a non-matching element is
+       skipped, silently and by design. The comprehension simply produces fewer results.</li>
+     <li><strong>In a <code>let</code> or a <code>where</code></strong> — the failure happens when
+       the bound name is demanded, which may be much later or never.</li>
+   </ul>
+   <p>The second is what makes this idiom work, and it is more useful than it first appears. It
+   lets one comprehension both select and destructure in a single pass:</p>
+   <pre class="code">-- keep only the successes, and unwrap them at the same time
+[v | Just v &lt;- [Just 1, Nothing, Just 3]]   = [1,3]
+
+-- take the second component of every pair tagged 'y'
+[c | ('y', c) &lt;- pairs]</pre>
+   <p>That first example is chapter 8's <code>Maybe</code> arriving early, and it is worth
+   recognising now — "filter out the failures and unwrap the rest" is one comprehension, not a
+   fold with a case expression inside it.</p>
+   <p>The trade-off, and it is a real one: a silent skip is exactly as silent when you did not mean
+   it. If a comprehension is returning fewer elements than you expected, a pattern on the left of
+   an arrow is the first place to look.</p>`,
+
+"`zip` truncates, and two idioms depend on it":
+  `<p>Both idioms are worth being able to write from memory, because both have appeared on past
+   papers and neither is obvious the first time.</p>
+   <p><strong>Adjacent pairs.</strong> <code>pairs xs = zip xs (tail xs)</code>. The tail is one
+   shorter, so truncation stops it in exactly the right place — no off-by-one to reason about.
+   Then sortedness is a statement about adjacent pairs, which is what sortedness actually
+   <em>means</em>:</p>
+   <pre class="code">sorted xs = and [x &lt;= y | (x,y) &lt;- pairs xs]</pre>
+   <p>Check the edge cases and notice they are free: <code>pairs []</code> and
+   <code>pairs [x]</code> are both <code>[]</code>, so <code>sorted</code> answers
+   <code>True</code> for a list of nought or one element, which is correct and which you did not
+   have to write.</p>
+   <p><strong>Indices.</strong> <code>zip xs [0..]</code>. This is the one to reach for whenever
+   you need positions, and the habit it replaces is the imperative one — indexing with
+   <code>!!</code> inside a loop, which is both partial and quadratic. It terminates because
+   <code>zip</code> stops at the shorter list and laziness never builds more of
+   <code>[0..]</code> than is demanded, which makes it your first genuinely useful use of
+   laziness rather than a demonstration of it.</p>
+   <pre class="code">positions x xs = [i | (v,i) &lt;- zip xs [0..], v == x]</pre>
+   <p>Two details that decide marks. The index list must be second, or you get pairs the wrong way
+   round. And it starts at <code>0</code> — Hutton's <code>positions</code> is zero-based, and the
+   lecturer's <code>tegnpos</code> on <code>uke4.txt</code> is not, so read which convention the
+   question wants before writing anything.</p>`,
+
+"Strings are lists, so all of this works on text":
+  `<p>Because <code>String</code> is a plain synonym for <code>[Char]</code>, the whole toolkit
+   transfers with no new vocabulary: <code>reverse "abc"</code>, <code>take 3 "haskell"</code>,
+   <code>'a' &#96;elem&#96; "banana"</code>, <code>length</code>, <code>++</code>, and every comprehension
+   you can write over a list. The count idiom is the one to have ready —
+   <code>length [c | c &lt;- s, c == 'a']</code> — because it turns up in some form in nearly every
+   text exercise.</p>
+   <p>The three extras you need come from <code>Data.Char</code> and must be imported:
+   <code>ord :: Char -&gt; Int</code>, <code>chr :: Int -&gt; Char</code>, and the predicates
+   <code>isLower</code>, <code>isUpper</code>, <code>isAlpha</code>, <code>isDigit</code>. From the
+   Prelude, <code>words</code>, <code>unwords</code>, <code>lines</code> and <code>unlines</code>
+   are worth knowing before you write a splitter by hand.</p>
+   <p>The Caesar cipher is where these combine, and it is worth understanding structurally rather
+   than as a puzzle. Three small functions in a chain: letter to number, shift with
+   <code>mod 26</code>, number back to letter.</p>
+   <pre class="code">let2int c   = ord c - ord 'a'
+int2let n   = chr (ord 'a' + n)
+shift n c   = int2let ((let2int c + n) &#96;mod&#96; 26)
+encode n s  = [shift n c | c &lt;- s]</pre>
+   <p>Two things to take from it. <code>mod 26</code> is what makes <code>'z'</code> wrap round to
+   <code>'a'</code> — without it the shift walks off the end of the alphabet into punctuation. And
+   because the arithmetic is modular, shifting by <code>-n</code> undoes shifting by
+   <code>n</code>: one function both encodes and decodes, which is the elegant part and the bit
+   worth saying out loud in an answer.</p>
+   <p>Watch the boundary the book quietly assumes: <code>let2int</code> works for lowercase
+   letters only. Anything else — a space, a capital, a digit — needs guarding, and the tests in
+   week 4 check that a space survives unchanged.</p>`
 };
 
 const HD = {};
@@ -2030,6 +3219,494 @@ HD.layout = host => {
   draw();
 };
 
+/* --- does the recursion reach its base case? ----------------------------- */
+HD.basecase = host => {
+  const DEFS = {
+    "fac (Hutton's)": {
+      src: "fac 0 = 1\nfac n = n * fac (n - 1)",
+      step: n => n - 1, base: n => n === 0, show: n => "fac " + n,
+      note: "One base case, tested with ==, and a step of −1. Fine from any natural; from a negative start it walks away from zero forever." },
+    "fac (guarded)": {
+      src: "fac n | n <  0 = 0\n      | n == 0 = 1\n      | otherwise = n * fac (n - 1)",
+      step: n => n - 1, base: n => n <= 0, show: n => "fac " + n,
+      note: "The guard makes the bottom reachable from everywhere. This is exercise 1, and the one-line fix is the whole point of it." },
+    "g n = g (n - 2)": {
+      src: "g 0 = 0\ng n = g (n - 2)",
+      step: n => n - 2, base: n => n === 0, show: n => "g " + n,
+      note: "A step of 2 against an equality test. Even naturals land on zero; every odd input and every negative one steps straight over it." },
+    "h, guarded": {
+      src: "h n | n <= 0    = 0\n    | otherwise = h (n - 1)",
+      step: n => n - 1, base: n => n <= 0, show: n => "h " + n,
+      note: "An inequality catches the whole bottom half of the number line at once. When you count down, guard with <= and stop thinking about it." },
+    "k n = k n": {
+      src: "k n = k n",
+      step: n => n, base: () => false, show: n => "k " + n,
+      note: "Compiles, has no base case, and never gets smaller. It is the purest version of the bug: a definition that is genuinely circular." }
+  };
+  const keys = Object.keys(DEFS);
+  host.innerHTML = `<div class="hd-row" id="hd-bd"></div>
+    <label class="hd-f wide"><span>starting input <b id="hd-bv">4</b></span>
+      <input type="range" id="hd-bn" min="-4" max="9" step="1" value="4"></label>
+    <div id="hd-o"></div>`;
+  document.getElementById("hd-bd").innerHTML = keys.map((k, i) =>
+    `<button class="hd-chip" data-k="${hesc(k)}" aria-pressed="${i === 0}">${hesc(k)}</button>`).join("");
+  let cur = keys[0];
+  const LIMIT = 14;
+  const draw = () => {
+    const d = DEFS[cur];
+    const n0 = Number(document.getElementById("hd-bn").value);
+    document.getElementById("hd-bv").textContent = String(n0);
+    const chain = [];
+    let n = n0, reached = false;
+    for (let i = 0; i <= LIMIT; i++) {
+      chain.push(n);
+      if (d.base(n)) { reached = true; break; }
+      n = d.step(n);
+    }
+    const ran = !reached;
+    document.getElementById("hd-o").innerHTML = `
+      <pre class="hd-pre">${hesc(d.src)}</pre>
+      <div class="hd-tape">${chain.map((v, i) =>
+        `<span class="hd-cell ${d.base(v) ? "good" : ""}">${hesc(d.show(v))}</span>`
+        + (i < chain.length - 1 ? `<span class="hd-l">→</span>` : "")).join("")}
+        ${ran ? `<span class="hd-l">→ …</span>` : ""}</div>
+      <p class="hd-k ${reached ? "good" : "bad"}">${reached
+        ? "Reached a base case after " + (chain.length - 1) + " step"
+          + (chain.length === 2 ? "" : "s") + ". This call terminates."
+        : "Still going after " + LIMIT + " steps, and nothing is getting closer. This call never returns."}</p>
+      <p class="hd-n">${d.note}</p>
+      <p class="hd-n">Drag the input below zero and watch which definitions survive it. The base case
+        is on screen in every one of them — what changes is whether this particular input can ever
+        arrive at it.</p>`;
+  };
+  host.querySelectorAll("#hd-bd .hd-chip").forEach(b => b.onclick = () => {
+    cur = b.dataset.k;
+    host.querySelectorAll("#hd-bd .hd-chip").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    draw();
+  });
+  document.getElementById("hd-bn").oninput = draw;
+  draw();
+};
+
+/* --- the five-step recipe ------------------------------------------------ */
+HD.recipe = host => {
+  const EX = {
+    "drop' :: Int -> [a] -> [a]": [
+      { t: "1 · Write down the type",
+        c: "drop' :: Int -> [a] -> [a]",
+        n: "Two arguments — a number and a list. That alone tells you the case analysis is a number-shape crossed with a list-shape, before you know anything about what drop does." },
+      { t: "2 · Enumerate the cases",
+        c: "drop' 0 []     = ...\ndrop' 0 (x:xs) = ...\ndrop' n []     = ...\ndrop' n (x:xs) = ...",
+        n: "Two shapes for the number, two for the list, so four lines. Write all four even though you can already see that some will collapse — collapsing them is step 5's job, not step 2's." },
+      { t: "3 · Define the simple cases",
+        c: "drop' 0 []     = []\ndrop' 0 (x:xs) = x:xs\ndrop' n []     = []\ndrop' n (x:xs) = ...",
+        n: "Three of the four need no recursive call at all. Dropping nothing gives the list back; dropping from nothing gives nothing." },
+      { t: "4 · Define the rest",
+        c: "drop' n (x:xs) = drop' (n - 1) xs",
+        n: "One case left, and it is the only one that recurses. Both arguments get smaller at once, which is why this terminates." },
+      { t: "5 · Generalise and simplify",
+        c: "drop' :: Int -> [a] -> [a]\ndrop' 0 xs     = xs\ndrop' _ []     = []\ndrop' n (_:xs) = drop' (n - 1) xs",
+        n: "The first two cases agreed, so they became one. n was never used in the empty-list case, and x was never used in the recursive one — both become _. Four lines to three, and every remaining variable is one the definition actually reads." }
+    ],
+    "elem' :: Eq a => a -> [a] -> Bool": [
+      { t: "1 · Write down the type",
+        c: "elem' :: Eq a => a -> [a] -> Bool",
+        n: "The Eq constraint is doing real work here: it is the permission slip to compare two elements. Without it the only honest definitions are the constant ones." },
+      { t: "2 · Enumerate the cases",
+        c: "elem' y []     = ...\nelem' y (x:xs) = ...",
+        n: "The first argument has no shape to match on — it is any a at all — so the case analysis is entirely on the list. Two lines." },
+      { t: "3 · Define the simple cases",
+        c: "elem' y []     = False\nelem' y (x:xs) = ...",
+        n: "Nothing is an element of the empty list. Note this is also the identity of (||), which is the operator the other case is about to use." },
+      { t: "4 · Define the rest",
+        c: "elem' y (x:xs) = x == y || elem' y xs",
+        n: "Either the head is it, or it is somewhere in the tail. (||) is lazy in its right argument, so a match at the front never looks at the rest." },
+      { t: "5 · Generalise and simplify",
+        c: "elem' :: Eq a => a -> [a] -> Bool\nelem' _ []     = False\nelem' y (x:xs) = x == y || elem' y xs",
+        n: "Only one tidy left: y is unused in the empty case. Small, but it is the same reflex that turned four lines into three above, and it is the reflex the exam rewards." }
+    ]
+  };
+  const keys = Object.keys(EX);
+  host.innerHTML = `<div class="hd-row" id="hd-rc"></div><div id="hd-o"></div>`;
+  document.getElementById("hd-rc").innerHTML = keys.map((k, i) =>
+    `<button class="hd-chip" data-k="${hesc(k)}" aria-pressed="${i === 0}">${hesc(k)}</button>`).join("");
+  let cur = keys[0], step = 1;
+  const draw = () => {
+    const seq = EX[cur];
+    step = Math.min(step, seq.length);
+    const now = seq[step - 1];
+    document.getElementById("hd-o").innerHTML = `
+      <div class="hd-steps">${seq.map((s, i) =>
+        `<div class="hd-step ${i === step - 1 ? "on" : ""}" ${i < step ? "" : 'style="opacity:.32"'}>
+          <code>${hesc(s.t)}</code></div>`).join("")}</div>
+      <pre class="hd-pre">${hesc(now.c)}</pre>
+      <p class="hd-k">${hesc(now.t)}</p>
+      <p class="hd-n">${now.n}</p>
+      <div class="hd-row">
+        <button class="hd-btn" id="hd-b1">← Back</button>
+        <button class="hd-btn on" id="hd-b2">Next step →</button>
+        <button class="hd-btn" id="hd-b3">Restart</button>
+      </div>`;
+    document.getElementById("hd-b2").onclick = () => { if (step < seq.length) { step++; draw(); } };
+    document.getElementById("hd-b1").onclick = () => { if (step > 1) { step--; draw(); } };
+    document.getElementById("hd-b3").onclick = () => { step = 1; draw(); };
+  };
+  host.querySelectorAll("#hd-rc .hd-chip").forEach(b => b.onclick = () => {
+    cur = b.dataset.k; step = 1;
+    host.querySelectorAll("#hd-rc .hd-chip").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    draw();
+  });
+  draw();
+};
+
+/* --- the list skeleton, unfolded live ------------------------------------ */
+HD.listrec = host => {
+  const FNS = {
+    "product'": { src: "product' []     = 1\nproduct' (x:xs) = x * product' xs",
+      base: "1", comb: (x, r) => x + " * " + r, val: xs => xs.reduce((a, b) => a * b, 1) },
+    "sum'": { src: "sum' []     = 0\nsum' (x:xs) = x + sum' xs",
+      base: "0", comb: (x, r) => x + " + " + r, val: xs => xs.reduce((a, b) => a + b, 0) },
+    "length'": { src: "length' []     = 0\nlength' (_:xs) = 1 + length' xs",
+      base: "0", comb: (x, r) => "1 + " + r, val: xs => xs.length },
+    "reverse'": { src: "reverse' []     = []\nreverse' (x:xs) = reverse' xs ++ [x]",
+      base: "[]", comb: (x, r) => r + " ++ [" + x + "]", val: xs => "[" + xs.slice().reverse().join(",") + "]" }
+  };
+  const keys = Object.keys(FNS);
+  host.innerHTML = `<div class="hd-row" id="hd-lf"></div>
+    ${hfield("the list", "hd-ll", "[3,4,5]")}
+    <div id="hd-o"></div>`;
+  let cur = keys[0];
+  const draw = () => {
+    const f = FNS[cur];
+    const raw = document.getElementById("hd-ll").value.replace(/[\[\]\s]/g, "");
+    const xs = raw ? raw.split(",").filter(t => t !== "").map(Number) : [];
+    const bad = xs.some(n => !Number.isFinite(n));
+    // Expand the skeleton all the way down to the base case, then show the value.
+    let body = f.base;
+    if (!bad && xs.length) {
+      let expr = f.base;
+      for (let i = xs.length - 1; i >= 0; i--) expr = f.comb(xs[i], "(" + expr + ")");
+      body = expr;
+    }
+    document.getElementById("hd-o").innerHTML = bad
+      ? `<pre class="hd-pre">${hesc(f.src)}</pre><p class="hd-k bad">Give me a list of whole numbers, like [3,4,5].</p>`
+      : `<pre class="hd-pre">${hesc(f.src)}</pre>
+        <div class="hd-steps">
+          <div class="hd-step"><span class="hd-eq"> </span><code>${hesc(cur + " [" + xs.join(",") + "]")}</code></div>
+          <div class="hd-step on"><span class="hd-eq">=</span><code>${hesc(body)}</code></div>
+          <div class="hd-step"><span class="hd-eq">=</span><code>${hesc(String(f.val(xs)))}</code></div>
+        </div>
+        <p class="hd-n">Every one of these is the same two equations with different blanks filled in:
+          an answer for <code>[]</code>, and a way of combining the head with the answer for the tail.
+          Empty the box and the whole thing collapses to the base case — which is why that base case
+          has to be the identity element rather than anything that looks empty.</p>`;
+  };
+  document.getElementById("hd-lf").innerHTML = keys.map((k, i) =>
+    `<button class="hd-chip" data-k="${hesc(k)}" aria-pressed="${i === 0}">${hesc(k)}</button>`).join("");
+  host.querySelectorAll("#hd-lf .hd-chip").forEach(b => b.onclick = () => {
+    cur = b.dataset.k;
+    host.querySelectorAll("#hd-lf .hd-chip").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    draw();
+  });
+  document.getElementById("hd-ll").oninput = draw;
+  draw();
+};
+
+/* --- which base case survives the algebra? ------------------------------- */
+HD.identity = host => {
+  const OPS = {
+    "and' / (&&)": { op: (a, b) => a && b, show: v => v ? "True" : "False",
+      cands: [true, false], right: true, f: xs => xs.every(Boolean),
+      sample: [[[], [true, false]], [[true], []], [[true, true], [true]]],
+      lit: xs => "[" + xs.map(v => v ? "True" : "False").join(",") + "]" },
+    "or' / (||)": { op: (a, b) => a || b, show: v => v ? "True" : "False",
+      cands: [true, false], right: false, f: xs => xs.some(Boolean),
+      sample: [[[], [true, false]], [[false], []], [[false, false], [true]]],
+      lit: xs => "[" + xs.map(v => v ? "True" : "False").join(",") + "]" },
+    "product' / (*)": { op: (a, b) => a * b, show: v => String(v),
+      cands: [1, 0], right: 1, f: xs => xs.reduce((a, b) => a * b, 1),
+      sample: [[[], [2, 3]], [[4], []], [[2, 5], [3]]],
+      lit: xs => "[" + xs.join(",") + "]" },
+    "sum' / (+)": { op: (a, b) => a + b, show: v => String(v),
+      cands: [0, 1], right: 0, f: xs => xs.reduce((a, b) => a + b, 0),
+      sample: [[[], [2, 3]], [[4], []], [[2, 5], [3]]],
+      lit: xs => "[" + xs.join(",") + "]" }
+  };
+  const keys = Object.keys(OPS);
+  host.innerHTML = `<div class="hd-row" id="hd-io"></div><div class="hd-row" id="hd-ic"></div><div id="hd-o"></div>`;
+  document.getElementById("hd-io").innerHTML = keys.map((k, i) =>
+    `<button class="hd-chip" data-k="${hesc(k)}" aria-pressed="${i === 0}">${hesc(k)}</button>`).join("");
+  let cur = keys[0], pick = 0;
+  const draw = () => {
+    const o = OPS[cur];
+    const base = o.cands[pick];
+    document.getElementById("hd-ic").innerHTML = o.cands.map((c, i) =>
+      `<button class="hd-chip" data-i="${i}" aria-pressed="${i === pick}">base case = ${hesc(o.show(c))}</button>`).join("");
+    document.getElementById("hd-ic").querySelectorAll(".hd-chip").forEach(b => b.onclick = () => {
+      pick = Number(b.dataset.i); draw();
+    });
+    // f with THIS base case, folded right
+    const fb = xs => xs.reduceRight((acc, x) => o.op(x, acc), base);
+    const rows = o.sample.map(([xs, ys]) => {
+      const lhs = fb(xs.concat(ys)), rhs = o.op(fb(xs), fb(ys));
+      const ok = lhs === rhs;
+      return `<tr class="${ok ? "on" : "off"}">
+        <td class="hd-m">f (${hesc(o.lit(xs))} ++ ${hesc(o.lit(ys))})</td>
+        <td class="hd-m">${hesc(o.show(lhs))}</td>
+        <td class="hd-m">${hesc(o.show(rhs))}</td>
+        <td class="hd-m ${ok ? "good" : "bad"}">${ok ? "agree" : "DISAGREE"}</td></tr>`;
+    }).join("");
+    const allOk = o.sample.every(([xs, ys]) => fb(xs.concat(ys)) === o.op(fb(xs), fb(ys)));
+    document.getElementById("hd-o").innerHTML = `
+      <table class="hd-t"><tr><th>the law</th><th>left</th><th>right</th><th></th></tr>${rows}</table>
+      <p class="hd-k ${allOk ? "good" : "bad"}">${allOk
+        ? "Base case " + o.show(base) + " keeps f (xs ++ ys) == f xs " + (cur.indexOf("&&") > -1 ? "&& " : cur.indexOf("||") > -1 ? "|| " : cur.indexOf("*") > -1 ? "* " : "+ ") + "f ys true for every pair."
+        : "Base case " + o.show(base) + " breaks the law. Everything collapses to " + o.show(base) + "."}</p>
+      <p class="hd-n">This is the argument that earns the mark on <code>and' [] == True</code>. Not
+        "it is vacuously true" — that is a restatement. The reason is that
+        <code>f (xs ++ ys) == f xs &lt;op&gt; f ys</code> has to hold for <em>every</em> pair of
+        lists, and putting <code>xs = []</code> into it pins the base case to the identity element
+        and nothing else. Try the other candidate and watch the law fail on the very first row.</p>`;
+  };
+  host.querySelectorAll("#hd-io .hd-chip").forEach(b => b.onclick = () => {
+    cur = b.dataset.k; pick = 0;
+    host.querySelectorAll("#hd-io .hd-chip").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    draw();
+  });
+  draw();
+};
+
+/* --- merge, one comparison at a time ------------------------------------- */
+HD.merge = host => {
+  host.innerHTML = `
+    <div class="hd-row">
+      ${hfield("left (sorted)", "hd-ma", "[2,5,6]")}
+      ${hfield("right (sorted)", "hd-mb", "[1,3,4]")}
+    </div>
+    <div class="hd-row" id="hd-mv">
+      <button class="hd-chip" data-v="ok" aria-pressed="true">base case = the other list</button>
+      <button class="hd-chip" data-v="bug" aria-pressed="false">base case = []</button>
+    </div>
+    <div id="hd-o"></div>`;
+  let step = 0, variant = "ok";
+  const parse = id => {
+    const raw = document.getElementById(id).value.replace(/[\[\]\s]/g, "");
+    const xs = raw ? raw.split(",").filter(t => t !== "").map(Number) : [];
+    return xs.some(n => !Number.isFinite(n)) ? null : xs;
+  };
+  const draw = () => {
+    const A = parse("hd-ma"), B = parse("hd-mb");
+    if (!A || !B) {
+      document.getElementById("hd-o").innerHTML =
+        `<p class="hd-k bad">Both boxes want a list of whole numbers, like [2,5,6].</p>`;
+      return;
+    }
+    // replay the recursion, recording one line per call
+    const lines = [];
+    let a = A.slice(), b = B.slice(), out = [], done = false;
+    const lit = xs => "[" + xs.join(",") + "]";
+    while (!done) {
+      if (!a.length) {
+        lines.push({ txt: "merge [] " + lit(b), note: variant === "ok"
+          ? "left is empty → emit the whole of the right"
+          : "left is empty → return [] and lose " + lit(b),
+          emit: variant === "ok" ? b.slice() : [], stop: true, bad: variant !== "ok" && b.length > 0 });
+        if (variant === "ok") out = out.concat(b);
+        done = true;
+      } else if (!b.length) {
+        lines.push({ txt: "merge " + lit(a) + " []", note: variant === "ok"
+          ? "right is empty → emit the whole of the left"
+          : "right is empty → return [] and lose " + lit(a),
+          emit: variant === "ok" ? a.slice() : [], stop: true, bad: variant !== "ok" && a.length > 0 });
+        if (variant === "ok") out = out.concat(a);
+        done = true;
+      } else {
+        const takeLeft = a[0] <= b[0];
+        const v = takeLeft ? a[0] : b[0];
+        lines.push({ txt: "merge " + lit(a) + " " + lit(b),
+          note: a[0] + (takeLeft ? " <= " : " > ") + b[0] + " → take " + v
+            + " from the " + (takeLeft ? "left" : "right")
+            + ", and hand the other list back whole",
+          emit: [v], stop: false });
+        out.push(v);
+        if (takeLeft) a = a.slice(1); else b = b.slice(1);
+      }
+      if (lines.length > 40) break;
+    }
+    step = Math.min(Math.max(step, 1), lines.length);
+    const shown = lines.slice(0, step);
+    const built = shown.reduce((acc, l) => acc.concat(l.emit), []);
+    const finished = step === lines.length;
+    const lost = finished && (A.length + B.length) !== built.length;
+    document.getElementById("hd-o").innerHTML = `
+      <div class="hd-steps">${shown.map((l, i) =>
+        `<div class="hd-step ${i === step - 1 ? "on" : ""}"><span class="hd-eq">${i ? "→" : " "}</span>
+          <code>${hesc(l.txt)}</code></div>`).join("")}</div>
+      <p class="hd-k ${shown[step - 1].bad ? "bad" : ""}">${hesc(shown[step - 1].note)}</p>
+      <div class="hd-tape"><span class="hd-l">output</span>
+        ${built.length ? built.map(v => `<span class="hd-cell good">${hesc(String(v))}</span>`).join("")
+          : `<span class="hd-cell off">[]</span>`}</div>
+      <div class="hd-row">
+        <button class="hd-btn" id="hd-b1">← Back</button>
+        <button class="hd-btn on" id="hd-b2">Next comparison →</button>
+        <button class="hd-btn" id="hd-b3">All the way</button>
+      </div>
+      ${finished ? `<p class="hd-k ${lost ? "bad" : "good"}">${lost
+        ? "Finished with " + built.length + " elements out of " + (A.length + B.length)
+          + " — still sorted, and quietly wrong. This is the bug an eyeball test passes."
+        : "Finished: " + built.length + " elements out of " + (A.length + B.length) + ", in order."}</p>` : ""}
+      <p class="hd-n">Two things to watch. The list <em>not</em> taken from is handed back whole —
+        <code>(y:ys)</code>, not <code>ys</code> — and re-consing that head is what keeps the count
+        right. And switch the base case to <code>[]</code> above: the output stays sorted, so
+        nothing looks wrong until you count. That is why <code>merge [] [1,2]</code> is one of the
+        checks in exercise 6.</p>`;
+    document.getElementById("hd-b2").onclick = () => { if (step < lines.length) { step++; draw(); } };
+    document.getElementById("hd-b1").onclick = () => { if (step > 1) { step--; draw(); } };
+    document.getElementById("hd-b3").onclick = () => { step = lines.length; draw(); };
+  };
+  ["hd-ma", "hd-mb"].forEach(id => document.getElementById(id).oninput = () => { step = 1; draw(); });
+  host.querySelectorAll("#hd-mv .hd-chip").forEach(b => b.onclick = () => {
+    variant = b.dataset.v; step = 1;
+    host.querySelectorAll("#hd-mv .hd-chip").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    draw();
+  });
+  step = 1;
+  draw();
+};
+
+/* --- qsort and msort: where the work happens ----------------------------- */
+HD.msort = host => {
+  host.innerHTML = `<div class="hd-row" id="hd-sv">
+      <button class="hd-chip" data-v="msort" aria-pressed="true">msort</button>
+      <button class="hd-chip" data-v="qsort" aria-pressed="false">qsort</button>
+    </div>
+    ${hfield("the list", "hd-sl", "[4,1,3,2,5]")}
+    <div id="hd-o"></div>`;
+  let v = "msort";
+  const lit = xs => "[" + xs.join(",") + "]";
+  const draw = () => {
+    const raw = document.getElementById("hd-sl").value.replace(/[\[\]\s]/g, "");
+    const xs = raw ? raw.split(",").filter(t => t !== "").map(Number) : [];
+    if (xs.some(n => !Number.isFinite(n))) {
+      document.getElementById("hd-o").innerHTML =
+        `<p class="hd-k bad">A list of whole numbers, please — like [4,1,3,2,5].</p>`;
+      return;
+    }
+    const rows = [];
+    let splitWork = 0, joinWork = 0;
+    if (v === "msort") {
+      const go = (ys, d) => {
+        if (ys.length <= 1) { rows.push({ d, t: "msort " + lit(ys), n: "base case — already sorted", k: "base" }); return ys.slice(); }
+        const h = Math.floor(ys.length / 2);
+        const l = ys.slice(0, h), r = ys.slice(h);
+        splitWork++;
+        rows.push({ d, t: "msort " + lit(ys), n: "halve → " + lit(l) + " and " + lit(r) + "  (position, not value — no comparison made)", k: "split" });
+        const sl = go(l, d + 1), sr = go(r, d + 1);
+        let out = [], i = 0, j = 0;
+        while (i < sl.length && j < sr.length) { joinWork++; out.push(sl[i] <= sr[j] ? sl[i++] : sr[j++]); }
+        out = out.concat(sl.slice(i)).concat(sr.slice(j));
+        rows.push({ d, t: "merge " + lit(sl) + " " + lit(sr), n: "→ " + lit(out) + "  (every comparison in the algorithm happens here)", k: "join" });
+        return out;
+      };
+      go(xs, 0);
+    } else {
+      const go = (ys, d) => {
+        if (!ys.length) { rows.push({ d, t: "qsort []", n: "base case", k: "base" }); return []; }
+        const [p, ...rest] = ys;
+        const sm = rest.filter(a => a <= p), lg = rest.filter(b => b > p);
+        splitWork += rest.length * 2;
+        rows.push({ d, t: "qsort " + lit(ys), n: "pivot " + p + " → smaller " + lit(sm) + ", larger " + lit(lg) + "  (every comparison in the algorithm happens here)", k: "split" });
+        const a = go(sm, d + 1), b = go(lg, d + 1);
+        const out = a.concat([p]).concat(b);
+        joinWork++;
+        rows.push({ d, t: lit(a) + " ++ [" + p + "] ++ " + lit(b), n: "→ " + lit(out) + "  (no comparison — just concatenation)", k: "join" });
+        return out;
+      };
+      go(xs, 0);
+    }
+    document.getElementById("hd-o").innerHTML = `
+      <div class="hd-scroll"><table class="hd-t">
+        <tr><th>call</th><th>what happens</th></tr>
+        ${rows.map(r => `<tr class="${r.k === "join" ? "on" : ""}">
+          <td class="hd-m" style="padding-left:${r.d * 16}px">${hesc(r.t)}</td>
+          <td class="hd-n" style="margin:0">${hesc(r.n)}</td></tr>`).join("")}
+      </table></div>
+      <p class="hd-k">${v === "msort"
+        ? "msort: " + splitWork + " splits, all trivial · " + joinWork + " comparisons, all in merge"
+        : "qsort: " + splitWork + " comparisons, all in the two comprehensions · " + joinWork + " concatenations, all trivial"}</p>
+      <p class="hd-n">Same list, same divide-and-conquer shape, and the comparisons end up in
+        opposite halves of it. <code>qsort</code> splits by <em>value</em> and recombines with a
+        bare <code>++</code>; <code>msort</code> splits by <em>position</em> and puts the whole
+        ordering argument into <code>merge</code>. One thinks on the way down, the other on the way
+        back up. Being able to say that in three lines is a good exam answer.</p>`;
+  };
+  host.querySelectorAll("#hd-sv .hd-chip").forEach(b => b.onclick = () => {
+    v = b.dataset.v;
+    host.querySelectorAll("#hd-sv .hd-chip").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    draw();
+  });
+  document.getElementById("hd-sl").oninput = draw;
+  draw();
+};
+
+/* --- mutual recursion: whose turn is it? --------------------------------- */
+HD.mutual = host => {
+  host.innerHTML = `${hfield("the list (any characters)", "hd-us", "abcdefg")}
+    <div id="hd-o"></div>`;
+  let step = 0;
+  const draw = () => {
+    const s = document.getElementById("hd-us").value || "";
+    const cs = s.split("");
+    // one line per call, alternating evens/odds
+    const lines = [];
+    for (let i = 0; i <= cs.length; i++) {
+      const who = i % 2 === 0 ? "evens" : "odds";
+      const rest = cs.slice(i);
+      if (!rest.length) {
+        lines.push({ who, txt: who + " \"\"", note: "base case for " + who + " — the list is empty, so the pair stops", keep: null });
+      } else {
+        lines.push({ who, txt: who + " \"" + rest.join("") + "\"",
+          note: who === "evens"
+            ? "evens keeps '" + rest[0] + "' and hands the tail to odds"
+            : "odds drops '" + rest[0] + "' and hands the tail to evens",
+          keep: who === "evens" ? rest[0] : null });
+      }
+    }
+    step = Math.min(Math.max(step, 1), lines.length);
+    const shown = lines.slice(0, step);
+    const kept = shown.map(l => l.keep).filter(c => c !== null);
+    document.getElementById("hd-o").innerHTML = `
+      <pre class="hd-pre">evens []     = []
+evens (x:xs) = x : odds xs
+odds  []     = []
+odds  (_:xs) = evens xs</pre>
+      <div class="hd-tape"><span class="hd-l">input</span>
+        ${cs.map((c, i) => `<span class="hd-cell ${i < step - 1 ? (i % 2 === 0 ? "good" : "off") : ""}">${hesc(c)}</span>`).join("")}</div>
+      <div class="hd-steps">${shown.map((l, i) =>
+        `<div class="hd-step ${i === step - 1 ? "on" : ""}"><span class="hd-eq">${i ? "→" : " "}</span>
+          <code>${hesc(l.txt)}</code></div>`).join("")}</div>
+      <p class="hd-k">${hesc(shown[step - 1].note)}</p>
+      <div class="hd-tape"><span class="hd-l">evens</span>
+        ${kept.length ? kept.map(c => `<span class="hd-cell good">${hesc(c)}</span>`).join("")
+          : `<span class="hd-cell off">[]</span>`}</div>
+      <div class="hd-row">
+        <button class="hd-btn" id="hd-b1">← Back</button>
+        <button class="hd-btn on" id="hd-b2">Next call →</button>
+        <button class="hd-btn" id="hd-b3">All the way</button>
+      </div>
+      <p class="hd-n">No index is computed anywhere. "Every other element" is carried entirely by
+        <em>whose turn it is</em> — the alternation is doing the job that <code>zip xs [0..]</code>
+        and <code>even i</code> did in week 4. Both are correct; they are different ideas about the
+        same problem, and noticing that is worth more than either definition.</p>`;
+    document.getElementById("hd-b2").onclick = () => { if (step < lines.length) { step++; draw(); } };
+    document.getElementById("hd-b1").onclick = () => { if (step > 1) { step--; draw(); } };
+    document.getElementById("hd-b3").onclick = () => { step = lines.length; draw(); };
+  };
+  document.getElementById("hd-us").oninput = () => { step = 1; draw(); };
+  step = 1;
+  draw();
+};
+
 
 function renderLearn() {
   view.textContent = "";
@@ -2073,6 +3750,15 @@ function renderLearn() {
     const pre = el("pre", "code");
     pre.textContent = c.code;
     art.appendChild(pre);
+  }
+  // A second prose block, after the code listing — either carried on the
+  // concept itself or looked up by title. Concepts with neither render exactly
+  // as they did before this existed.
+  const deeper = c.body2 || MORE[c.t];
+  if (deeper) {
+    const more = el("div");
+    more.innerHTML = deeper;
+    art.appendChild(more);
   }
   if (c.ghci) {
     const g = el("div", "ghci");
@@ -2337,8 +4023,9 @@ function renderWork() {
     const p = el("div", "panel");
     p.appendChild(el("h2", null, "Week " + week + " — not written yet"));
     p.appendChild(el("p", "empty",
-      "The workbench exists for week 1 so far. The exercises themselves are already in the repo: "
-      + "tutorial/week0" + week + "/Exercises.hs, run with ./check.sh " + week + " from tutorial/."));
+      "The workbench exists for weeks 1 and 5 so far. The exercises themselves are already in the "
+      + "repo either way: tutorial/week0" + week + "/Exercises.hs, run with ./check.sh " + week
+      + " from tutorial/, and tutorial/week0" + week + "/LESSON.md has the paper drills."));
     wrap.appendChild(p);
     view.appendChild(wrap);
     return;
@@ -2402,7 +4089,8 @@ function renderWork() {
     pp.appendChild(it);
   });
   const note = el("div", "wbnote");
-  note.innerHTML = "Worked answers to these four are in <code>tutorial/solutions/week01/PAPER.md</code>"
+  note.innerHTML = "Worked answers to these " + W.paper.length + " are in "
+    + "<code>tutorial/solutions/week0" + week + "/PAPER.md</code>"
     + " — open it after you have written yours down, not before. Reading a solution to a problem "
     + "you have not fought with feels like learning and is not.";
   pp.appendChild(note);
@@ -2411,7 +4099,7 @@ function renderWork() {
   /* -- code -- */
   const cp = el("div", "panel");
   cp.appendChild(el("h2", null, "At the keyboard"));
-  cp.appendChild(el("p", "note", "Six exercises in " + W.dir + "/Exercises.hs. Replace each "
+  cp.appendChild(el("p", "note", W.code.length + " exercises in " + W.dir + "/Exercises.hs. Replace each "
     + "undefined. Unimplemented stubs report as todo rather than FAIL, so do them one at a "
     + "time and watch the count climb."));
   W.code.forEach(item => {
@@ -2453,7 +4141,7 @@ function renderWork() {
   note2.innerHTML = "<strong>When all " + W.checks + " are green</strong>, that is half the skill. "
     + "Ask for an <em>idiom review</em> — paste the file and get told where a five-line recursion "
     + "wanted to be one line. The tests cannot tell you that, and it is most of what separates a "
-    + "C from an A here. Reference answers are in <code>tutorial/solutions/week01/</code>, and "
+    + "C from an A here. Reference answers are in <code>tutorial/solutions/week0" + week + "/</code>, and "
     + "<code>" + W.cmd + " --solution</code> runs the tests against them.";
   cp.appendChild(note2);
   wrap.appendChild(cp);
