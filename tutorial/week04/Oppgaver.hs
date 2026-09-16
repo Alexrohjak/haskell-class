@@ -62,10 +62,13 @@ strInt = undefined
 -- ---------------------------------------------------------------------------
 
 fjernLK :: String -> Char -> String
-fjernLK = undefined
+fjernLK s c = [x | x <- s, x /= c]
 
 fjernRek :: String -> Char -> String
-fjernRek = undefined
+fjernRek [] c = []
+fjernRek(x:xs) c
+  | x == c = fjernRek xs c
+  | otherwise = x : fjernRek xs c
 
 -- ---------------------------------------------------------------------------
 -- Oppgave 3
@@ -78,10 +81,17 @@ fjernRek = undefined
 -- ---------------------------------------------------------------------------
 
 tegnposLK :: Char -> String -> [Int]
-tegnposLK = undefined
+tegnposLK c s = [i | (x, i) <- zip s [0..], x == c]
 
 tegnposRek :: Char -> String -> [Int]
-tegnposRek = undefined
+tegnposRek c (str) = tegnposRek' c (str) 0
+
+tegnposRek' :: Char -> String -> Int -> [Int]
+tegnposRek' _ [] _ = []
+
+tegnposRek' c (x:xs) y
+  | x == c = y : tegnposRek' c xs (y + 1)
+  | otherwise = tegnposRek' c xs (y + 1)
 
 -- ---------------------------------------------------------------------------
 -- Oppgave 4
@@ -131,7 +141,8 @@ isEvenGj = undefined
 -- ---------------------------------------------------------------------------
 
 fibs :: [Integer]
-fibs = undefined
+fibs = 0 : 1 : zipWith (+) (fibs) (drop 1 fibs)
+
 
 -- ---------------------------------------------------------------------------
 -- Oppgave 6
