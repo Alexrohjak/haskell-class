@@ -23,6 +23,13 @@
     "editor.wordBasedSuggestions": "off"
   },
 
+  // ---- No AI autocomplete --------------------------------------------------
+  // Ghost-text suggestions write the exercise for you before you've thought
+  // it. Turned off for this repo; Copilot Chat still works if you ask it.
+  "github.copilot.enable": { "*": false },
+  "github.copilot.nextEditSuggestions.enabled": false,
+  "editor.inlineSuggest.enabled": false,
+
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
 
