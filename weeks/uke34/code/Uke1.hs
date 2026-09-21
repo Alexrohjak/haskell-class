@@ -1,4 +1,4 @@
--- Uke 1 (uke34) — the lecturer's weekly sheet.
+-- Uke 1 (uke34) — the lecturer's weekly sheet
 -- Problems: ../exercises/uke1.txt        How to check these: ../../../docs/checking-your-work.md
 --
 --   runghc -Wno-x-partial weeks/uke34/code/Uke1.hs   -- examples + properties
@@ -15,30 +15,33 @@ import Test.QuickCheck
 
 -- 1. xs with every element increased by k.
 plu :: [Int] -> Int -> [Int]
-plu = undefined
+plu [] k = []
+plu (x:xs) k = x + k : plu xs k
 
 -- 2. True iff the string reads the same forwards and backwards.
 pali :: String -> Bool
-pali = undefined
+pali xs = xs == reverse xs
 
 -- 3. Pad to the given width. The sheet asks what should happen when the input
 --    is already longer than the width — decide, then write a property for it.
 hjuster :: Int -> String -> String   -- right-align: "  word"
-hjuster = undefined
+hjuster k xs = replicate (k - length xs) ' ' ++ xs
 
 vjuster :: Int -> String -> String   -- left-align:  "word  "
-vjuster = undefined
+vjuster k xs = xs ++ replicate (k - length xs)' '
 
 -- 4. Elements at even / odd positions.
 evens :: [a] -> [a]
-evens = undefined
+evens [] = []
+evens (x:xs) = x : odds xs
 
 odds :: [a] -> [a]
-odds = undefined
+odds [] = []
+odds (x:xs) = drop x : evens xs
 
 -- 5. Same result as (evens xs, odds xs), but traversing xs only once.
 evensOdds :: [a] -> ([a], [a])
-evensOdds = undefined
+evensOdds xs =
 
 -- ---- examples from the sheet ---------------------------------------------
 

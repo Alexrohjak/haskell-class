@@ -1,4 +1,4 @@
--- Uke 2 (uke35) — the lecturer's weekly sheet.
+-- Uke 2 (uke35) — the lecturer's weekly sheet
 -- Problems: ../exercises/uke2.txt        How to check these: ../../../docs/checking-your-work.md
 --
 --   ghci weeks/uke35/code/Uke2.hs        -- this sheet is mostly a `:t` session
@@ -14,31 +14,48 @@
 
 module Main where
 
+-- ---- task 1: choose the types --------------------------------------
+
+False :: Bool
+
+5 + 8 :: Num a => a
+
+(+) 2 :: Num a => a -> a
+
+(["foo", "bar"], 'a') :: ([[Char]], Char)
+
+[(True, []), (False, [['a']])] :: [(Bool, [[Char]])]
+
+\x y -> y !! x :: Int -> [a] -> a
+
+[ take, drop, \x y -> [ y !! x ] ] :: [Int -> [a] -> [a]]
+
+
 -- ---- task 2: fill in the signatures --------------------------------------
 -- Write the type you believe is right, uncomment, and let GHC agree or not.
 -- If GHC infers something MORE general than what you wrote, that gap is the
 -- lesson — go back and see what you over-specified.
 
--- e1 :: ?
+e1 :: [Bool]
 e1 = [False, True, False]
 
--- e2 :: ?
+e2 :: Num a => [[a]]
 e2 = [[1,2],[3,4]]
 
--- e3 :: ?
+e3 :: Num a => [([Char], a)]
 e3 = [ ("a", 7) ]
 
--- e4 :: ?
+e4 :: Num a => [(Char, a)]
 e4 = [ ('a', 7) ]
 
--- e5 :: ?
+e5 :: Num a => a -> a
 e5 x = x * 2
 
--- e6 :: ?
+e6 :: (x, y) -> x
 e6 (x, y) = x
 
 e7 :: a -> (a, a)
-e7 = undefined
+e7 x = (x, x)
 
 -- ---- task 3: most general type --------------------------------------------
 -- Work each one out on paper, then uncomment it ONE AT A TIME and check with
@@ -49,10 +66,38 @@ e7 = undefined
 -- answer, so read it rather than deleting the line.
 
 -- app f x = f x
+app :: (a -> b) -> a -> b
+
 -- com f g x = f (g x)
+com :: (b -> c) -> (a -> b) -> a -> c
+
 -- sub f g x = (f x) (g x)
+sub :: (a -> b -> c) -> (a -> b) -> a -> c
+
 -- fix f = f (fix f)
+fix :: (a -> a) -> a
+
 -- selv f = f f
+selv :: ((((a -> b)... -> b) -> b) -> b) -> a
+--doesnt compute as its infinitely trying to substitute in (a -> b)
+
+
+-- ---- task 4: --------------------------------------------
+-- Hvilke av ligningene nedenfor er feiltypet? For de som er riktig typet, ---
+-- hva kan du si om typen til xs, og hvilke av dem holder? -------------------
+
+[] : xs = xs        -- String
+[] : xs = [[],xs]   -- String in a list
+xs : [] = xs        -- String
+xs : [] = [xs]      -- String in a list
+xs : xs = [xs,xs]   -- List of the same string twice
+xs : [xs] = [xs,xs] --
+[[]] ++ xs = xs
+[[]] ++ xs = [xs]
+[[]] ++ xs = [[],xs]
+[[]] ++ [xs] = [[],xs]
+[xs] ++ [] = [xs]
+[xs] ++ [xs] = [xs,xs]
 
 -- ---- task 5: define every function of type Bool -> Bool -------------------
 -- The counting part (1-10) is paper. This is the code part: list them all.
