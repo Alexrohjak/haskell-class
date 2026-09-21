@@ -15,6 +15,7 @@ build-type:      Simple
 -- cannot. See docs/setup-notes.md.
 --
 -- Adding a week: copy the `executable`/`library` pair and bump the number.
+-- Adding a lecturer's sheet: copy a `weekNN-oppgaver` executable.
 
 common warnings
   ghc-options:      -Wno-x-partial
@@ -90,6 +91,46 @@ executable week09-tests
   main-is:        Tests.hs
   other-modules:  Exercises
   build-depends:  base, inf122-tutorial:check
+
+-- The lecturer's weekly sheets: one more component per week, since each
+-- week's Oppgaver.hs sits in the same folder as its Exercises.hs. No
+-- solutions counterpart -- the sheets have no reference answers.
+-- QuickCheck is listed so you can `import Test.QuickCheck` in Oppgaver.hs
+-- and write properties next to your answers (docs/checking-your-work.md).
+executable week01-oppgaver
+  import:         warnings
+  hs-source-dirs: tutorial/week01
+  main-is:        OppgaverTests.hs
+  other-modules:  Oppgaver
+  build-depends:  base, inf122-tutorial:check, QuickCheck
+
+executable week02-oppgaver
+  import:         warnings
+  hs-source-dirs: tutorial/week02
+  main-is:        OppgaverTests.hs
+  other-modules:  Oppgaver
+  build-depends:  base, inf122-tutorial:check, QuickCheck
+
+executable week03-oppgaver
+  import:         warnings
+  hs-source-dirs: tutorial/week03
+  main-is:        OppgaverTests.hs
+  other-modules:  Oppgaver
+  build-depends:  base, inf122-tutorial:check, QuickCheck
+
+executable week04-oppgaver
+  import:         warnings
+  hs-source-dirs: tutorial/week04
+  main-is:        OppgaverTests.hs
+  other-modules:  Oppgaver
+  build-depends:  base, inf122-tutorial:check, QuickCheck
+
+executable week05-oppgaver
+  import:         warnings
+  hs-source-dirs: tutorial/week05
+  main-is:        OppgaverTests.hs
+  other-modules:  Oppgaver
+  build-depends:  base, inf122-tutorial:check, QuickCheck
 
 -- The reference solutions. No Tests.hs of their own, so these are libraries.
 library sol-week01

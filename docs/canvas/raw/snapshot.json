@@ -73,6 +73,27 @@
   ],
   "announcements": [
     {
+      "title": "Skrivefeil i oppgave 6, uke 4",
+      "posted": "2026-09-09T05:09:54Z",
+      "text": "Typen til fuksjon evlaOPN burde være evalOPN :: [Int] -> [String] -> Int, og ikke evalOPN :: [Int] -> [[String]] -> Int, som det sto i teksten.",
+      "file_ids": [],
+      "links": []
+    },
+    {
+      "title": "Feil avlysning",
+      "posted": "2026-09-01T09:27:20Z",
+      "text": "Hvis du har sett en kunngjøring om avlyst forelesning 1.09, så var det en feil. Vi har vanlig forelesning idag.",
+      "file_ids": [],
+      "links": []
+    },
+    {
+      "title": "Oppgaver uke3.txt",
+      "posted": "2026-08-31T16:24:17Z",
+      "text": "til denne uken, finnes i katalogen Filer/oppgaver/...",
+      "file_ids": [],
+      "links": []
+    },
+    {
       "title": "Oppgaver uke2.txt",
       "posted": "2026-08-25T14:13:20Z",
       "text": "er tilgjengelige fra katalogen Filer/oppgaver/...",
@@ -139,6 +160,30 @@
       "updated": "2026-08-25T12:57:09Z"
     },
     {
+      "folder": "course files/forelesningsnotater",
+      "name": "3-func+list-konversjon.pdf",
+      "id": 7995128,
+      "size": 83083,
+      "type": "application/pdf",
+      "updated": "2026-09-01T10:49:59Z"
+    },
+    {
+      "folder": "course files/forelesningsnotater",
+      "name": "4-rekursjon-handout.pdf",
+      "id": 7998751,
+      "size": 572467,
+      "type": "application/pdf",
+      "updated": "2026-09-01T11:00:21Z"
+    },
+    {
+      "folder": "course files/forelesningsnotater",
+      "name": "5-HO-hand.pdf",
+      "id": 8016138,
+      "size": 556908,
+      "type": "application/pdf",
+      "updated": "2026-09-07T08:34:56Z"
+    },
+    {
       "folder": "course files/oppgaver",
       "name": "uke1.txt",
       "id": 7963385,
@@ -153,6 +198,22 @@
       "size": 1507,
       "type": "text/plain",
       "updated": "2026-08-25T14:11:45Z"
+    },
+    {
+      "folder": "course files/oppgaver",
+      "name": "uke3.txt",
+      "id": 7996606,
+      "size": 1943,
+      "type": "text/plain",
+      "updated": "2026-08-31T16:23:06Z"
+    },
+    {
+      "folder": "course files/oppgaver",
+      "name": "uke4.txt",
+      "id": 8022568,
+      "size": 3446,
+      "type": "text/plain",
+      "updated": "2026-09-09T05:08:19Z"
     }
   ],
   "errors": [

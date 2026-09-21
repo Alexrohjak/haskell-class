@@ -50,7 +50,8 @@ From the lecturer's own plan, [`weeks/uke34/slides/1krav-plan+intro.pdf`](weeks/
 
 Note what is **not** in it: chapter 9 (the countdown problem), and 11–14. The
 weekly exercise sheets are separate work from the book's exercises; `uke1.txt`
-says so outright.
+says so outright. Both get done: each tutorial week carries the book's exercises
+in `Exercises.hs` and the lecturer's sheet in `Oppgaver.hs`.
 
 ## Semester plan
 
@@ -102,19 +103,20 @@ This repo holds two different things, and keeping them apart is the point.
 - **[`weeks/ukeNN/`](weeks/)** — the course. What the *lecturer* published, plus
   the code you wrote in class. The `README.md` in each is **generated** by the
   sync: it records what was posted. Don't hand-edit it.
-- **[`tutorial/`](tutorial/)** — the 12-week self-study track, with tests, at
-  2–3 h/week. Yours to edit, and the only place with a feedback loop that tells
-  you when you're right.
+- **[`tutorial/`](tutorial/)** — where the weekly work gets done, with tests.
+  Each week holds the book's exercises (`Exercises.hs`) *and* the lecturer's
+  sheet for that week (`Oppgaver.hs`), and `./check.sh N` runs both. Yours to
+  edit, and the only place with a feedback loop that tells you when you're right.
 
 ## Where things go
 
 | I have… | It goes in… |
 |---|---|
 | A lecture note or slide deck | `weeks/ukeNN/slides/` — or just re-run the sync |
-| The week's exercise sheet | `weeks/ukeNN/exercises/` — the sync files these too |
+| The week's exercise sheet (original) | `weeks/ukeNN/exercises/` — the sync files these too |
 | Code I wrote in class | `weeks/ukeNN/code/` |
-| My answer to a weekly exercise | `weeks/ukeNN/code/` |
-| My answers to the tutorial | `tutorial/weekNN/Exercises.hs` |
+| My answers to the lecturer's sheet | `tutorial/weekNN/Oppgaver.hs` |
+| My answers to the book exercises | `tutorial/weekNN/Exercises.hs` |
 | The obligatorisk oppgåve | `assignments/` |
 | A useful link | `resources/links.md` |
 | Revision material | `exam/` — the [uke34–35 guide](exam/revision-uke34-35.md) and the [drill room](exam/interactive-revision.html) |
@@ -221,9 +223,10 @@ what `check.sh` prints.
 | `Ctrl+K Ctrl+/` | fold every comment block, when the file feels wordy |
 
 The explorer is cut down to the two files you type into — `tutorial/weekNN/Exercises.hs`
-for the book track and `weeks/ukeNN/code/UkeN.hs` for the lecturer's, with the
-sheet itself alongside it — and `LESSON.md` and `Tests.hs` nested under each
-`Exercises.hs`. That is a display setting in `.vscode/settings.json`; hidden
+for the book track and `tutorial/weekNN/Oppgaver.hs` for the lecturer's — with
+`LESSON.md` and `Tests.hs` nested under each `Exercises.hs`, and `OppgaverTests.hs`
+under each `Oppgaver.hs`. The sheet's own text stays visible in
+`weeks/ukeNN/exercises/`. That is a display setting in `.vscode/settings.json`; hidden
 files still compile, still load, still show in git, and still open by path
 (`code exam/README.md`). The reading material is meant to be read in the
 browser; the editor is the workbench.

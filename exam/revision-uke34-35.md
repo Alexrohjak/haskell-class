@@ -70,8 +70,8 @@ column as a promise about what a lecture will contain.
 | [`tutorial/week03/`](../tutorial/week03/) | Hutton 4 · 42 checks | 0/42 |
 | Hutton kap. 1–3, chapter exercises | Pensum point (C) — "antas løst" | not started |
 
-Answers to the weekly sheets go in `weeks/ukeNN/code/`; answers to the tutorial
-go in `tutorial/weekNN/Exercises.hs`.
+Answers to the weekly sheets go in `tutorial/weekNN/Oppgaver.hs`; answers to the
+tutorial go in `tutorial/weekNN/Exercises.hs`.
 
 ---
 

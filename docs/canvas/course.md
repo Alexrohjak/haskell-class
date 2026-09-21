@@ -112,10 +112,33 @@ Første uke er kapitel 1 og 2 pensum. Les igjennom disse kapitlene og gjør oppg
 | 1krav-plan+intro.pdf | course files/forelesningsnotater | `weeks/uke34/slides/` | 2026-08-16 |
 | 2typer-handout.pdf | course files/forelesningsnotater | `weeks/uke35/slides/` | 2026-08-24 |
 | 3-func+list-handoutpdf.pdf | course files/forelesningsnotater | `weeks/uke36/slides/` | 2026-08-25 |
+| 3-func+list-konversjon.pdf | course files/forelesningsnotater | `weeks/uke36/slides/` | 2026-09-01 |
+| 4-rekursjon-handout.pdf | course files/forelesningsnotater | `weeks/uke37/slides/` | 2026-09-01 |
+| 5-HO-hand.pdf | course files/forelesningsnotater | `weeks/uke38/slides/` | 2026-09-07 |
 | uke1.txt | course files/oppgaver | `weeks/uke34/exercises/` | 2026-08-18 |
 | uke2.txt | course files/oppgaver | `weeks/uke35/exercises/` | 2026-08-25 |
+| uke3.txt | course files/oppgaver | `weeks/uke36/exercises/` | 2026-08-31 |
+| uke4.txt | course files/oppgaver | `weeks/uke37/exercises/` | 2026-09-09 |
 
 ## Announcements
+
+### Skrivefeil i oppgave 6, uke 4
+
+*Posted 2026-09-09T05:09:54Z*
+
+Typen til fuksjon evlaOPN burde være evalOPN :: [Int] -> [String] -> Int, og ikke evalOPN :: [Int] -> [[String]] -> Int, som det sto i teksten.
+
+### Feil avlysning
+
+*Posted 2026-09-01T09:27:20Z*
+
+Hvis du har sett en kunngjøring om avlyst forelesning 1.09, så var det en feil. Vi har vanlig forelesning idag.
+
+### Oppgaver uke3.txt
+
+*Posted 2026-08-31T16:24:17Z*
+
+til denne uken, finnes i katalogen Filer/oppgaver/...
 
 ### Oppgaver uke2.txt
 

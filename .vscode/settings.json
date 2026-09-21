@@ -31,6 +31,12 @@
   "editor.suggestOnTriggerCharacters": false,
   "editor.acceptSuggestionOnEnter": "off",
   "editor.acceptSuggestionOnCommitCharacter": false,
+
+  // ---- No AI autocomplete --------------------------------------------------
+  // Ghost-text suggestions write the exercise for you before you've thought
+  // it. Turned off for this repo; Copilot Chat still works if you ask it.
+  "github.copilot.enable": { "*": false },
+  "github.copilot.nextEditSuggestions.enabled": false,
   "editor.inlineSuggest.enabled": false,
 
   "files.trimTrailingWhitespace": true,
@@ -39,16 +45,10 @@
   // ---- The explorer shows the work, and nothing else ----------------------
   //
   // The reading material lives in the browser drill room and in this repo's
-  // markdown; the editor is the workbench. So the tree is cut down to the
-  // things you actually type into -- and there are TWO of them, one per track:
-  //
-  //     tutorial/weekNN/Exercises.hs     Hutton's book exercises
-  //     weeks/ukeNN/code/UkeN.hs         the lecturer's weekly sheet
-  //
-  // This block once hid weeks/ outright. That was written before the second
-  // track existed and was never revisited when it arrived, so the lecturer's
-  // sheets were in the repo and invisible in the sidebar -- which is a good way
-  // to go a month solving only half the course. Both tracks are visible now.
+  // markdown; the editor is the workbench. So the tree is cut down to the two
+  // things you actually type into: tutorial/weekNN/Exercises.hs (the book) and
+  // tutorial/weekNN/Oppgaver.hs (the lecturer's weekly sheet). weeks/ stays
+  // visible so each sheet's text in weeks/ukeNN/exercises/ is one click away.
   //
   // Nothing here is deleted or unreachable -- a hidden file still opens by
   // path from the terminal (`code exam/README.md`), still loads in HLS, and is
@@ -101,23 +101,15 @@
     "tutorial/check.sh": true,
     "tutorial/lib": true,
     "tutorial/solutions": true
-
-    // Weeks the lecturer has not reached yet draw as an empty code/ and
-    // exercises/ pair, because the .gitkeep holding each one open is hidden
-    // above. That is eleven rows of nothing until December. If it bothers you,
-    // uncomment the line below and delete a week from it as its sheet lands --
-    // but note that hiding a week is exactly how the sheets went missing in the
-    // first place, so err towards leaving it off.
-    //
-    // "weeks/uke{39,4[0-9]}": true,
   },
 
-  // Each week collapses to a single row -- Exercises.hs -- with the lesson and
-  // the test spec one chevron away underneath it.
+  // Each week collapses to two rows -- Exercises.hs and Oppgaver.hs -- each
+  // with its test spec one chevron away underneath it.
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
-    "Exercises.hs": "LESSON.md, Tests.hs"
+    "Exercises.hs": "LESSON.md, Tests.hs",
+    "Oppgaver.hs": "OppgaverTests.hs"
   },
 
   // Ctrl+Shift+F searches your work, not the answers to it.
