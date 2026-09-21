@@ -61,7 +61,8 @@ pali xs = xs == reverse xs
 -- The tests don't touch the "input longer than the width" case -- that's the
 -- question the sheet asks YOU. Answer it here, in a comment:
 --
---   Svar:
+--   Svar: It gives just an empty string, so the hjuster function just
+--   returns "word"
 -- ---------------------------------------------------------------------------
 
 hjuster :: Int -> String -> String
@@ -90,7 +91,7 @@ evens (x:xs) = x : odds xs
 
 odds :: [a] -> [a]
 odds [] = []
-odds (x:xs) = drop x : evens xs
+odds (x:xs) = evens xs
 
 -- ---------------------------------------------------------------------------
 -- Oppgave 5
@@ -107,4 +108,6 @@ odds (x:xs) = drop x : evens xs
 -- ---------------------------------------------------------------------------
 
 evensOdds :: [a] -> ([a], [a])
-evensOdds xs =
+evensOdds [] = ([], [])
+evensOdds (x:xs) = (x : o, e)
+  where (e, o) = evensOdds xs

@@ -28,7 +28,7 @@ import Data.Char (chr, isLower, ord)
 -- ---------------------------------------------------------------------------
 
 sumSquares :: Int -> Int
-sumSquares = undefined
+sumSquares xs = sum [x ^ 2 | x <- [1..xs]]
 
 -- ---------------------------------------------------------------------------
 -- Exercise 2  (Hutton 5.2)
@@ -44,7 +44,7 @@ sumSquares = undefined
 -- ---------------------------------------------------------------------------
 
 grid :: Int -> Int -> [(Int, Int)]
-grid = undefined
+grid xs ys = [(x, y) | x <- [0..xs], y <- [0..ys]]
 
 -- ---------------------------------------------------------------------------
 -- Exercise 3  (Hutton 5.3)
@@ -58,7 +58,7 @@ grid = undefined
 -- ---------------------------------------------------------------------------
 
 square :: Int -> [(Int, Int)]
-square = undefined
+square xs = [(x, y) | (x, y) <- grid xs xs, x /= y]
 
 -- ---------------------------------------------------------------------------
 -- Exercise 4  (Hutton 5.4)
@@ -74,7 +74,7 @@ square = undefined
 -- ---------------------------------------------------------------------------
 
 replicate' :: Int -> a -> [a]
-replicate' = undefined
+replicate' x y = [y | _ <- [1..x]]
 
 -- ---------------------------------------------------------------------------
 -- Exercise 5  (Hutton 5.5)
@@ -89,13 +89,14 @@ replicate' = undefined
 -- ---------------------------------------------------------------------------
 
 pyths :: Int -> [(Int, Int, Int)]
-pyths = undefined
+pyths n = [(x, y, z) | x <- [1..n], y <- [1..n], z <- [1..n], x^2 + y^2 == z^2]
 
 -- ---------------------------------------------------------------------------
 -- Exercise 6  (Hutton 5.6)
 --
 -- A positive integer is PERFECT if it equals the sum of its factors, not
--- counting the number itself.
+-- counting the number itself. 'perfects n' returns the list of all perfect
+-- numbers up to the limit n -- it searches 1..n, it does not test n itself.
 --
 --   factors 15   ==  [1,3,5,15]
 --   factors 7    ==  [1,7]
@@ -107,10 +108,10 @@ pyths = undefined
 -- ---------------------------------------------------------------------------
 
 factors :: Int -> [Int]
-factors = undefined
+factors n = [x | x <- [1..n], n `mod` x == 0]
 
 perfects :: Int -> [Int]
-perfects = undefined
+perfects n = [x | x <- [1..n], sum (init (factors x)) == x]
 
 -- ---------------------------------------------------------------------------
 -- Exercise 7  (from the chapter text)
@@ -130,10 +131,10 @@ perfects = undefined
 -- ---------------------------------------------------------------------------
 
 pairs :: [a] -> [(a, a)]
-pairs = undefined
+pairs xs = zip xs (tail xs)
 
 sorted :: Ord a => [a] -> Bool
-sorted = undefined
+sorted xs = and [x <= y | (x, y) <- pairs xs]
 
 -- ---------------------------------------------------------------------------
 -- Exercise 8  (Hutton 5.8)
@@ -150,8 +151,7 @@ sorted = undefined
 -- ---------------------------------------------------------------------------
 
 positions :: Eq a => a -> [a] -> [Int]
-positions = undefined
-
+positions x y = [b | (a, b) <- zip y ([0..]), a == x]
 -- ---------------------------------------------------------------------------
 -- Exercise 9  (Hutton 5.9)
 --
@@ -164,7 +164,7 @@ positions = undefined
 -- ---------------------------------------------------------------------------
 
 scalarproduct :: [Int] -> [Int] -> Int
-scalarproduct = undefined
+scalarproduct x y = sum [a * b| (a, b) <- zip x (y)]
 
 -- ---------------------------------------------------------------------------
 -- Exercise 10  (the Caesar cipher, from the chapter text)
@@ -190,13 +190,13 @@ scalarproduct = undefined
 -- ---------------------------------------------------------------------------
 
 let2int :: Char -> Int
-let2int = undefined
+let2int x = (ord x) - 97
 
 int2let :: Int -> Char
-int2let = undefined
+int2let y = chr (y + 97)
 
 shift :: Int -> Char -> Char
-shift = undefined
+shift x y = if isLower y then int2let (((let2int y) + x) `mod` 26) else y
 
 encode :: Int -> String -> String
-encode = undefined
+encode x xs = [shift x ys | ys <- xs]
