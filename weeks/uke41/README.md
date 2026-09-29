@@ -6,11 +6,12 @@ Tutorial week: [`tutorial/week08/`](../../tutorial/week08/) — `cd tutorial && 
 
 ## Posted by the lecturer
 
-*Nothing published for this week yet.* Re-run `.venv/bin/python src/canvas_sync.py` once it appears.
+- `slides/8-grammatikk-hand.pdf` — from Canvas `course files/forelesningsnotater`, updated 2026-09-27
 
 ## In this folder
 
-- `slides/` — empty
+- `slides/` — 1 item(s), 156 KB
+  - `8-grammatikk-hand.pdf`
 - `exercises/` — empty
 - `code/` — empty
 

@@ -6,12 +6,15 @@ Tutorial week: [`tutorial/week06/`](../../tutorial/week06/) — `cd tutorial && 
 
 ## Posted by the lecturer
 
-*Nothing published for this week yet.* Re-run `.venv/bin/python src/canvas_sync.py` once it appears.
+- `slides/6-typer(kap8).pdf` — from Canvas `course files/forelesningsnotater`, updated 2026-09-21
+- `exercises/uke6.txt` — from Canvas `course files/oppgaver`, updated 2026-09-22
 
 ## In this folder
 
-- `slides/` — empty
-- `exercises/` — empty
+- `slides/` — 1 item(s), 408 KB
+  - `6-typer(kap8).pdf`
+- `exercises/` — 1 item(s), 1 KB
+  - `uke6.txt`
 - `code/` — empty
 
 ---

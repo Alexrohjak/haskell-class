@@ -115,12 +115,31 @@ Første uke er kapitel 1 og 2 pensum. Les igjennom disse kapitlene og gjør oppg
 | 3-func+list-konversjon.pdf | course files/forelesningsnotater | `weeks/uke36/slides/` | 2026-09-01 |
 | 4-rekursjon-handout.pdf | course files/forelesningsnotater | `weeks/uke37/slides/` | 2026-09-01 |
 | 5-HO-hand.pdf | course files/forelesningsnotater | `weeks/uke38/slides/` | 2026-09-07 |
+| 6-typer(kap8).pdf | course files/forelesningsnotater | `weeks/uke39/slides/` | 2026-09-21 |
+| 7-IO-hand.pdf | course files/forelesningsnotater | `weeks/uke40/slides/` | 2026-09-21 |
+| 8-grammatikk-hand.pdf | course files/forelesningsnotater | `weeks/uke41/slides/` | 2026-09-27 |
 | uke1.txt | course files/oppgaver | `weeks/uke34/exercises/` | 2026-08-18 |
 | uke2.txt | course files/oppgaver | `weeks/uke35/exercises/` | 2026-08-25 |
 | uke3.txt | course files/oppgaver | `weeks/uke36/exercises/` | 2026-08-31 |
 | uke4.txt | course files/oppgaver | `weeks/uke37/exercises/` | 2026-09-09 |
+| uke5.txt | course files/oppgaver | `weeks/uke38/exercises/` | 2026-09-15 |
+| uke6.txt | course files/oppgaver | `weeks/uke39/exercises/` | 2026-09-22 |
 
 ## Announcements
+
+### De gjenstående forelesningene
+
+*Posted 2026-09-27T10:05:14Z*
+
+de nærmeste 2-3 ukene, etter avsluttning av IO på mandag 28.09, vil omhandle deler av pensum som ikke er presentert i boken, nemlig
+
+1. formelle grammatikker og enkel parsing,
+
+2. unifikasjonsalgoritmen (som er en sentral del av)
+
+3. typeavledning i Haskell.
+
+Den obligatoriske oppgaven forventes å bli kunngjort rundt midten av oktober.
 
 ### Skrivefeil i oppgave 6, uke 4
 

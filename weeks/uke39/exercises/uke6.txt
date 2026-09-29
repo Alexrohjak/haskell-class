@@ -1,0 +1,42 @@
+1. Skriv følgende funksjonen for kartesisk produkt v.hj.a. foldr:
+	cp :: [[a]] -> [[a]]
+	cp [] = [[]]
+	cp (xs:xss) = [ x:ys | x <- xs, ys <- cp xss ]
+
+
+2. Oppgaver 8.5 og 8.6 fra boken.
+
+
+3. Naturlige tall (heltall >= 0) kan representers som 
+	data Nat = Z | S Nat
+
+3.a. Skriv 0, 1, og 7 i denne representasjonen.
+
+3.b. Hva er konstruktorer, og deres typer, for Nat?
+
+3.c. Definer naturlig fold for Nat, nemlig foldN; tenk først hvilken type den skal ha.
+
+3.d. Bruk foldN for å definere konversjon nat2Int :: Nat -> Int.
+
+
+4. Typen av ikke-tomme lister med elementer av type a kunne defineres ved
+	data List a = Wrap a | Cons a (List a)
+
+`foldr` er naturlig fold for lister, slik at `foldr (:) []` er identitet på lister, dvs. foldr (:) [] xs == xs, for envher liste xs::[a]. En tilsvarende egenskap for  
+	foldL :: ... -> ... -> Pist a -> b 
+blir at `foldL Wrap Cons` er identiteten på `List a`, dvs. foldL Wrap Cons ls == ls, for enhver ls::List a.
+
+4.a. Definer foldL slik at denne egenskapen holder.
+
+4.b. Bruk foldL (og evt. andre fold) for å definere funksjoner
+	clist :: [a] -> List a
+	list :: List a -> [a]
+s.a., f.eks.:
+	ghci> clist [1, 2, 3]
+	Cons 1 (Cons 2 (Wrap 3))
+og	ghci> list (Cons 1 (Cons 2 (Wrap 3)))
+	[1, 2, 3]
+
+
+5. Dette er et litt vanskeligere spørsmål for spesialinteresserte. Bevis ved induksjon at:
+	foldr f c (xs ++ ys) == foldr f (foldr f c ys) xs

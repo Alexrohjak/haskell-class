@@ -73,6 +73,13 @@
   ],
   "announcements": [
     {
+      "title": "De gjenstående forelesningene",
+      "posted": "2026-09-27T10:05:14Z",
+      "text": "de nærmeste 2-3 ukene, etter avsluttning av IO på mandag 28.09, vil omhandle deler av pensum som ikke er presentert i boken, nemlig\n\n1. formelle grammatikker og enkel parsing,\n\n2. unifikasjonsalgoritmen (som er en sentral del av)\n\n3. typeavledning i Haskell.\n\nDen obligatoriske oppgaven forventes å bli kunngjort rundt midten av oktober.",
+      "file_ids": [],
+      "links": []
+    },
+    {
       "title": "Skrivefeil i oppgave 6, uke 4",
       "posted": "2026-09-09T05:09:54Z",
       "text": "Typen til fuksjon evlaOPN burde være evalOPN :: [Int] -> [String] -> Int, og ikke evalOPN :: [Int] -> [[String]] -> Int, som det sto i teksten.",
@@ -184,6 +191,30 @@
       "updated": "2026-09-07T08:34:56Z"
     },
     {
+      "folder": "course files/forelesningsnotater",
+      "name": "6-typer(kap8).pdf",
+      "id": 8036939,
+      "size": 418459,
+      "type": "application/pdf",
+      "updated": "2026-09-21T12:55:26Z"
+    },
+    {
+      "folder": "course files/forelesningsnotater",
+      "name": "7-IO-hand.pdf",
+      "id": 8058812,
+      "size": 137681,
+      "type": "application/pdf",
+      "updated": "2026-09-21T12:44:45Z"
+    },
+    {
+      "folder": "course files/forelesningsnotater",
+      "name": "8-grammatikk-hand.pdf",
+      "id": 8080088,
+      "size": 160596,
+      "type": "application/pdf",
+      "updated": "2026-09-27T09:49:31Z"
+    },
+    {
       "folder": "course files/oppgaver",
       "name": "uke1.txt",
       "id": 7963385,
@@ -214,6 +245,22 @@
       "size": 3446,
       "type": "text/plain",
       "updated": "2026-09-09T05:08:19Z"
+    },
+    {
+      "folder": "course files/oppgaver",
+      "name": "uke5.txt",
+      "id": 8040651,
+      "size": 2352,
+      "type": "text/plain",
+      "updated": "2026-09-15T14:21:58Z"
+    },
+    {
+      "folder": "course files/oppgaver",
+      "name": "uke6.txt",
+      "id": 8064559,
+      "size": 1382,
+      "type": "text/plain",
+      "updated": "2026-09-22T13:08:19Z"
     }
   ],
   "errors": [
