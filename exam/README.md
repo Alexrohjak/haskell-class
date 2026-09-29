@@ -47,7 +47,7 @@ ask the person who writes the paper what he expects on it.
   what was actually taught (with slide pages), the practice attached to them,
   and a six-hour route through it. Written 31 August.
 - [`interactive-revision.html`](interactive-revision.html) — the drill room.
-  34 concepts across Hutton 1–6, each cited to the slide it came from, and 71
+  70 concepts across Hutton 1–8 and 10 plus his grammar notes, each cited to the slide it came from, and 142
   drills. Published at <https://claude.ai/code/artifact/e3c608e9-c5c4-471a-b1c3-b710d40c945c>
   (private); open the local file with `xdg-open exam/interactive-revision.html`
   if you would rather not use the hosted copy. Every value and type in it was
@@ -68,7 +68,7 @@ ask the person who writes the paper what he expects on it.
 
   A fourth tab, **Work**, is the bridge to the repo: the week's paper drills and
   its coding exercises, each with a hint ladder that gets more specific and stops
-  where the thinking starts. Written for weeks 1 and 5 so far.
+  where the thinking starts. Written for weeks 1–8.
 
   It contains **no answers** to `uke1.txt`, `uke2.txt` or the tutorial
   exercises — different examples, same ideas, deliberately. The hints name the

@@ -205,25 +205,21 @@ tidy example of a data type replacing repeated work.
 ## 5. Folding your own type
 
 Week 6 taught you `foldr` as "replace `:` with `f` and `[]` with `v`". That reading
-generalises to **every** data type — one function per constructor, with matching arity:
+is not special to lists: **every** data type has a fold that says what to put in place
+of each of its constructors. The lecturer builds one for his `Tre` on slides 85–97 of
+`6-typer(kap8).pdf` — read those.
 
-```haskell
-folde :: (Int -> b) -> (b -> b -> b) -> (b -> b -> b) -> Expr -> b
-folde f _ _ (Val n)   = f n
-folde f g h (Add x y) = g (folde f g h x) (folde f g h y)
-folde f g h (Mul x y) = h (folde f g h x) (folde f g h y)
-```
+Writing the fold for `Expr`, and then `evalE` and `sizeE` with it, is exercise 6 (and
+task 2 of his sheet uke6), so it is not worked here. Two questions to take into it:
 
-And then the payoff, which is exercise 6:
+- Look at each constructor of `Expr` in turn. What does the fold need to be *given*
+  to replace it, and what type must that thing have?
+- By the time the function replacing `Add` is called, what does it receive: two
+  expressions, or two answers?
 
-```haskell
-evalE = folde id    (+) (*)     -- keep the numbers, use real arithmetic
-sizeE = folde (const 1) (+) (+) -- turn every Val into 1 and add them up
-```
-
-Two one-line definitions, no recursion, no pattern matching. **`folde` is where the
-recursion lives, once**, and everything over `Expr` is now an application of it. That
-is the most reusable idea in the chapter, and it is worth more marks than it costs.
+The payoff, once it is green: everything over `Expr` becomes an application of one
+function that holds the recursion, once. That is the most reusable idea in the
+chapter. Worked answers are in `../solutions/week07/`, after yours.
 
 ---
 

@@ -202,13 +202,18 @@ data Expr = Val Int | Add Expr Expr | Mul Expr Expr
   deriving (Eq, Show)
 
 folde :: (Int -> b) -> (b -> b -> b) -> (b -> b -> b) -> Expr -> b
-folde = undefined
+
+folde f g h (Val n) = f n
+
+folde f g h (Add x y) = g (folde f g h x) (folde f g h y)
+
+folde f g h (Mul x y) = h (folde f g h x) (folde f g h y)
 
 evalE :: Expr -> Int
-evalE = undefined
+evalE = folde (\n -> n) (+) (*)
 
 sizeE :: Expr -> Int
-sizeE = undefined
+sizeE = folde (\_ -> 1) (+) (+)
 
 -- ---------------------------------------------------------------------------
 -- Exercise 7  (a class of your own)

@@ -20,6 +20,7 @@
 -- its own -- the very function oppgave 2 has you write -- so if you import
 -- Data.List, hide it:  import Data.List hiding (group)
 module Oppgaver where
+import Data.Char (isDigit)
 
 -- ---------------------------------------------------------------------------
 -- Oppgave 1
@@ -101,7 +102,11 @@ letterFreq = undefined
 -- ---------------------------------------------------------------------------
 
 tokMat :: String -> [String]
-tokMat = undefined
+tokMat [] = []
+tokMat (x:xs)
+  | x == ' ' = tokMat xs
+  | isDigit x = takeWhile isDigit (x:xs) : tokMat (dropWhile isDigit(x:xs))
+  | otherwise = [x] : tokMat xs
 
 -- ---------------------------------------------------------------------------
 --   Følgende spørsmål er litt mer utfordrende. Ingen grunn til panikk hvis du

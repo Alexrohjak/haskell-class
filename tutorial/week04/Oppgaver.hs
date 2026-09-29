@@ -23,6 +23,7 @@
 -- "correct", not "done". The method is what the idiom review looks at.
 module Oppgaver where
 
+import Data.Char (isDigit)
 -- ---------------------------------------------------------------------------
 -- Oppgave 1
 --
@@ -141,7 +142,7 @@ isEvenGj = undefined
 -- ---------------------------------------------------------------------------
 
 fibs :: [Integer]
-fibs = 0 : 1 : zipWith (+) (fibs) (drop 1 fibs)
+fibs = 1 : 1 : zipWith (+) (fibs) (drop 1 fibs)
 
 
 -- ---------------------------------------------------------------------------
@@ -190,11 +191,21 @@ fibs = 0 : 1 : zipWith (+) (fibs) (drop 1 fibs)
 -- ---------------------------------------------------------------------------
 
 evalOPN :: [Int] -> [String] -> Int
-evalOPN = undefined
+evalOPN [x] [] = x
+evalOPN (y:x:rest) ("+":ts) = evalOPN (x + y : rest) ts
+evalOPN (y:x:rest) ("-":ts) = evalOPN (x - y : rest) ts
+evalOPN (y:x:rest) ("*":ts) = evalOPN (x * y : rest) ts
+evalOPN (y:x:rest) ("/":ts) = evalOPN (x `div` y : rest) ts
+evalOPN stack (t:ts) = evalOPN (read t : stack) ts
 
 eval :: String -> Int
-eval = undefined
+eval s = evalOPN x (tokMat s)
+  where x = []
 
 -- Copied from week03/Oppgaver.hs.
 tokMat :: String -> [String]
-tokMat = undefined
+tokMat [] = []
+tokMat (x:xs)
+  | x == ' ' = tokMat xs
+  | isDigit x = takeWhile isDigit (x:xs) : tokMat (dropWhile isDigit(x:xs))
+  | otherwise = [x] : tokMat xs
