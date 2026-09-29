@@ -34,7 +34,7 @@ import Data.Char (digitToInt)
 --   som gjør det samme som zipWith gjør, dvs. zipper two lister ved å anvende
 --   funksjonen i første argumentet på respektive par av elementer fra hver
 --   liste inntil en av listene blir tomme, f.eks.:
---     zipW (+) [4,5,6,7] [1,2,3] = [5,7,9]
+--     zipW plus [4,5,6,7] [1,2,3] = [5,7,9]
 --     zipW (-) [4,5,6,7] [1,2,5] = [3,3,1]
 -- ---------------------------------------------------------------------------
 
@@ -42,6 +42,8 @@ zipW :: (a -> b -> c) -> [a] -> [b] -> [c]
 zipW _ [] _ = []
 zipW _ _ [] = []
 zipW f (x:xs) (y:ys) = f x y : zipW f xs ys
+
+-- plus a b = a + b
 
 -- ---------------------------------------------------------------------------
 -- Oppgave 1.a
@@ -72,6 +74,8 @@ zip' = zipW (\x y -> (x, y))
 --   som konverterer en String til en Int
 --     strToInt "2" == 2,
 --     strToInt "1398" == 1398.
+-- 10 + 3 = 13
+-- 130 + 9 =
 --
 -- Oppgave 2.b
 --
@@ -105,7 +109,24 @@ strToIntF xs = foldl (\acc c -> acc * 10 + digitToInt c) 0 xs
 -- ---------------------------------------------------------------------------
 
 poly :: [Int] -> Int -> Int
-poly xs x = foldl (\acc c -> (acc * x) + c) 0 xs
+poly xs x = foldl (\acc c -> acc + polyLedd c x) 0 (revIndex xs)
+
+revIndex :: [a] -> [(a, Int)]
+revIndex xs = zip xs (reverse [0..length xs - 1])
+
+polyLedd :: (Int, Int) -> Int -> Int
+polyLedd (coeffisient, potens) x = coeffisient * (x ^ potens)
+
+-- poly xs x = foldl (\acc c -> acc * x + c) 0 xs
+-- [3,1,1] 2
+-- 1 = acc 0, c 3 -> 0*2 + 3
+-- 2 = acc 3, c 1 -> (0*2 + 3)*2 + 1
+-- 3 = acc 7, c 1 -> ((0*2 + 3)*2 + 1)*2 + 1
+-- evaluate, innermost first:
+-- 4 =           (3*2 + 1)*2 + 1
+-- 5 =                  7*2 + 1
+-- 6 =
+
 
 -- ---------------------------------------------------------------------------
 -- Oppgave 4
@@ -118,8 +139,13 @@ poly xs x = foldl (\acc c -> (acc * x) + c) 0 xs
 -- ---------------------------------------------------------------------------
 
 kompress :: (Eq a) => [a] -> [a]
-kompress xs = foldl (\acc c -> if acc /= [] && last acc == c
-  then acc else acc ++ [c]) [] xs
+kompress xs = foldl cond [] xs
+
+cond :: Eq a => [a] -> a -> [a]
+cond [] c = [c]
+cond xs c
+  | c == last xs = xs
+  | otherwise = xs ++ [c]
 
 -- ---------------------------------------------------------------------------
 -- Oppgave 5
@@ -183,7 +209,9 @@ med x (Sum y z) = med x y || med x z
 -- ---------------------------------------------------------------------------
 
 delm :: Eq a => Set a -> Set a -> Bool
-delm = undefined
+delm Empty y = True
+delm (En x) y = med x y
+delm (Sum x z) y = delm x y && delm z y
 
 -- ---------------------------------------------------------------------------
 -- Oppgave 5.d
@@ -197,4 +225,4 @@ delm = undefined
 -- ---------------------------------------------------------------------------
 
 instance (Eq a) => Eq (Set a) where
-  x == y = undefined
+  x == y = delm x y && delm y x
