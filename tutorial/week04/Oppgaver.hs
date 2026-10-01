@@ -202,7 +202,8 @@ evalOPN stack (t:ts) = evalOPN (read t : stack) ts
 
 -- evalOPN som fold ->
 evalOPN' :: [Int] -> [String] -> Int
-evalOPN' stack ts = head (foldl step stack ts)
+evalOPN' stack ts = top (foldl step stack ts)
+  where top [x] = x
 
 step :: [Int] -> String -> [Int]
 step (y:x:rest) "+" = x + y : rest
