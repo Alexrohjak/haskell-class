@@ -87,6 +87,7 @@ zero, one, seven :: Nat
 zero  = Z
 one   = S Z
 seven = S (S (S (S (S (S (S Z))))))
+-- seven = S $ S $ S $ S $ S $ S $ S Z
 
 -- ---------------------------------------------------------------------------
 -- Oppgave 3.b
@@ -113,7 +114,10 @@ foldN :: b -> (b -> b) -> Nat -> b
 foldN z s Z = z
 foldN z s (S n) = s (foldN z s n)
 
--- ---------------------------------------------------------------------------
+idNat :: Nat -> Nat
+idNat = foldN Z S
+
+-- --------------------------------------------------------------------------
 -- Oppgave 3.d
 --
 --   Bruk foldN for å definere konversjon nat2Int :: Nat -> Int.
@@ -131,11 +135,10 @@ nat2Int = foldN 0 (\z -> z + 1)
 --   `foldr` er naturlig fold for lister, slik at `foldr (:) []` er identitet
 --   på lister, dvs. foldr (:) [] xs == xs, for envher liste xs::[a]. En
 --   tilsvarende egenskap for
---     foldL :: ... -> ... -> Pist a -> b
+--     foldL :: ... -> ... -> list a -> b
 --   blir at `foldL Wrap Cons` er identiteten på `List a`, dvs.
 --   foldL Wrap Cons ls == ls, for enhver ls::List a.
 --
--- ("Pist a" is a typo in the sheet for "List a".)
 --
 -- The data type is copied as given, plus 'deriving (Show, Eq)': the sheet's
 -- examples in 4.b show GHCi printing a List, and the tests compare them.
@@ -154,8 +157,14 @@ data List a = Wrap a | Cons a (List a)
 -- definition. The tests check the property the sheet states,
 -- foldL Wrap Cons ls == ls, and use foldL through your list (4.b).
 -- ---------------------------------------------------------------------------
+foldL :: (a -> b) -> (a -> b -> b) -> List a -> b
+foldL w c (Wrap x) = w x
+foldL w c (Cons x y) = c x (foldL w c y)
 
-foldL = undefined
+idList :: List a -> List a
+idList = foldL Wrap Cons
+
+-- Cons a (Wrap x)
 
 -- ---------------------------------------------------------------------------
 -- Oppgave 4.b
@@ -175,10 +184,15 @@ foldL = undefined
 -- ---------------------------------------------------------------------------
 
 clist :: [a] -> List a
-clist = undefined
+clist xs = foldr (\c acc -> Cons c acc) (Wrap (last xs)) (init xs)
+
+-- clist [x] = Wrap x
+-- clist (x:xs) = Cons x (clist xs)
 
 list :: List a -> [a]
-list = undefined
+list = foldL w c
+  where w a = [a]
+        c a b = a : b
 
 -- ---------------------------------------------------------------------------
 -- Oppgave 5
@@ -189,3 +203,4 @@ list = undefined
 --
 -- On paper.
 -- ---------------------------------------------------------------------------
+

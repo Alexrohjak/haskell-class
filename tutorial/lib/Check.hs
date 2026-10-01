@@ -10,7 +10,7 @@
 -- Unimplemented exercises still contain 'undefined', which throws when
 -- evaluated. We catch that and report it as TODO rather than crashing the
 -- whole run, so you can implement the exercises one at a time.
-module Check (check, checkThat, runTests) where
+module Check (Result, check, checkThat, runTests) where
 
 import Control.Exception (SomeException, evaluate, try)
 import Control.Monad (unless)

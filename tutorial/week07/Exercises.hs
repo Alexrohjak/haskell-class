@@ -211,6 +211,7 @@ folde f g h (Mul x y) = h (folde f g h x) (folde f g h y)
 
 evalE :: Expr -> Int
 evalE = folde (\n -> n) (+) (*)
+-- (\n -> n) = id i Haskell
 
 sizeE :: Expr -> Int
 sizeE = folde (\_ -> 1) (+) (+)

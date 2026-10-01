@@ -1,0 +1,27 @@
+1. Definer en aksjon 
+	expr :: String -> IO ()
+som leser fra skjermen et uttrykk i OPN (oppgave 6, uke 4; bruk helst funksjonen eval fra den tidligere oppgaven) og skriver ut resultatet av dets evaluering. Dette gjentas inntil brukeren oppgir tallet 0.
+
+2. Definer en aksjon 
+	lesev :: IO ()
+som ber brukeren om navn på 
+(a) en fil fra hvilken den skal lese input, og 
+(b) en fil til hvilken den skal skrive resultatet. 
+Hver linje i filen (a) antas å inneholde ett uttrykk i OPN. Aksjonen leser hver linje, evaluerer uttrykket, og skriver resultatet i en ny linje i filen (b). 
+
+3. Definer en aksjon 
+	main::IO () 
+for en interaksjon der bruker kan gi følgende kommandoer:
+  exp uttrk – der uttrk er et uttrykk i OPN - evalueringsresultatet av uttrk skrives på skjermen;
+  les fil-a fil-b – aksjonen lesev fra oppgave 2 utføres med filnavn fil-a og fil-b; 
+  q – main avslutes og kontrollen returnerer til ghci.
+ 
+
+4. Utvid main fra oppgave 3 med kommandoer:
+  asf filnavn - som leser et OPN uttrykk fra filen med filnavn og viser dets 
+                AST på skjermen.
+  pre uttrk – der uttrk er i OPN; aksjonen bygger AST for det og skriver 
+              uttrykket på skjermen i PN (dvs., polsk eller prefiks notasjon)
+  inf uttrk – som aksjonen over, bare at den skriver på skjermen uttrykket 
+              i vanlig infiks notasjon (med nødvendige parenteser).
+Definer først en passende datatype Ast som konstrueres for input uttrykket.
