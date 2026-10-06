@@ -30,6 +30,7 @@
 module Oppgaver where
 
 import Data.Char (isDigit)
+import System.IO
 
 -- ---------------------------------------------------------------------------
 -- Oppgave 1
@@ -47,7 +48,13 @@ import Data.Char (isDigit)
 -- ---------------------------------------------------------------------------
 
 expr :: String -> IO ()
-expr = undefined
+expr prompt =
+  putStr prompt >>
+  hFlush stdout >>
+  getLine >>= (\line ->
+  if line == "0"
+    then return ()
+    else print (eval line) >> expr prompt)
 
 -- ---------------------------------------------------------------------------
 -- Oppgave 2
@@ -66,7 +73,25 @@ expr = undefined
 -- ---------------------------------------------------------------------------
 
 lesev :: IO ()
-lesev = undefined
+lesev =
+  putStr "Inn fil?" >>
+  getLine >>= (\fraFil ->
+    putStr "Out fil?" >>
+    getLine >>= (\tilFil ->
+      readFile fraFil >>= (\innhold ->
+        -- evalFil fraFil tilFil
+        let eI = evalLines innhold in writeFile tilFil (eI))))
+
+evalLines :: String -> String
+evalLines innhold = unlines (map (show . eval) (lines innhold))
+
+evalFil :: String -> String -> IO ()
+evalFil fraFil tilFil = do
+  innhold <- readFile fraFil
+  let l = lines innhold
+  let svar = map (show . eval) (l)
+  let s = unlines svar
+  writeFile tilFil s
 
 -- ---------------------------------------------------------------------------
 -- Oppgave 3
@@ -86,7 +111,17 @@ lesev = undefined
 -- ---------------------------------------------------------------------------
 
 main :: IO ()
-main = undefined
+main =
+  putStr "Input:" >>
+  hFlush stdout >>
+  getLine >>= (\line ->
+    command (words line))
+
+command :: [String] -> IO ()
+command ("exp":xs) = print (eval (unwords xs)) >> main
+command ["les", x, y] = evalFil x y >> main
+command ["q"] = return ()
+command _ = main
 
 -- ---------------------------------------------------------------------------
 -- Oppgave 4
@@ -113,7 +148,17 @@ main = undefined
 -- 'deriving Show', for asf).
 -- ---------------------------------------------------------------------------
 
-data Ast
+data Ast = Const Int
+         | Bin String Ast Ast
+         deriving Show
+
+antall :: Ast -> Int
+antall (Const n) = 1
+antall (Bin o l r) = antall l + antall r
+
+prefiks :: Ast -> String
+prefiks (Const n) = show n
+prefiks (Bin o l r) = o ++ " " ++ prefiks l ++ " " ++ prefiks r
 
 -- ---------------------------------------------------------------------------
 -- Copied from week04/Oppgaver.hs (sheet 4, task 6), with tokMat from week03.
