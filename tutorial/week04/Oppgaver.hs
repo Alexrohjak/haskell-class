@@ -192,11 +192,25 @@ fibs = 1 : 1 : zipWith (+) (fibs) (drop 1 fibs)
 
 evalOPN :: [Int] -> [String] -> Int
 evalOPN [x] [] = x
+
 evalOPN (y:x:rest) ("+":ts) = evalOPN (x + y : rest) ts
 evalOPN (y:x:rest) ("-":ts) = evalOPN (x - y : rest) ts
 evalOPN (y:x:rest) ("*":ts) = evalOPN (x * y : rest) ts
 evalOPN (y:x:rest) ("/":ts) = evalOPN (x `div` y : rest) ts
+
 evalOPN stack (t:ts) = evalOPN (read t : stack) ts
+
+-- evalOPN som fold ->
+evalOPN' :: [Int] -> [String] -> Int
+evalOPN' stack ts = top (foldl step stack ts)
+  where top [x] = x
+
+step :: [Int] -> String -> [Int]
+step (y:x:rest) "+" = x + y : rest
+step (y:x:rest) "-" = x - y : rest
+step (y:x:rest) "*" = x * y : rest
+step (y:x:rest) "/" = x `div` y : rest
+step stack t        = read t : stack
 
 eval :: String -> Int
 eval s = evalOPN x (tokMat s)

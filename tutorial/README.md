@@ -106,7 +106,7 @@ Not all twelve weeks are written yet. Current state:
 | 4 | done | done (50 checks) | done + PAPER.md | uke4 (47 checks) |
 | 5 | done | done (63 checks) | done + PAPER.md | uke5 (55 checks) |
 | 6 | done | done (81 checks) | done + PAPER.md | uke6 (30 checks; task 2 is week 7's Exercise 6) |
-| 7 | done | done (89 checks) | done + PAPER.md | not published yet |
+| 7 | done | done (89 checks) | done + PAPER.md | uke7 (19 checks; IO, run with stdin fed in; asf is GHCi-only) |
 | 8 | done | done (76 checks) | done + PAPER.md | not published yet |
 | 9 | done | done (56 checks) | done + PAPER.md | not published yet |
 | 10–11 | blocked | blocked | blocked | not published yet |

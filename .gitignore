@@ -31,3 +31,7 @@ __pycache__/
 # nothing you put beside it is.
 reference/*
 !reference/README.md
+
+# Worked answers kept beside a week to study from, never pushed (the lecturer
+# asks that AI not solve the sheets). Must stay below "!*.hs" to win over it.
+tutorial/*/Svar.hs
