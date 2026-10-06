@@ -7722,9 +7722,9 @@ const STUDY = [
    { id: "40-b", t: "Book exercises, week 8 (76 checks)",
      where: "cd tutorial && ./check.sh 8",
      what: "Exercise 2 has no checks — run it with ./check.sh 8 --repl and look at the screen. Everything else is pure and tested hard." },
-   { id: "40-sync", t: "No sheet posted for uke 40 yet — sync Mitt UiB",
-     where: ".venv/bin/python src/canvas_sync.py",
-     what: "When it lands, ask for it as Oppgaver stubs with tests, the same as sheets 1–6." }
+   { id: "40-o", t: "Lecturer's sheet uke7: an OPN calculator you can talk to",
+     where: "weeks/uke40/exercises/uke7.txt → tutorial/week07/Oppgaver.hs  ·  ./check.sh 7 --oppg",
+     what: "Four tasks, each built on the one before: a read–evaluate loop (1), the same over files (2), a command loop (3), then an Ast type printed in prefix and infix (4). The prerequisite is your eval from sheet 4 — copy it across, since both modules are called Oppgaver. Tasks 1–3 are slide 8's loops plus slides 13–19's files; keep the pure part out of IO so it can be tested. Task 4 builds the tree with the same stack as evalOPN and reaches ahead into uke41's AST slides. Decide before writing task 1: does 'oppgir tallet 0' mean the line typed, or the value it evaluates to? 19 checks: they feed your actions stdin and read what is printed, so prompts are yours to word; asf is checked by eye in GHCi. No reference answers exist, by design." }
 ]},
  { uke: 41, title: "Lecture notes 8: grammars and parsing", drill: [10], items: [
    { id: "41-s1", t: "Slides 1–4: languages, grammars, BNF/EBNF, ambiguity, precedence, associativity",
@@ -7748,7 +7748,7 @@ const STUDY = [
      what: "This material is only in his notes. tutorial/week10/ does not exist yet, so there is no check.sh and no Work tab for this week — the Learn pages, the drills and slide 3's derivation task are the practice for now." },
    { id: "41-sync", t: "No sheet for uke41 has been posted yet — sync Mitt UiB",
      where: ".venv/bin/python src/canvas_sync.py",
-     what: "When a parsing sheet lands, ask for it as Oppgaver stubs with tests, the same as sheets 1–6, and for tutorial/week10." },
+     what: "When a parsing sheet lands, ask for it as Oppgaver stubs with tests, the same as sheets 1–7, and for tutorial/week10." },
    { id: "41-e", t: "Parsing is examinable — and in no chapter of the book",
      where: "exam/README.md (What is examinable, B)",
      what: "All lecture notes are pensum, and this is where parsing lives. Likely question shapes, judging by the slides: write a grammar, draw two trees for an ambiguous string, layer a grammar for precedence, give the data type, and write a recursive-descent parser by hand." }

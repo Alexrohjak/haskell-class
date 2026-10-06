@@ -1,6 +1,6 @@
 # Uke 41 — INF122
 
-**5. - 11. okt** · kap. 10 - interactive programming
+**5. - 11. okt** · grammatikk og enkel parsing (forelesningsnotater!)
 
 Tutorial week: [`tutorial/week08/`](../../tutorial/week08/) — `cd tutorial && ./check.sh 8`
 

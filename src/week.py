@@ -45,10 +45,16 @@ PLAN: dict[int, tuple[str, int | None]] = {
     37: ("kap. 5-8 - list comprehensions to declaring types", 4),
     38: ("kap. 5-8 - list comprehensions to declaring types", 5),
     39: ("kap. 5-8 - list comprehensions to declaring types", 6),
-    40: ("kap. 5-8 - list comprehensions to declaring types", 7),
-    41: ("kap. 10 - interactive programming", 8),
-    42: ("kap. 10, and enkel parsing (forelesningsnotater!)", 9),
-    43: ("enkel parsing + typeinferens (forelesningsnotater!)", 10),
+    # From uke40 on the topics follow what he published, not the tentative
+    # plan: 7-IO-hand.pdf is course week 7, 8-grammatikk-hand.pdf is week 8,
+    # and his announcement of 27 September puts unification and type inference
+    # in the two to three weeks after IO, with the oblig announced around
+    # mid-October. The tutorial column is unchanged — sheet N still lives in
+    # tutorial week N.
+    40: ("kap. 10 - interactive programming (IO)", 7),
+    41: ("grammatikk og enkel parsing (forelesningsnotater!)", 8),
+    42: ("unifikasjon + typeinferens (forelesningsnotater!), oblig kunngjøres ca. midt i oktober", 9),
+    43: ("typeinferens (forelesningsnotater!)", 10),
     44: ("typeinferens, and the oblig opens", 11),
     45: ("Oblig (frist antakelig rundt 10. november)", None),
     46: ("Oblig (frist antakelig rundt 10. november)", None),

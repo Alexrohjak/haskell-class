@@ -124,6 +124,7 @@ Første uke er kapitel 1 og 2 pensum. Les igjennom disse kapitlene og gjør oppg
 | uke4.txt | course files/oppgaver | `weeks/uke37/exercises/` | 2026-09-09 |
 | uke5.txt | course files/oppgaver | `weeks/uke38/exercises/` | 2026-09-15 |
 | uke6.txt | course files/oppgaver | `weeks/uke39/exercises/` | 2026-09-22 |
+| uke7.txt | course files/oppgaver | `weeks/uke40/exercises/` | 2026-09-29 |
 
 ## Announcements
 
