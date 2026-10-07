@@ -119,7 +119,12 @@ main =
 
 command :: [String] -> IO ()
 command ("exp":xs) = print (eval (unwords xs)) >> main
+command ("pre":xs) = putStrLn (prefiks (evalOPNt [] xs)) >> main
+command ("inf":xs) = putStrLn (infiks (evalOPNt [] xs)) >> main
 command ["les", x, y] = evalFil x y >> main
+command ["asf", file] =
+  readFile file >>= (\line ->
+    print (evalOPNt [] (words line))) >> main
 command ["q"] = return ()
 command _ = main
 
@@ -159,6 +164,49 @@ antall (Bin o l r) = antall l + antall r
 prefiks :: Ast -> String
 prefiks (Const n) = show n
 prefiks (Bin o l r) = o ++ " " ++ prefiks l ++ " " ++ prefiks r
+
+power :: String -> Int
+power ("+") = 1
+power ("-") = 1
+power ("*") = 2
+power ("/") = 2
+
+brackets :: Bool -> String -> String
+brackets True xs = "(" ++ xs ++ ")"
+brackets False xs = xs
+
+needsLeft :: String -> Ast -> Bool
+needsLeft outer (Const n) = False
+needsLeft outer (Bin inner l r)
+  | power outer > power inner = True
+  | power outer < power inner = False
+  | otherwise = False
+
+needsRight :: String -> Ast -> Bool
+needsRight outer (Const n) = False
+needsRight outer (Bin inner l r)
+  | power outer > power inner = True
+  | power outer < power inner = False
+  | otherwise = True
+
+infiks :: Ast -> String
+infiks (Const n) = show n
+infiks (Bin o l r) = brackets leftNeeds leftText ++ " " ++ o ++ " " ++ brackets rightNeeds rightText
+  where
+    leftNeeds = needsLeft o l
+    leftText = infiks l
+    rightNeeds = needsRight o r
+    rightText = infiks r
+
+evalOPNt :: [Ast] -> [String] -> Ast
+evalOPNt [x] [] = x
+
+evalOPNt (y:x:rest) ("+":ts) = evalOPNt (Bin "+" x y : rest) ts
+evalOPNt (y:x:rest) ("-":ts) = evalOPNt (Bin "-" x y : rest) ts
+evalOPNt (y:x:rest) ("*":ts) = evalOPNt (Bin "*" x y : rest) ts
+evalOPNt (y:x:rest) ("/":ts) = evalOPNt (Bin "/" x y : rest) ts
+
+evalOPNt stack (t:ts) = evalOPNt (Const (read t) : stack) ts
 
 -- ---------------------------------------------------------------------------
 -- Copied from week04/Oppgaver.hs (sheet 4, task 6), with tokMat from week03.
