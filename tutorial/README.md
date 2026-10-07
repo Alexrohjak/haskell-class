@@ -107,8 +107,8 @@ Not all twelve weeks are written yet. Current state:
 | 5 | done | done (63 checks) | done + PAPER.md | uke5 (55 checks) |
 | 6 | done | done (81 checks) | done + PAPER.md | uke6 (30 checks; task 2 is week 7's Exercise 6) |
 | 7 | done | done (89 checks) | done + PAPER.md | uke7 (19 checks; IO, run with stdin fed in; asf is GHCi-only) |
-| 8 | done | done (76 checks) | done + PAPER.md | not published yet |
-| 9 | done | done (56 checks) | done + PAPER.md | not published yet |
+| 8 | done | done (76 checks) | done + PAPER.md | uke8 (66 checks; a parser for boolean expressions, then its models) |
+| 9 | done | done (56 checks) | done + PAPER.md | uke9 (37 checks; type inference, del I is paper; unify runs with a time limit) |
 | 10 | not written — notes arrived 27 Sep | — | — | not published yet |
 | 11 | blocked | blocked | blocked | not published yet |
 | 12 | — | — | — | — |

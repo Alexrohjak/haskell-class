@@ -1,0 +1,114 @@
+DEL I - TYPEAVLEDNING
+
+Bruk Hindley-Milner (og deretter unifikasjon) for å besvare spørsmål i denne delen.
+Husk at funksjonsapplikasjon assosierer til venstre, mens funksjonsabstraksjon, dvs. ->, til høyre. Altså: 
+		a b c 		er det samme som 		((a b) c), 
+mens 	\x -> \y -> x y 	er det samme som  		\x -> (\y -> (x y)) .  
+
+
+1. Gitt følgende definisjon
+    pro x y = x
+finn typen til pro, dvs. et typeuttrykk t slik at 
+	pro :: t 
+eller vis at pro er feiltypet.
+(Hint: skriv først en ekvivalent definisjon på formen: pro = …) 
+
+
+2. Finn typen til (pro 2) fra punkt 1, eller vis at det er feiltypet.
+
+
+Finn typer til følgende uttrykk eller vis at de er feiltypet:
+
+3. \x -> \y -> x y
+
+4. \x -> \y -> (x y) x 
+
+5. \x -> \y -> x (y x)
+
+6. \x -> \y -> x y x
+
+7. \x -> x (\y -> x y) 
+
+8. \x -> \y -> \z -> (x z) (y z)
+
+
+
+DEL II - UNIFIKASJON
+
+Oppgaven er å implementere unifikasjonsalgoritme for en liten del av Haskells typespråk, som innholder kun typevariabler og funksjonstyper. Vi skal bruke 
+
+	data Type = Var String | Arrow Type Type
+ 	   deriving Eq
+
+F.eks., `a -> b` representeres som `Arrow (Var "a") (Var "b")`, `Int -> Int -> Bool` som 
+`Arrow (Var "Int") (Arrow (Var "Int") (Var "Bool"))` og `(Int -> Int) -> Bool` som 
+`Arrow (Arrow (Var "Int") (Var "Bool")) (Var "Int")`.
+
+1. Gjør Type til en instans av Show klassen ved å deklarere 
+	instance Show Type where
+		show ... = 
+og definere funksjon `show` slik at, f.eks.:
+
+	ghci> show $ Arrow (Var "Int") (Arrow (Var "Int") (Var "Bool"))
+		"Int -> Int -> Bool"
+	evt. "Int -> (Int -> Bool)", og 
+
+	ghci> show $ Arrow (Arrow (Var "a") (Var "b")) (Var "c") 
+		"(a -> b) -> c"
+
+
+2. Unifikasjon krever substitusjon av termer for variabler (av typetermer for typevariabler fra Type). Notasjon for substitutsjon
+	F[x\t]
+betyr: "uttrykket F med hver x erstattet med t". F.eks.
+	`(a -> b)[b\c]` blir `a -> c`.
+
+Definer funksjon `subst :: String -> Type -> Type -> Type`, der
+- det første argumentet er navnet til typevariabelen som skal substituteres for (x eller b over)
+- det andre argumentet er typeuttrykk som skal substituteres inn (t eller c over)
+- det tredje argumnetet er typeuttrykk i hvilken vi substituterer (F eller (a->b) over)
+
+For eksempel:
+	ghci> subst "b" (Var "c") (Arrow (Var "a") (Var "b")) -- (a -> b)[c/b]
+	a -> c
+
+	ghci> subst "Int" (Var "Double") (Arrow (Var "Int") (Arrow (Var "Int") (Var "Bool")))
+	Double -> Double -> Bool
+
+GHCis output ser ut som det gjør pga. show funksjon du har definert i Type som instans av Show.
+
+3. Definer funksjon 
+	`occursIn :: String -> Type -> Bool` 
+
+som tar et (type)variabelnavn og et typeuttrykk og sier om variabelen forekommer i uttrykket, f.eks.:
+
+	ghci> occursIn "x" (Arrow (Var "x") (Var "y"))
+	True
+
+	ghci> occursIn "x" (Var "int")
+	False
+
+
+4. Unifikasjon for typesjekking foretas med tanke på å unifisere den initielle typevariabelen, som vi kaller "t" (dvs. Var "t"). Implementer funksjon 
+	unify :: [(Type, Type)] -> String -> Type
+som tar
+- en liste med ligninger - hvert par (s,t)::(Type,Type) er en ligning s=t, 
+- navnet på den initielle typevariabelen, 
+og returnerer typeuttrykk som vellykket unifikasjon tilordner til den initielle typevariabelen.
+
+Med "t" som den initielle typevariabelen, går algoritmen gjennom listen av ligninger og utfører operasjon tilsvarende dens definisjon fra forelesninger, avhengig av elementet i starten av listen:
+1. (Var "t", x) flyttes til slutten av listen, mens 
+   (x, Var "t") fjernes og (Var "t", x) plasseres på slutten av listen; 
+2. (Var x, y), der x ikke forekommer i y, fjernes mens hver `Var x` i resten av listen substitueres med y 
+3. (Arrow x y, Arrow a b) erstattes med (x,a) og (y,b)
+4. (y, Var x) erstattes med (Var x, y)
+5. Enhver annen situasjon gir en feilmelding og mislykket unifikasjon. 
+Passende halerekursive kall skal utføres og algoritmen terminerer når listen har kun ett element (Var "t",x) - x returneres.
+
+F.eks.:
+
+  unify [(Arrow (Var "a") (Var "b"), Var "t"), (Var "a", Arrow (Var "c") (Var "d"))] "t"
+⇒ unify [(Var "t", Arrow (Var "a") (Var "b")), (Var "a", Arrow (Var "c") (Var "d"))] "t" -- Rule 4
+⇒ unify [(Var "a", Arrow (Var "c") (Var "d")), (Var "t", Arrow (Var "a") (Var "b"))] "t" -- Rule 1
+⇒ unify [(Var "t", Arrow (Arrow (Var "c") (Var "d")) (Var "b"))] "t" -- Rule 2
+⇒ Arrow (Arrow (Var "c") (Var "d")) (Var "b") -- returneres
+

@@ -146,6 +146,20 @@ executable week07-oppgaver
   other-modules:  Oppgaver
   build-depends:  base, inf122-tutorial:check, QuickCheck
 
+executable week08-oppgaver
+  import:         warnings
+  hs-source-dirs: tutorial/week08
+  main-is:        OppgaverTests.hs
+  other-modules:  Oppgaver
+  build-depends:  base, inf122-tutorial:check, QuickCheck
+
+executable week09-oppgaver
+  import:         warnings
+  hs-source-dirs: tutorial/week09
+  main-is:        OppgaverTests.hs
+  other-modules:  Oppgaver
+  build-depends:  base, inf122-tutorial:check, QuickCheck
+
 -- The reference solutions. No Tests.hs of their own, so these are libraries.
 library sol-week01
   import:          warnings

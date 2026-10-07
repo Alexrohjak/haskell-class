@@ -7746,9 +7746,9 @@ const STUDY = [
    { id: "41-nb", t: "No book chapter, and no tutorial folder yet",
      where: "tutorial/README.md (row 10: Enkel parsing)",
      what: "This material is only in his notes. tutorial/week10/ does not exist yet, so there is no check.sh and no Work tab for this week — the Learn pages, the drills and slide 3's derivation task are the practice for now." },
-   { id: "41-sync", t: "No sheet for uke41 has been posted yet — sync Mitt UiB",
-     where: ".venv/bin/python src/canvas_sync.py",
-     what: "When a parsing sheet lands, ask for it as Oppgaver stubs with tests, the same as sheets 1–7, and for tutorial/week10." },
+   { id: "41-o", t: "Lecturer's sheet uke8: parse boolean expressions, then find their models",
+     where: "weeks/uke41/exercises/uke8.txt → tutorial/week08/Oppgaver.hs  ·  ./check.sh 8 --oppg",
+     what: "One program in five steps: tokenise and parse (1), atomer (2), vals (3), ev (4), models (5). Task 1 is slide 12's recursive descent on a new grammar — one function per non-terminal, each returning (Bst, rest) — with | and & associating to the right. The sheet's text and its examples disagree in three places (the N rule, At versus Atom, and what an expression with no atoms has for models); the scaffold points at each and the tests follow the examples or accept both readings. 66 checks. No reference answers exist, by design." },
    { id: "41-e", t: "Parsing is examinable — and in no chapter of the book",
      where: "exam/README.md (What is examinable, B)",
      what: "All lecture notes are pensum, and this is where parsing lives. Likely question shapes, judging by the slides: write a grammar, draw two trees for an ambiguous string, layer a grammar for precedence, give the data type, and write a recursive-descent parser by hand." }

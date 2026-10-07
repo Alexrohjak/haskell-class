@@ -1,0 +1,53 @@
+Vi behandler grammatikken for boolske uttrykk, med startsymbolet B:
+	B ::= A|B | A   
+(i "A|B" er "|" et terminal symbol, men mellom det og "A", er det et metasymbol i grammatikken vår!)
+	A ::= N & A | N
+	N ::= !C 
+	C ::= Atom | T | F | (B)
+	Atom ::= lowerLetter+ 
+
+Atom er en vilkårlig ikke-tom sekvens av småbokstaver, T og F er konstanter (for True og False, som ikke er Atomer), ! er negasjon, & konjunksjon og | disjunksjon. F.eks., er  
+	bad & (alle | !z)
+	T | F & T
+lovlige boolske uttrykk. Merk at ! har høyeste presendens og | laveste; både & og | assosierer til høyre. Det siste uttrykket parses som "T | (F & T)" og er logisk ekvivalent med T, mens "!F | T" er logisk ekvivalent med T, ulikt "!(F | T)" som er ekvivalent med F. 
+
+Vi skal benytte følgende datatypen for boolske ASTer:
+
+	data Bst = T | F | Atom String | Or Bst Bst | And Bst Bst | Not Bst deriving (Eq,Show,Read)
+
+1. Definer funksjoner
+	tokenise :: String -> [String], og 
+	parse :: String -> Bst.
+Den første lager en liste av tokens, mens den andre returnerer et Bst for et korrekt boolsk uttrykk.
+F.eks.:
+	parse "T | F & T" = Or T (And F T)
+	parse  "!(a & !a) & !b" = And (Not (And (At "a") (Not (At "a")))) (Not (At "b"))
+	parse  "!a & !a & !b"   = And (Not (At "a")) (And (Not (At "a")) (Not (At "b"))) 
+
+2. Definer funksjon
+	atomer :: Bst -> [String]
+som returnerer listen av forskjellige Atomer som forekommer i Bst. (T og F regnes ikke som Atomer.)
+
+3. Definer en funksjon 
+	vals :: [String] -> [[(String,Bst)]], evt. 
+	vals :: [a] -> [[(a,Bst)]], for en vilkårlig type a,
+som for en inputliste med forskjellige Atomer gir en liste med alle deres valueringer (en valuering av n Atomer er en liste med n par, med en verdi T eller F assosiert med hvert Atom fra listen). F.eks.
+	vals ["a","b"] = [ [("a",T),("b",T)], [("a",T),("b",F)], 
+                           [("a",F),("b",T)], [("a",F),("b",F)] ]
+
+4. Definer funksjon
+	ev :: Bst -> [(String,Bst)] -> Bst
+som gitt et t::Bst og en liste v::[(String,Bst)] tilsvarende en valuering av Atomer i t, returnerer boolsk verdi - T eller F - av t under valueringen v, f.eks.:
+	ev T [] = T
+	ev (Or F (And F T)) [] = F
+	ev (Atom "a") [("a",T)] = T
+	ev (Or (Atom "a") (Not (Atom "b"))) [("a",F),("b",T)] = F
+
+5. Definer funksjon
+	models :: String -> [ [(String,Bst)] ]
+som for en inputstring med et lovlig boolsk uttrykk, gir listen av alle valueringene av dets Atomer, som gjør uttrykket T(true). Hvis ingen slik finnes får man altså en tom liste. F.eks.:
+	models "T | F & T" = [] -- siden uttrykket ikke har noen Atomer 
+        models "!a & a" = []
+	models "b & (a | !z)" = [ [("b",T),("a",T),("z",T)], 
+                                  [("b",T),("a",T),("z",F)], 
+                                  [("b",T),("a",F),("z",F)] ]
