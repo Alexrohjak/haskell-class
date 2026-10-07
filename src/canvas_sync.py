@@ -140,6 +140,10 @@ class Canvas:
         )
         try:
             with urllib.request.urlopen(req, timeout=30) as resp:
+                # Off campus, Mitt UiB bounces every request to a static
+                # "VPN-tilgang påkrevd" page instead of answering with JSON.
+                if "mittuib-message" in resp.geturl():
+                    return None, "Mitt UiB wants the UiB VPN — connect and re-run"
                 return json.loads(resp.read().decode()), None
         except urllib.error.HTTPError as exc:
             return None, f"HTTP {exc.code}"

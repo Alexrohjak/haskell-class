@@ -109,7 +109,8 @@ Not all twelve weeks are written yet. Current state:
 | 7 | done | done (89 checks) | done + PAPER.md | uke7 (19 checks; IO, run with stdin fed in; asf is GHCi-only) |
 | 8 | done | done (76 checks) | done + PAPER.md | not published yet |
 | 9 | done | done (56 checks) | done + PAPER.md | not published yet |
-| 10–11 | blocked | blocked | blocked | not published yet |
+| 10 | not written — notes arrived 27 Sep | — | — | not published yet |
+| 11 | blocked | blocked | blocked | not published yet |
 | 12 | — | — | — | — |
 
 **Lecturer's sheets** arrive one a week on Mitt UiB, and sheet *N* belongs to
@@ -124,10 +125,14 @@ implementation that is deleted afterwards and never committed.
 answers, every week verified green against its own solution. **507 checks in total.**
 That is *the whole of Hutton in pensum*: chapters 1–8, 10 and 15.
 
-Weeks **10 and 11 cannot be written yet**. They are *enkel parsing* and *typeinferens*,
-which appear in no chapter of the book — the lecturer's notes are the only source, and
-they arrive in uke 42–44. Watch `../weeks/uke42/` onward; `python src/find.py parsing`
-will search inside the PDFs the moment they land. Week 12 is exam prep and can be
+Weeks **10 and 11** are *enkel parsing* and *typeinferens*, which appear in no chapter
+of the book — the lecturer's notes are the only source. **Week 10 is no longer blocked**:
+the grammar and parsing notes landed on 27 September
+(`../weeks/uke41/slides/8-grammatikk-hand.pdf`) and the drill room already has Learn
+pages and drills for them, but the tutorial folder is not written yet. **Week 11 still
+is**: the unification and type-inference notes have not been published. Watch
+`../weeks/uke42/` onward; `python src/find.py typeinferens` will search inside the PDFs
+the moment they land. Week 12 is exam prep and can be
 written any time.
 
 Two notes on how the later weeks are built. **Week 8 is mostly pure**: an IO action that
@@ -149,9 +154,9 @@ to weeks not yet built:
   it as a bonus week if you want it — just don't spend exam-revision time there.
 - **Weeks 10 and 11 are now parsing and type inference.** These are examinable
   and appear in *no chapter of Hutton* — the lecturer's notes are the only
-  source, and he flags them twice with "kun forelesningsnotater!". They arrive
-  in uke 42–44, so those two tutorial weeks can only be written after his notes
-  are published.
+  source, and he flags them twice with "kun forelesningsnotater!". The parsing
+  notes arrived in uke 41; type inference follows, so week 11 can only be
+  written after those notes are published.
 
 ---
 

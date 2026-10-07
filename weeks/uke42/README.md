@@ -1,6 +1,6 @@
 # Uke 42 — INF122
 
-**12. - 18. okt** · kap. 10, and enkel parsing (forelesningsnotater!)
+**12. - 18. okt** · unifikasjon + typeinferens (forelesningsnotater!), oblig kunngjøres ca. midt i oktober
 
 Tutorial week: [`tutorial/week09/`](../../tutorial/week09/) — `cd tutorial && ./check.sh 9`
 

@@ -1,6 +1,6 @@
 # Uke 43 — INF122
 
-**19. - 25. okt** · enkel parsing + typeinferens (forelesningsnotater!)
+**19. - 25. okt** · typeinferens (forelesningsnotater!)
 
 Tutorial week: [`tutorial/week10/`](../../tutorial/week10/) — `cd tutorial && ./check.sh 10`
 

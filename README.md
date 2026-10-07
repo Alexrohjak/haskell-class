@@ -15,7 +15,7 @@ Contact details for the gruppeleiarar are in [`docs/canvas/course.md`](docs/canv
 ```bash
 cd ~/code/haskell-class
 .venv/bin/python src/week.py   # what week is it, what is filed
-cd tutorial && ./check.sh 4    # work this week's tutorial
+cd tutorial && ./check.sh 8    # work this week's tutorial
 ```
 
 Verify the toolchain: `.venv/bin/python src/check_setup.py`. It runs week 1's
@@ -66,11 +66,11 @@ truth — re-run the sync and update `PLAN` in `src/week.py` when it changes.
 | 37 | 7.–13. sep | kap. 5–8 | [week04](tutorial/week04/) | [`uke37`](weeks/uke37/) |
 | 38 | 14.–20. sep | kap. 5–8 | [week05](tutorial/week05/) | [`uke38`](weeks/uke38/) |
 | 39 | 21.–27. sep | kap. 5–8 | [week06](tutorial/week06/) | [`uke39`](weeks/uke39/) |
-| 40 | 28. sep–4. okt | kap. 5–8 | [week07](tutorial/week07/) | [`uke40`](weeks/uke40/) |
-| 41 | 5.–11. okt | kap. 10 | [week08](tutorial/week08/) | [`uke41`](weeks/uke41/) |
-| 42 | 12.–18. okt | kap. 10 · enkel parsing | [week09](tutorial/week09/) | [`uke42`](weeks/uke42/) |
-| 43 | 19.–25. okt | enkel parsing · typeinferens | week10 | [`uke43`](weeks/uke43/) |
-| 44 | 26. okt–1. nov | typeinferens · **Oblig opens** | week11 | [`uke44`](weeks/uke44/) |
+| 40 | 28. sep–4. okt | kap. 10 (IO) ‡ | [week07](tutorial/week07/) | [`uke40`](weeks/uke40/) |
+| 41 | 5.–11. okt | grammatikk · enkel parsing ‡ | [week08](tutorial/week08/) | [`uke41`](weeks/uke41/) |
+| 42 | 12.–18. okt | unifikasjon · typeinferens · **Oblig kunngjøres** ‡ | [week09](tutorial/week09/) | [`uke42`](weeks/uke42/) |
+| 43 | 19.–25. okt | typeinferens ‡ | week10 | [`uke43`](weeks/uke43/) |
+| 44 | 26. okt–1. nov | typeinferens · Oblig | week11 | [`uke44`](weeks/uke44/) |
 | 45 | 2.–8. nov | Oblig | — | [`uke45`](weeks/uke45/) |
 | 46 | 9.–15. nov | Oblig — frist ~10. nov | — | [`uke46`](weeks/uke46/) |
 | 47 | 16.–22. nov | Resultat og gjennomgang av Oblig | — | [`uke47`](weeks/uke47/) |
@@ -83,6 +83,15 @@ the table follows the slides. He is running a chapter ahead of his own plan, and
 has already dipped into two later chapters: lazy evaluation (kap. 15) in lecture
 1, and type classes (kap. 8.1–8.5) in lecture 2. Nothing in the pensum changed —
 only the order.
+
+‡ From uke 40 the table follows what he published instead of the tentative
+plan. His IO notes (`7-IO-hand.pdf`) are course week 7 and the grammar and
+parsing notes (`8-grammatikk-hand.pdf`) are week 8, so parsing arrived a week
+earlier than planned. His announcement of 27 September says the two to three
+weeks after IO are grammars and parsing, the unification algorithm, and type
+inference, and that the oblig is expected to be announced around mid-October.
+The tutorial column did not move: sheet *N* still lives in tutorial week *N*,
+so the book chapter in a tutorial week now trails the lectures.
 
 The oblig weeks and the exam week have no tutorial week. The rest of the column
 is my mapping, not his: it points at the tutorial week whose chapter the course

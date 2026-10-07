@@ -1,18 +1,20 @@
 # Uke 40 — INF122
 
-**28. sep - 4. okt** · kap. 5-8 - list comprehensions to declaring types
+**28. sep - 4. okt** · kap. 10 - interactive programming (IO)
 
 Tutorial week: [`tutorial/week07/`](../../tutorial/week07/) — `cd tutorial && ./check.sh 7`
 
 ## Posted by the lecturer
 
 - `slides/7-IO-hand.pdf` — from Canvas `course files/forelesningsnotater`, updated 2026-09-21
+- `exercises/uke7.txt` — from Canvas `course files/oppgaver`, updated 2026-09-29
 
 ## In this folder
 
 - `slides/` — 1 item(s), 134 KB
   - `7-IO-hand.pdf`
-- `exercises/` — empty
+- `exercises/` — 1 item(s), 1 KB
+  - `uke7.txt`
 - `code/` — empty
 
 ---
