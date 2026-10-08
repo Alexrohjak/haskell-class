@@ -47,7 +47,8 @@ ask the person who writes the paper what he expects on it.
   what was actually taught (with slide pages), the practice attached to them,
   and a six-hour route through it. Written 31 August.
 - [`interactive-revision.html`](interactive-revision.html) — the drill room.
-  70 concepts across Hutton 1–8 and 10 plus his grammar notes, each cited to the slide it came from, and 142
+  83 concepts across Hutton 1–8 and 10 plus his grammar notes and his unification and
+  type-inference notes, each cited to the slide it came from, and 164
   drills. Published at <https://claude.ai/code/artifact/e3c608e9-c5c4-471a-b1c3-b710d40c945c>
   (private); open the local file with `xdg-open exam/interactive-revision.html`
   if you would rather not use the hosted copy. Every value and type in it was

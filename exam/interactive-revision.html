@@ -2829,6 +2829,455 @@ x   :: T        -- the IO has been peeled off</pre>
       choices: ["E → T * E | T", "S → a b | a c", "N → not N | A", "A → t | f | ( B )"], answer: 1,
       explain: "Both alternatives of S start with a, so seeing a does not decide the rule (LL(2)). E → T * E | T is fine: parse a T either way, then the next token decides. Factored as S → a S' ; S' → b | c it becomes LL(1)." }
   ]
+},
+{
+  n: 11, uke: "uke42", chapter: "Lecture notes 9", topic: "Unification and type inference",
+  blurb: "Examinable, and in no chapter of the book. How to solve a set of equations between terms by hand (Martelli–Montanari), and how Hindley–Milner turns 'what is the type of this expression?' into exactly such a set of equations.",
+  concepts: [
+    { t: "A substitution replaces variables by terms, all at once",
+      cite: "uke42 s.2",
+      body: `<p>Everything this week is done to <strong>terms</strong>: variables, constants, and
+        function symbols applied to other terms, such as <code>p(X, g(a))</code>. On slides 2–5
+        he writes variables in capitals (<code>X</code>, <code>Y</code>, <code>H</code>) and
+        constants and function symbols in lower case (<code>a</code>, <code>f</code>,
+        <code>mem</code>).</p>
+        <p>A <strong>substitution</strong> σ is a set of equations
+        <code>{x1 = t1, …, xn = tn}</code> whose left-hand sides are <em>different
+        variables</em>. <strong>Applying</strong> it to a term t, written σ(t), replaces every
+        occurrence of each <code>xi</code> by <code>ti</code> — <em>simultaneously</em>. You
+        read the original term once and swap as you go; you do not then substitute again into
+        what you just wrote.</p>`,
+      code: `σ = { X = g(Y), Y = a }\n\nσ( p(X, Y) )  =  p(g(Y), a)      -- not p(g(a), a): the Y inside g(Y)\n                                 -- came from σ, it was not in the term\n\nOne-variable shorthand:   t[x/s]   means   σ(t) with σ = { x = s }\n  p(X, f(X))[X/b]  =  p(b, f(b))`,
+      body2: `<p>The same notation is used on a whole set of equations: <code>E[x/t]</code> means
+        "apply <code>{x = t}</code> to both sides of every equation in E". Slide 20 collects all
+        of this notation on one page — keep it open while reading the rest.</p>`,
+      cp: { q: "Slide 2 leaves this one for the blackboard: σ = { x = f(x, y) }, t = g(a(x, y), x). What is σ(t)?",
+            a: `<code>g(a(f(x, y), y), f(x, y))</code>. Both occurrences of <code>x</code> are
+                replaced, <code>y</code> is untouched because σ says nothing about it, and the
+                <code>x</code> inside the new <code>f(x, y)</code> stays — one pass, not a loop.` } },
+
+    { t: "A unifier makes both sides identical; the most general one commits to nothing extra",
+      cite: "uke42 s.2–3",
+      body: `<p>To <strong>unify</strong> a set of equations
+        <code>{t1 = t1', …, tn = tn'}</code> is to find one substitution σ that makes every
+        equation <em>syntactically</em> true: after applying σ, the left side and the right side
+        are the same string of symbols. Nothing is evaluated — <code>1 + 2</code> and
+        <code>3</code> do not unify.</p>
+        <p>Usually there are many unifiers. Slide 3's example is
+        <code>f(X, a) = f(Y, a)</code>:</p>`,
+      code: `{ X = a, Y = a }   gives  f(a, a) = f(a, a)     a unifier\n{ X = b, Y = b }   gives  f(b, a) = f(b, a)     a unifier\n{ X = Y }          gives  f(Y, a) = f(Y, a)     a most general unifier\n{ Y = X }          gives  f(X, a) = f(X, a)     a most general unifier`,
+      body2: `<p>The first two work, but they decide something the equation never asked for: that
+        the argument is <code>a</code>, or <code>b</code>. The last two say only what is forced —
+        X and Y are the same thing. That is a <strong>most general unifier</strong> (mgu): every
+        other unifier can be obtained from it by substituting further (put <code>Y = a</code>
+        into <code>{X = Y}</code> and you get the first line).</p>
+        <p>An mgu is unique only up to renaming, which is why both of the last two count. This is
+        what slide 3 means by "ikke-deterministisk, resultatene er ekvivalente": the algorithm
+        lets you choose which rule to apply next, and whichever order you choose, the answers
+        differ at most in the names of variables.</p>`,
+      cp: { q: "Why is { X = a, Y = a } not a most general unifier of f(X, a) = f(Y, a)?",
+            a: `Because <code>{X = b, Y = b}</code> is also a unifier and cannot be reached from
+                it — once X is <code>a</code>, no further substitution turns it into
+                <code>b</code>. From <code>{X = Y}</code> you can reach both.` } },
+
+    { t: "Martelli–Montanari: four rewrite rules and two ways to fail",
+      cite: "uke42 s.4–5",
+      body: `<p>The algorithm takes the set of equations E and rewrites it, one rule at a time,
+        until it either fails or reaches a form you can read the answer off. Slide 4 gives the
+        rules in words, slide 5 as a table. These are worth knowing by name, because on paper
+        you write the rule beside each line:</p>
+        <ul>
+          <li><strong>Delete</strong> — remove a trivial equation <code>t = t</code>
+            (<code>x = x</code>, <code>c = c</code>).</li>
+          <li><strong>Decompose</strong> — replace <code>f(t1,…,tn) = f(s1,…,sn)</code> by the
+            n equations <code>t1 = s1, …, tn = sn</code>. Same symbol, same number of arguments:
+            compare argument by argument.</li>
+          <li><strong>Swap</strong> — turn <code>f(…) = x</code> round to <code>x = f(…)</code>,
+            so that variables end up on the left. A constant counts as an f with no arguments,
+            so <code>a = X</code> becomes <code>X = a</code>.</li>
+          <li><strong>Eliminate</strong> — given <code>x = t</code> where x does <em>not</em>
+            occur in t, replace x by t in <em>every other</em> equation, and keep
+            <code>x = t</code> itself.</li>
+        </ul>
+        <p>And it stops with <strong>NO</strong> in two cases:</p>
+        <ul>
+          <li><strong>Clash</strong> — <code>f(…) = g(…)</code> with different symbols, or the
+            same symbol with a different number of arguments. Two different constants,
+            <code>a = b</code>, are the commonest clash.</li>
+          <li><strong>Occurs check</strong> — <code>x = t</code> where x occurs inside t (and t
+            is not just x).</li>
+        </ul>`,
+      code: `1.  E, t = t                      ⇒  E                          delete\n2.  E, f(t1..tn) = f(s1..sn)      ⇒  E, t1 = s1, ..., tn = sn   decompose\n3.  E, f(t1..tn) = g(s1..sm)      ⇒  NO      f ≠ g or n ≠ m     clash\n4.  E, f(t1..tn) = x              ⇒  E, x = f(t1..tn)           swap\n5.  E, x = t                      ⇒  E[x/t], x = t   x ∉ Var(t) eliminate\n6.  E, x = t                      ⇒  NO              x ∈ Var(t) occurs check`,
+      body2: `<p>It stops with <strong>YES</strong> when no rule changes anything any more, which
+        is when E is in <strong>solved form</strong> (slide 4, bottom): every left-hand side is
+        a variable, and each of those variables appears nowhere else — not in another equation,
+        not on any right-hand side. A set in solved form <em>is</em> a substitution, and it is
+        the mgu.</p>
+        <p>The condition "appears nowhere else" is also what tells you whether eliminate still
+        has work to do: if the x of some <code>x = t</code> still shows up in another equation,
+        eliminate it there.</p>`,
+      cp: { q: "Is { X = f(Y), Y = a } in solved form?",
+            a: `No. <code>Y</code> is a left-hand side and also occurs in <code>f(Y)</code>.
+                Eliminate Y: <code>{ X = f(a), Y = a }</code> — now it is.` } },
+
+    { t: "Running the algorithm: one rule per line",
+      cite: "uke42 s.5–6",
+      body: `<p>The way to do this on paper is the way slide 5 does it: write the whole set, apply
+        one rule, write the whole set again. It is slow and it is what gets marked. Here is a
+        run that uses three of the four rules:</p>`,
+      code: `{ p(X, f(Y)) = p(g(Y), f(a)) }\n\n⇒ { X = g(Y),  f(Y) = f(a) }        decompose p\n⇒ { X = g(Y),  Y = a }              decompose f\n⇒ { X = g(a),  Y = a }              eliminate Y\n\nsolved form, so the mgu is { X = g(a), Y = a }\ncheck:  p(g(a), f(a)) = p(g(a), f(a))   ✓`,
+      body2: `<p>Always finish with the check: apply your answer to the original equation and see
+        that the two sides really are the same string. It takes ten seconds and catches a
+        forgotten eliminate.</p>
+        <p>Slide 5 has four examples of his own. In number 3 he unifies
+        <code>mem(H, H:T) = mem(a, X:[b,c])</code>: read <code>:</code> as just another binary
+        function symbol, <code>:(H, T)</code>, and <code>[b,c]</code> as a term with no
+        variables in it. Decompose <code>mem</code>, decompose <code>:</code>, eliminate
+        <code>H</code>, swap the resulting <code>a = X</code>, eliminate <code>X</code>, and you arrive at
+        <code>{X = a, H = a, T = [b,c]}</code>.</p>
+        <p>Slide 6 is a longer run with seven lines — and note that on that slide the lower-case
+        letters <code>x, y, a, b, c, d, e</code> are all <em>variables</em>; only
+        <code>f</code> and <code>g</code> are function symbols. It is slide 11 in disguise, with
+        <code>f(s, t)</code> standing for the type <code>s -> t</code>.</p>`,
+      cp: { q: "Slide 5's example 4 changes one symbol: mem(H, H:T) = mem(a, d:[b,c]). What happens?",
+            a: `Decompose twice: <code>{H = a, H = d, T = [b,c]}</code>. Eliminate H:
+                <code>{H = a, a = d, T = [b,c]}</code> — and <code>a = d</code> is two different
+                constants, a clash. The answer is NO. The right-hand column of example 3 on the
+                slide is exactly this run.` } },
+
+    { t: "The occurs check: a variable cannot equal a term that contains it",
+      cite: "uke42 s.4–5",
+      body: `<p>Rule 6 is the one that is easy to forget. <code>X = f(X)</code> has no solution
+        among finite terms: whatever you put for X, the right side is one <code>f</code> bigger
+        than the left. Substituting would go <code>f(f(f(…)))</code> for ever. So before
+        eliminating with <code>x = t</code> you look for x inside t, and if it is there, the
+        answer is NO.</p>
+        <p>It rarely shows up in the first line. It appears after a few eliminations, which is
+        why slide 5's example 2 is on the slide:</p>`,
+      code: `{ p(X, X) = p(Y, f(Y)) }\n\n⇒ { X = Y,  X = f(Y) }              decompose p\n⇒ { X = Y,  Y = f(Y) }              eliminate X\n⇒ NO                                occurs check: Y is inside f(Y)`,
+      body2: `<p>Two things are <em>not</em> an occurs-check failure. <code>X = X</code> is a
+        trivial equation — delete it. And <code>X = f(Y)</code> is fine as long as Y is not
+        later forced to contain X.</p>
+        <p>Hold on to this rule. It comes back on slide 13 as GHC's error message
+        "Occurs check: cannot construct the infinite type".</p>`,
+      cp: { q: "Does { X = g(Y), Y = h(X) } unify?",
+            a: `No. Eliminate X: <code>{ X = g(Y), Y = h(g(Y)) }</code>, and Y occurs in
+                <code>h(g(Y))</code>. Neither equation fails the check on its own — the cycle
+                only shows once you substitute.` } },
+
+    { t: "Types are terms, so finding a type is solving equations",
+      cite: "uke42 s.7–8",
+      body: `<p>Slide 7 fixes a deliberately small language. Expressions are lambdas, applications,
+        variables and constants; types are type constants (<code>Int</code>, <code>Bool</code>),
+        type variables, and arrows:</p>`,
+      code: `expr     ::= \\exprvar -> expr | funapp\nfunapp   ::= funapp simpexpr | simpexpr\nsimpexpr ::= exprcon | exprvar | (expr) | (*) | ...\n\ntype     ::= type' -> type | type'\ntype'    ::= typecon | typevar | (type)\n\n\\x -> (*) x 2        ::  Int -> Int\n(\\x -> (*) x 2) 6    ::  Int\n\\x -> \\y -> x y      ::  (a -> b) -> a -> b`,
+      body2: `<p>Read the two grammars with last week's eyes: <code>funapp</code> is left recursive,
+        so application associates to the left (<code>f x y</code> is <code>(f x) y</code>), and
+        <code>type</code> recurses on the right, so <code>-></code> associates to the right
+        (<code>a -> b -> c</code> is <code>a -> (b -> c)</code>).</p>
+        <p>The link to unification is that a type is a term. <code>-></code> is a function
+        symbol with two arguments, <code>Int</code> and <code>Bool</code> are constants, and
+        type variables are the variables. So <code>a -> Int</code> is the term
+        <code>f(a, Int)</code>, and "these two types must be the same" is an equation between
+        terms — which Martelli–Montanari solves.</p>
+        <p>Two more pieces of notation (slide 20). An <strong>environment</strong> Γ is a set of
+        assumptions <code>x :: type</code> about variables. <code>Γ ⊢ expr :: t</code> reads
+        "from the assumptions in Γ we can derive that expr has type t". And
+        <code>E(Γ | expr :: t)</code> is the set of equations that must hold for that to be
+        true. Hindley–Milner is a recipe for computing E.</p>`,
+      cp: { q: "Decompose the equation  a -> b  =  Int -> (c -> Bool).  What do you get?",
+            a: `<code>a = Int</code> and <code>b = c -> Bool</code>. The arrow is the function
+                symbol; its two arguments are compared one by one. Bracket the right-hand side
+                first if you are unsure — <code>-></code> is right associative.` } },
+
+    { t: "Hindley–Milner: four rules turn an expression into equations",
+      cite: "uke42 s.8–9",
+      body: `<p>To find the type of an expression, call the unknown type <code>t</code> and ask
+        what must be true of it. There is one rule per shape of expression, so the recipe is
+        induction on the expression — the same shape as last week's parser, one case per
+        production:</p>
+        <ul>
+          <li><strong>(t1) constant</strong> — its type is looked up:
+            <code>t = θ(con)</code>, so <code>True</code> gives <code>t = Bool</code>.</li>
+          <li><strong>(t2) variable</strong> — its type is whatever the environment says:
+            <code>t = Γ(x)</code>.</li>
+          <li><strong>(t3) application <code>f g</code></strong> — invent a
+            <em>fresh</em> type variable <code>a</code> for the argument. Then g must have type
+            <code>a</code>, and f must have type <code>a -> t</code>.</li>
+          <li><strong>(t4) lambda <code>\\x -> ex</code></strong> — invent two fresh
+            variables. The lambda is a function, so <code>t = a -> b</code>; then, with
+            <code>x :: a</code> added to the environment, the body must have type
+            <code>b</code>.</li>
+        </ul>`,
+      code: `(t1)  E(Γ | con :: t)       =  { t = θ(con) }\n(t2)  E(Γ | x :: t)         =  { t = Γ(x) }\n(t3)  E(Γ | f g :: t)       =  E(Γ | g :: a)  ∪  E(Γ | f :: a -> t)\n(t4)  E(Γ | \\x -> ex :: t)  =  { t = a -> b }  ∪  E(Γ, x :: a | ex :: b)\n                                         a, b fresh every time\n(MM)  when (t1)-(t4) have nothing left to do, unify the equations`,
+      body2: `<p>"Fresh" means a letter not used anywhere yet in the derivation. Reusing one is
+        the standard mistake, and it silently forces two unrelated types to be equal.</p>
+        <p>Only (t3) and (t4) recurse, and each recursive call is on a strictly smaller
+        expression, so the first phase always ends. What is left is a set of equations and no
+        expressions; hand it to Martelli–Montanari. Slide 9's example is the smallest possible
+        run:</p>
+        <pre class="code">E(∅ | \\x -> x :: t)
+  = { t = a -> b } ∪ E(x :: a | x :: b)        (t4)
+  = { t = a -> b } ∪ { b = a }                 (t2)
+
+unify:  { t = a -> a,  b = a }                 eliminate b
+
+so  \\x -> x :: a -> a</pre>
+        <p>The answer is whatever the solved form says <code>t</code> is. The other equations
+        are working.</p>`,
+      cp: { q: "Which rule creates an equation of the form t = a -> b, and which creates no equation of its own at all?",
+            a: `(t4), the lambda rule, creates <code>t = a -> b</code>. (t3), application,
+                creates none directly — it only passes two smaller problems on. Its equations
+                appear when those reach (t1) or (t2).` } },
+
+    { t: "A full run: derive the equations, then unify",
+      cite: "uke42 s.10–11",
+      body: `<p>Slide 7 claims <code>\\x -> \\y -> x y :: (a -> b) -> a -> b</code> without
+        showing the work. Here it is, in the layout of slide 10: the rule on the left, the
+        problem still to be solved in the middle, the equations collected so far on the
+        right.</p>`,
+      code: `E(∅ | \\x -> \\y -> x y :: t)\n\n(t4)  x :: a | \\y -> x y :: b               { t = a -> b }\n(t4)  x :: a, y :: c | x y :: d             { b = c -> d, t = a -> b }\n(t3)  x :: a, y :: c | y :: e\n   ∪  x :: a, y :: c | x :: e -> d\n(t2)  y is c in the environment             { e = c, ... }\n(t2)  x is a in the environment             { a = e -> d, ... }\n\nE = { e = c,  a = e -> d,  b = c -> d,  t = a -> b }`,
+      body2: `<p>Now there are no expressions left, only equations. Unify, one rule per line:</p>
+        <pre class="code">{ e = c,  a = e -> d,  b = c -> d,  t = a -> b }
+{ e = c,  a = c -> d,  b = c -> d,  t = a -> b }                eliminate e
+{ e = c,  a = c -> d,  b = c -> d,  t = (c -> d) -> b }         eliminate a
+{ e = c,  a = c -> d,  b = c -> d,  t = (c -> d) -> c -> d }    eliminate b
+
+\\x -> \\y -> x y :: (c -> d) -> c -> d</pre>
+        <p>That is slide 7's <code>(a -> b) -> a -> b</code> with the letters renamed, and
+        renaming type variables does not change a type. Keep the brackets when you substitute an
+        arrow type into the <em>left</em> of an arrow — <code>(c -> d) -> b</code> and
+        <code>c -> d -> b</code> are different types.</p>
+        <p>Slides 10 and 11 do the same for <code>\\x -> \\y -> x (x y)</code>. It needs (t3)
+        twice, because there are two applications, and the unification needs a decompose step:
+        x is used at type <code>e -> d</code> and at type <code>f -> e</code>, so
+        <code>c -> e = e -> d</code> appears and splits into <code>c = e</code> and
+        <code>e = d</code>. Everything collapses to one variable and the answer is
+        <code>(d -> d) -> d -> d</code>. Work it on paper before reading slide 11.</p>`,
+      cp: { q: "In the run above, why does (t3) give x the type e -> d rather than some fresh type?",
+            a: `Because the application <code>x y</code> is required to have type <code>d</code>
+                (that is the t being asked for) and the argument has the fresh type
+                <code>e</code>. So the function part must take an <code>e</code> and return a
+                <code>d</code>. Only the argument type is new.` } },
+
+    { t: "When unification says NO, the expression has no type",
+      cite: "uke42 s.12–13",
+      body: `<p>Slide 12 runs the rules on <code>\\x -> x x</code>, a function applied to
+        itself. The first phase goes through without complaint — it always does. The trouble is
+        in the equations:</p>`,
+      code: `E(∅ | \\x -> x x :: t)\n\n(t4)  x :: a | x x :: b                     { t = a -> b }\n(t3)  x :: a | x :: c\n   ∪  x :: a | x :: c -> b\n(t2)                                        { c = a,  a = c -> b,  t = a -> b }\n\nunify:\n{ c = a,  a = c -> b,  t = a -> b }\n{ c = a,  a = a -> b,  t = a -> b }         eliminate c\nNO                                          occurs check: a is inside a -> b`,
+      body2: `<p>The argument <code>x</code> has type <code>a</code>; the function <code>x</code>
+        must then have type <code>a -> b</code>; but they are the same x, so
+        <code>a = a -> b</code>. No finite type satisfies that. Slide 13 quotes GHC saying so in
+        almost the same words as rule 6:</p>
+        <pre class="code">Occurs check: cannot construct the infinite type a ~ a -> b</pre>
+        <p>The GHC installed here words the same failure differently — "Couldn't match expected
+        type ‘t1’ with actual type ‘t1 -> t2’" — but look at what it could not match: a variable
+        against an arrow type containing that variable. Same equation, same rule.</p>
+        <p>His conclusion on slide 13: self-application is impossible in Haskell — it has no
+        type. The other way inference can fail is a clash: <code>Bool = Int</code>, or
+        <code>Int = a -> b</code> when you apply a number as if it were a function. Those are
+        GHC's "Couldn't match expected type" errors.</p>`,
+      ghci: `:t \\x -> x x\n:t \\x -> \\y -> x (x y)`,
+      cp: { q: "A type error in GHCi corresponds to which two outcomes of the unification algorithm?",
+            a: `The two NO rules. A <strong>clash</strong> is "couldn't match type X with Y"; a
+                failed <strong>occurs check</strong> is slide 13's "cannot construct the infinite
+                type" (or, in newer GHCs, a failure to match <code>t1</code> with
+                <code>t1 -> t2</code>).` } },
+
+    { t: "Pairs and lists: three more rules of the same shape",
+      cite: "uke42 s.14",
+      body: `<p>Slide 14 extends the recipe. Nothing new happens: each rule says what shape the
+        type must have, invents fresh variables for the parts, and recurses into the
+        sub-expressions.</p>`,
+      code: `(t5)  E(Γ | (ex1, ex2) :: t)  =  { t = (a, b) } ∪ E(Γ | ex1 :: a) ∪ E(Γ | ex2 :: b)\n(t6)  E(Γ | x : xs :: t)      =  { t = [a] }    ∪ E(Γ | x :: a)   ∪ E(Γ | xs :: [a])\n(t7)  E(Γ | [] :: t)          =  { t = [a] }\n                                                      a, b fresh everywhere`,
+      body2: `<p>For unification, <code>(a, b)</code> is a two-argument function symbol and
+        <code>[a]</code> a one-argument one, so <code>[a] = [b]</code> decomposes to
+        <code>a = b</code>, and <code>[a] = (b, c)</code> is a clash. Note what (t6) says about
+        lists: the head has type <code>a</code> and the tail has type <code>[a]</code> with the
+        <em>same</em> a — that one shared variable is the whole reason a list cannot mix
+        types.</p>
+        <p>A small run using (t4), (t5), (t2) and (t1):</p>
+        <pre class="code">E(∅ | \\x -> (x, True) :: t)
+  = { t = a -> b } ∪ E(x :: a | (x, True) :: b)                    (t4)
+  = { t = a -> b, b = (c, d) } ∪ E(x :: a | x :: c)
+                               ∪ E(x :: a | True :: d)             (t5)
+  = { t = a -> b, b = (c, d), c = a, d = Bool }                    (t2), (t1)
+
+unify:  t = a -> (a, Bool)</pre>
+        <p>The slide's own example is <code>[1, 2]</code>, first rewritten as
+        <code>1 : 2 : []</code> so that (t6) and (t7) apply. It takes
+        <code>θ(1) = Int</code> to keep the example small; the real type of a numeric literal
+        is the subject of the next page but one.</p>`,
+      cp: { q: "Which rule, and which equation, stops [True, 'a'] from having a type?",
+            a: `(t6) on <code>True : ('a' : [])</code> gives the head type <code>a = Bool</code>
+                and requires the tail to be <code>[a]</code>. (t6) on the tail gives
+                <code>[a] = [b]</code> with <code>b = Char</code>. Decompose, eliminate, and
+                <code>Bool = Char</code> is a clash.` } },
+
+    { t: "let makes a definition polymorphic; a lambda argument is not",
+      cite: "uke42 s.15",
+      body: `<p>The four rules give <code>\\x -> x</code> the type <code>a -> a</code>. Now use
+        it twice:</p>`,
+      code: `let id = \\x -> x in (id 5, id True)        -- fine:  (Int, Bool)\n\nE(id :: a -> a | (id 5, id True) :: t)     -- fails`,
+      body2: `<p>If the environment holds <code>id :: a -> a</code> with <code>a</code> an
+        ordinary type variable, then <code>id 5</code> produces <code>a = Int</code>,
+        <code>id True</code> produces <code>a = Bool</code>, and unification reports the clash
+        <code>Int = Bool</code>. One variable cannot be two things.</p>
+        <p>Slide 15's fix is to distinguish two kinds of variable:</p>
+        <ul>
+          <li>a type variable <code>a</code> that is an <em>unknown</em> — it may occur in other
+            sub-expressions and must mean the same thing everywhere;</li>
+          <li>a variable that may be <em>instantiated freely</em>, written
+            <code>∀a</code>.</li>
+        </ul>
+        <p>With <code>id :: ∀a. a -> a</code> in the environment, each use of <code>id</code>
+        gets its own fresh copy — <code>a1 -> a1</code> at the first use,
+        <code>a2 -> a2</code> at the second — and the two never meet. That is what
+        <code>let</code> does, and what every top-level definition does. Every
+        <code>a</code> you have read in a Prelude type since week 2 has had an invisible
+        <code>∀</code> in front of it.</p>
+        <p>A lambda-bound variable does <em>not</em> get this treatment: (t4) puts
+        <code>x :: a</code> in the environment with a plain unknown. So the lambda version of
+        the same program is rejected.</p>`,
+      ghci: `let f = \\x -> x in (f 'c', f True)\n(\\f -> (f 'c', f True)) (\\x -> x)`,
+      cp: { q: "Why is (\\f -> (f 'c', f True)) (\\x -> x) a type error when the let version is fine?",
+            a: `Inside the lambda, <code>f :: a</code> is one unknown shared by both uses, so
+                they demand <code>Char -> …</code> and <code>Bool -> …</code> of the same type
+                and clash. Under <code>let</code>, f's type is generalised to
+                <code>∀a. a -> a</code> before the body is checked, so each use is instantiated
+                separately.` } },
+
+    { t: "Class constraints ride along with the equations",
+      cite: "uke42 s.16–18",
+      body: `<p>When the environment contains overloaded functions, their constraints are carried
+        beside the equations and attached to whatever the variables turn out to be. Slide 16
+        starts from</p>`,
+      code: `Γ = { read :: Read r => String -> r,   show :: Show s => s -> String }\n\nE(Γ | \\x -> read (show x) :: t)\n\n  { d = a,  s -> String = d -> c,  String -> r = c -> b,  t = a -> b }\n⇒ { d = a,  s = d,  String = c,  r = b,  t = a -> b }          decompose ×2\n⇒ { d = s,  a = s,  c = String,  b = r,  t = s -> r }          swap, eliminate\n\n\\x -> read (show x) :: (Show s, Read r) => s -> r`,
+      body2: `<p>The equations are solved exactly as before; <code>Show s</code> and
+        <code>Read r</code> simply survive into the answer because <code>s</code> and
+        <code>r</code> are still variables at the end.</p>
+        <p><strong>Ambiguity</strong> (slide 17). In <code>read (show 2)</code> the type that
+        <code>show</code> consumes is needed in the middle and appears nowhere in the result:
+        the whole expression is <code>Read r => r</code>, and nothing says which
+        <code>r</code>. GHCi has to pick something, picks wrongly, and you get
+        <code>*** Exception: Prelude.read: no parse</code>. An annotation settles it —
+        <code>read (show 2) :: Int</code> is <code>2</code>,
+        <code>read (show 2) :: Float</code> is <code>2.0</code>. This is the
+        <code>roundTrip</code> exercise from week 2, now with the reason.</p>
+        <p><strong>A constraint can land on a strange type</strong> (slide 18).
+        <code>[tail, (+1)]</code> is a list, so both elements must have one type:
+        <code>[a] -> [a]</code> from <code>tail</code> must equal <code>b -> b</code> from
+        <code>(+1)</code>, giving <code>b = [a]</code>. But <code>(+1)</code> came with
+        <code>Num b</code>, which is now <code>Num [a]</code>. So</p>
+        <pre class="code">[tail, (+1)] :: Num [a] => [[a] -> [a]]</pre>
+        <p>Inference succeeds. It tells you the expression is fine <em>provided</em> lists are
+        numbers — and since there is no such instance, you cannot actually use it. A type with
+        an absurd constraint is the type checker's way of saying "this unified, but probably
+        not the way you meant".</p>`,
+      ghci: `:t \\x -> read (show x)\nread (show 2) :: Int\n:t [tail, (+1)]`,
+      cp: { q: "Unification of [tail, (+1)] succeeds. Where does Num [a] come from?",
+            a: `<code>(+1) :: Num b => b -> b</code> has to equal
+                <code>tail :: [a] -> [a]</code>, so <code>b = [a]</code>. The constraint was on
+                <code>b</code>; applying the substitution to it gives <code>Num [a]</code>.` } },
+
+    { t: "Kinds are the types of type constructors",
+      cite: "uke42 s.19",
+      body: `<p>The last slide goes one level up. Values have types; types and type constructors
+        have <strong>kinds</strong>, and GHCi shows them with <code>:k</code>.</p>
+        <ul>
+          <li>Every complete type — one that can have values — has kind <code>*</code>:
+            <code>Int</code>, <code>Char</code>, <code>[Bool]</code>,
+            <code>Maybe Int</code>.</li>
+          <li>A type constructor that needs one type argument before it is a type has kind
+            <code>* -> *</code>: <code>Maybe</code>, <code>[]</code>, and any
+            <code>data T a = …</code> of your own.</li>
+          <li>A class has a kind ending in <code>Constraint</code>:
+            <code>Show :: * -> Constraint</code> — give it a type, get a constraint.</li>
+        </ul>`,
+      code: `> :k Int             > :k Maybe             > :k Show\nInt :: *             Maybe :: * -> *        Show :: * -> Constraint\n\ndata Set a = Tom | En a | Un (Set a) (Set a)\n> :k Set\nSet :: * -> *\n\n> :k []              > :t []\n[] :: * -> *         [] :: [a]`,
+      body2: `<p>The last pair is the one to stare at. <code>[]</code> is two different things with
+        one spelling: in a <em>type</em> it is the list type constructor, which has a kind; in
+        an <em>expression</em> it is the empty list, which has a type. <code>:k</code> asks
+        about the first and <code>:t</code> about the second.</p>
+        <p>Kinds work like the arrows you already know: apply <code>Maybe :: * -> *</code> to
+        <code>Int :: *</code> and one arrow goes away, leaving <code>Maybe Int :: *</code>.
+        <code>Maybe Maybe</code> is a kind error for the same reason <code>not not</code> is a
+        type error.</p>`,
+      ghci: `:k Maybe\n:k Maybe Int\n:k Either\n:k []`,
+      cp: { q: "data Tree a = Leaf | Node (Tree a) a (Tree a). What are the kinds of Tree and of Tree Int?",
+            a: `<code>Tree :: * -> *</code> — it needs one type argument.
+                <code>Tree Int :: *</code> — it has it, so it is a complete type with
+                values.` } }
+  ],
+  drills: [
+    { tag: "subst", kind: "value", prompt: "Apply the substitution σ to the term. Write the resulting term.", code: "σ = { X = g(Y), Y = a }\n\nσ( p(X, Y) )",
+      answer: "p(g(Y), a)", accept: ["p(g(y),a)"],
+      explain: "All replacements happen at once, on the original term. The Y inside g(Y) was brought in by σ, so it is not replaced again — p(g(a), a) is the usual wrong answer." },
+    { tag: "subst", kind: "choice", prompt: "What does t[x/s] mean?", code: "",
+      choices: ["Replace every occurrence of x in t by s", "Replace every occurrence of s in t by x", "Unify t with x and return s", "Replace the first occurrence of x in t by s"], answer: 0,
+      explain: "It is the one-variable substitution { x = s } applied to t (slide 2, slide 20). Read the slash as 'x gives way to s'. Every occurrence, not just the first." },
+    { tag: "mgu", kind: "choice", prompt: "Which of these is a most general unifier of the equation?", code: "f(X, b) = f(Y, b)",
+      choices: ["{ X = b, Y = b }", "{ X = Y }", "{ X = a, Y = a }", "There is no unifier"], answer: 1,
+      explain: "The first and third are unifiers, but they decide what X is when nothing required it. { X = Y } says only what is forced, and both of the others can be reached from it by substituting further." },
+    { tag: "mgu", kind: "choice", prompt: "Which of these equation sets has a unifier?", code: "",
+      choices: ["{ f(X) = g(X) }", "{ X = f(X) }", "{ f(X, Y) = f(Y, a) }", "{ f(X) = f(X, Y) }"], answer: 2,
+      explain: "The third gives X = Y, Y = a, so { X = a, Y = a }. The first is a clash of symbols, the second fails the occurs check, and the fourth is a clash on the number of arguments (rule 3: n ≠ m)." },
+    { tag: "unify", kind: "value", prompt: "How many equations are there after ONE decompose step?", code: "{ f(g(X), Y, a) = f(Z, b, a) }",
+      answer: "3", accept: ["3", "three", "tre"],
+      explain: "g(X) = Z, Y = b, a = a — one per argument of f. The next steps are swap (Z = g(X)) and delete (a = a)." },
+    { tag: "unify", kind: "value", prompt: "Run Martelli–Montanari. In the mgu, what is Y equal to?", code: "{ p(X, g(Y)) = p(a, g(X)) }",
+      answer: "a", accept: ["a", "y=a"],
+      explain: "Decompose p: X = a, g(Y) = g(X). Decompose g: Y = X. Eliminate X: Y = a. The mgu is { X = a, Y = a }; check: p(a, g(a)) on both sides." },
+    { tag: "unify", kind: "choice", prompt: "What is the result of unifying these?", code: "{ p(X, a) = p(b, X) }",
+      choices: ["{ X = a }", "{ X = b }", "NO — two different constants clash", "NO — the occurs check fails"], answer: 2,
+      explain: "Decompose: X = b, a = X. Swap: X = b, X = a. Eliminate X: X = b, b = a — and a and b are different constants. One variable cannot be two things." },
+    { tag: "unify", kind: "choice", prompt: "Which of these is in solved form, so the algorithm stops with YES?", code: "",
+      choices: ["{ X = f(Y), Y = a }", "{ X = f(a), Y = a }", "{ f(X) = Y }", "{ X = Y, Y = X }"], answer: 1,
+      explain: "Every left side must be a variable that occurs nowhere else. In the first, Y is also inside f(Y) — eliminate it. The third needs a swap. In the fourth, each variable occurs in the other equation; eliminating X leaves Y = Y, which is deleted." },
+    { tag: "occurs", kind: "choice", prompt: "What is the result of unifying these?", code: "{ q(X, h(X)) = q(Y, Y) }",
+      choices: ["{ X = Y }", "{ X = h(Y), Y = h(Y) }", "NO — h and q clash", "NO — the occurs check fails"], answer: 3,
+      explain: "Decompose: X = Y, h(X) = Y. Swap: Y = h(X). Eliminate X: Y = h(Y), and Y is inside h(Y). The failure is invisible in the first line; it appears after one substitution." },
+    { tag: "occurs", kind: "choice", prompt: "Which of these is NOT a failure of the occurs check?", code: "",
+      choices: ["X = f(X)", "X = g(a, X)", "X = X", "X = f(g(X))"], answer: 2,
+      explain: "X = X is a trivial equation: rule 1, delete it. The check fails only when X sits inside a larger term on the other side." },
+    { tag: "hmrules", kind: "choice", prompt: "Rule (t3): what does an application f g :: t turn into?", code: "",
+      choices: ["E(Γ | g :: a) ∪ E(Γ | f :: a -> t), with a fresh", "E(Γ | f :: t) ∪ E(Γ | g :: t)", "{ t = a -> b } ∪ E(Γ | f :: a) ∪ E(Γ | g :: b)", "{ t = Γ(f) }"], answer: 0,
+      explain: "The argument gets a fresh type a; the function must then take an a and return the t being asked for. Only one fresh variable — the result type is already named." },
+    { tag: "hmrules", kind: "value", prompt: "How many fresh type variables do the rules introduce for this expression (not counting t itself)?", code: "E(∅ | \\x -> \\y -> x :: t)",
+      answer: "4", accept: ["4", "four", "fire"],
+      explain: "Two lambdas, and (t4) introduces two each: t = a -> b, then b = c -> d. The final x is a variable, rule (t2), which introduces none: d = a." },
+    { tag: "hmrules", kind: "choice", prompt: "In which rule is the environment Γ made larger?", code: "",
+      choices: ["(t1), constants", "(t2), variables", "(t3), application", "(t4), lambda"], answer: 3,
+      explain: "(t4) adds x :: a before going into the body. (t2) is where the environment is read. Nothing else touches it." },
+    { tag: "infer", kind: "type", prompt: "What type do the rules give? Name the type variables a, b in order of appearance.", code: "\\x -> \\y -> x",
+      answer: "a -> b -> a", accept: ["a->b->a", "a->(b->a)", "a->c->a"],
+      explain: "{ t = a -> b, b = c -> d, d = a }. Eliminate d, then b: t = a -> c -> a. Rename c to b and it is the type of const." },
+    { tag: "infer", kind: "choice", prompt: "What type do the rules give this expression?", code: "\\f -> \\g -> \\x -> f (g x)",
+      choices: ["(b -> c) -> (a -> b) -> a -> c", "(a -> b) -> (b -> c) -> a -> c", "(a -> a) -> (a -> a) -> a -> a", "No type — the occurs check fails"], answer: 0,
+      explain: "g is applied to x, so g :: a -> b. f is applied to that result, so f :: b -> c. f comes first in the lambda, so its type comes first. This is the type of (.) — and unlike x (x y) on slide 10, nothing forces the three variables together." },
+    { tag: "infer", kind: "type", prompt: "What type do the rules (with t5) give?", code: "\\x -> (x, True)",
+      answer: "a -> (a, Bool)", accept: ["a->(a,bool)"],
+      explain: "{ t = a -> b, b = (c, d), c = a, d = Bool }. Eliminate c and d into b, then b into t." },
+    { tag: "infer", kind: "choice", prompt: "Why does \\x -> x x have no type?", code: "equations:  { c = a,  a = c -> b,  t = a -> b }",
+      choices: ["Two different type constants clash", "Eliminating c gives a = a -> b, which fails the occurs check", "The rules (t1)–(t4) cannot be applied to it", "x is not in the environment"], answer: 1,
+      explain: "The rules run to the end without trouble; the failure is in unification. Slide 13 quotes GHC: Occurs check: cannot construct the infinite type a ~ a -> b." },
+    { tag: "polylet", kind: "choice", prompt: "Which of these does GHC reject?", code: "A:  let f = \\x -> x in (f 'c', f True)\nB:  (\\f -> (f 'c', f True)) (\\x -> x)",
+      choices: ["Only A", "Only B", "Both", "Neither"], answer: 1,
+      explain: "A let-bound f is generalised to ∀a. a -> a and instantiated afresh at each use. A lambda-bound f is one unknown type shared by both uses, so Char and Bool clash (slide 15)." },
+    { tag: "polylet", kind: "type", prompt: "What is the type, constraints included? Use a for the argument's type and b for the result's.", code: "\\x -> read (show x)",
+      answer: "(Show a, Read b) => a -> b", accept: ["(show a, read b) => a -> b", "(read b, show a) => a -> b", "(show s, read r) => s -> r"],
+      explain: "show consumes the argument, so Show is on its type; read produces the result, so Read is on that. The String in the middle has disappeared from the type, which is exactly why read (show 2) is ambiguous." },
+    { tag: "polylet", kind: "choice", prompt: "GHCi infers this type without complaint. What does it mean?", code: "[tail, (+1)] :: Num [a] => [[a] -> [a]]",
+      choices: ["The list is usable for any a", "Unification succeeded, but only by requiring lists to be numbers — there is no such instance", "tail has been converted to a numeric function", "It is a kind error"], answer: 1,
+      explain: "Both elements must share a type, so b -> b from (+1) is unified with [a] -> [a], and the Num b that came with (+1) becomes Num [a]. Valid on paper, unusable in practice (slide 18)." },
+    { tag: "kinds", kind: "value", prompt: "What does GHCi print after the :: ?", code: "> :k Either",
+      answer: "* -> * -> *", accept: ["*->*->*", "type->type->type"],
+      explain: "Either needs two type arguments before it is a type: Either String Int :: *. One arrow per missing argument, just as with function types." },
+    { tag: "kinds", kind: "choice", prompt: "Which of these has kind * ?", code: "",
+      choices: ["Maybe", "[]", "Maybe [Int]", "Show"], answer: 2,
+      explain: "Kind * means a complete type, one that has values. Maybe and [] are still waiting for an argument (* -> *), and Show is a class (* -> Constraint)." }
+  ]
 }
 ];
 
@@ -4143,7 +4592,10 @@ ioloop: "loops and lists of actions",
 pureshell: "pure core, IO shell",
   grammar: "grammars and BNF", derivation: "derivations", ambiguity: "ambiguity",
 layering: "precedence levels", assoc: "associativity", lexing: "tokenising",
-astype: "grammar to data type", descent: "recursive descent"
+astype: "grammar to data type", descent: "recursive descent",
+  subst: "substitution", mgu: "most general unifier", unify: "Martelli–Montanari",
+occurs: "the occurs check", hmrules: "Hindley–Milner rules", infer: "inferring a type",
+polylet: "polymorphism and classes", kinds: "kinds"
 };
 
 /* ------------------------------------------------------------------ state -- */
@@ -7752,6 +8204,33 @@ const STUDY = [
    { id: "41-e", t: "Parsing is examinable — and in no chapter of the book",
      where: "exam/README.md (What is examinable, B)",
      what: "All lecture notes are pensum, and this is where parsing lives. Likely question shapes, judging by the slides: write a grammar, draw two trees for an ambiguous string, layer a grammar for precedence, give the data type, and write a recursive-descent parser by hand." }
+ ]},
+ { uke: 42, title: "Lecture notes 9: unification and type inference", drill: [11], items: [
+   { id: "42-s1", t: "Slides 2–6: substitution, unifiers, mgu, and the Martelli–Montanari algorithm",
+     where: "weeks/uke42/slides/9-unifi+HiMi-hand.pdf",
+     what: "Slide 2 leaves σ(t) 'på tavlen' — do it. Slide 5 has four examples: cover everything after the first line of each and run the algorithm yourself, one rule per line, naming the rule. Example 4 has no worked answer under it; write one. Slide 6 is a seven-line run — say which rule produced each line.",
+     learn: [11, 0] },
+   { id: "42-s2", t: "Slides 7–9: the small language, rules (t1)–(t4), and \\x -> x",
+     where: "weeks/uke42/slides/9-unifi+HiMi-hand.pdf",
+     what: "Write the four rules out from memory before going on; every later slide repeats them at the top because you are expected to have them to hand. Slide 7 gives \\x -> \\y -> x y a type without showing the work — derive it, then compare with the Learn page.",
+     learn: [11, 5] },
+   { id: "42-s3", t: "Slides 10–13: \\x -> \\y -> x (x y), and why \\x -> x x has no type",
+     where: "weeks/uke42/slides/9-unifi+HiMi-hand.pdf",
+     what: "Do slide 10's derivation on paper, then unify the five equations yourself before turning to slide 11. Check both answers with :t in GHCi — for slide 12 the error message is the answer.",
+     learn: [11, 7] },
+   { id: "42-s4", t: "Slides 14–19: pairs and lists, let-polymorphism, class constraints, kinds",
+     where: "weeks/uke42/slides/9-unifi+HiMi-hand.pdf",
+     what: "Slide 14: derive the type of [1, 2] with (t6) and (t7). Slides 16–18 are worked examples to follow rather than reproduce; type each expression into GHCi with :t. Slide 19: predict each :k before you run it. Slide 20 is the notation key for the whole handout.",
+     learn: [11, 9] },
+   { id: "42-nb", t: "No book chapter, and no tutorial folder yet",
+     where: "tutorial/README.md (row 11: Typeinferens)",
+     what: "This material is only in his notes. tutorial/week11/ does not exist yet, so there is no check.sh and no Work tab for this week — it is pen-and-paper material anyway. The Learn pages, the drills and the slides' own examples are the practice for now." },
+   { id: "42-sync", t: "No sheet 8 has been posted yet — sync Mitt UiB",
+     where: ".venv/bin/python src/canvas_sync.py",
+     what: "As of 6 October the newest sheet is uke7. When a parsing or type-inference sheet lands, ask for it as Oppgaver stubs with tests, the same as sheets 1–7. The oblig is expected to be announced around mid-October." },
+   { id: "42-e", t: "Unification and type inference are examinable — and in no chapter of the book",
+     where: "exam/README.md (What is examinable, B)",
+     what: "All lecture notes are pensum. Likely question shapes, judging by the slides: apply a substitution; run Martelli–Montanari on a set of equations and give the mgu or say why the answer is NO; derive the equations for a small lambda expression with (t1)–(t4) and unify them to get its type; explain why an expression has no type." }
  ]}
 ];
 

@@ -110,7 +110,7 @@ Not all twelve weeks are written yet. Current state:
 | 8 | done | done (76 checks) | done + PAPER.md | uke8 (66 checks; a parser for boolean expressions, then its models) |
 | 9 | done | done (56 checks) | done + PAPER.md | uke9 (37 checks; type inference, del I is paper; unify runs with a time limit) |
 | 10 | not written — notes arrived 27 Sep | — | — | not published yet |
-| 11 | blocked | blocked | blocked | not published yet |
+| 11 | not written — notes arrived 5 Oct | — | — | not published yet |
 | 12 | — | — | — | — |
 
 **Lecturer's sheets** arrive one a week on Mitt UiB, and sheet *N* belongs to
@@ -126,14 +126,13 @@ answers, every week verified green against its own solution. **507 checks in tot
 That is *the whole of Hutton in pensum*: chapters 1–8, 10 and 15.
 
 Weeks **10 and 11** are *enkel parsing* and *typeinferens*, which appear in no chapter
-of the book — the lecturer's notes are the only source. **Week 10 is no longer blocked**:
+of the book — the lecturer's notes are the only source. **Neither is blocked any more**:
 the grammar and parsing notes landed on 27 September
-(`../weeks/uke41/slides/8-grammatikk-hand.pdf`) and the drill room already has Learn
-pages and drills for them, but the tutorial folder is not written yet. **Week 11 still
-is**: the unification and type-inference notes have not been published. Watch
-`../weeks/uke42/` onward; `python src/find.py typeinferens` will search inside the PDFs
-the moment they land. Week 12 is exam prep and can be
-written any time.
+(`../weeks/uke41/slides/8-grammatikk-hand.pdf`) and the unification and type-inference
+notes on 5 October (`../weeks/uke42/slides/9-unifi+HiMi-hand.pdf`). The drill room has
+Learn pages and drills for both, but neither tutorial folder is written yet.
+`python src/find.py typeinferens` searches inside the PDFs. Week 12 is exam prep and
+can be written any time.
 
 Two notes on how the later weeks are built. **Week 8 is mostly pure**: an IO action that
 prints has no value to compare, so the exercises are the pure cores of Nim, Hangman and
@@ -155,8 +154,8 @@ to weeks not yet built:
 - **Weeks 10 and 11 are now parsing and type inference.** These are examinable
   and appear in *no chapter of Hutton* — the lecturer's notes are the only
   source, and he flags them twice with "kun forelesningsnotater!". The parsing
-  notes arrived in uke 41; type inference follows, so week 11 can only be
-  written after those notes are published.
+  notes arrived on 27 September and the type-inference notes on 5 October, so
+  both weeks can now be written.
 
 ---
 

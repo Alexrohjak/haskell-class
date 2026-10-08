@@ -6,11 +6,12 @@ Tutorial week: [`tutorial/week09/`](../../tutorial/week09/) — `cd tutorial && 
 
 ## Posted by the lecturer
 
-*Nothing published for this week yet.* Re-run `.venv/bin/python src/canvas_sync.py` once it appears.
+- `slides/9-unifi+HiMi-hand.pdf` — from Canvas `course files/forelesningsnotater`, updated 2026-10-05
 
 ## In this folder
 
-- `slides/` — empty
+- `slides/` — 1 item(s), 358 KB
+  - `9-unifi+HiMi-hand.pdf`
 - `exercises/` — empty
 - `code/` — empty
 

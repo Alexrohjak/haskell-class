@@ -215,6 +215,14 @@
       "updated": "2026-09-27T09:49:31Z"
     },
     {
+      "folder": "course files/forelesningsnotater",
+      "name": "9-unifi+HiMi-hand.pdf",
+      "id": 8106834,
+      "size": 367238,
+      "type": "application/pdf",
+      "updated": "2026-10-05T07:19:01Z"
+    },
+    {
       "folder": "course files/oppgaver",
       "name": "uke1.txt",
       "id": 7963385,
@@ -288,6 +296,11 @@
     {
       "label": "Kunngjeringar",
       "url": "/courses/59171/announcements",
+      "type": "internal"
+    },
+    {
+      "label": "Oppgåver",
+      "url": "/courses/59171/assignments",
       "type": "internal"
     },
     {

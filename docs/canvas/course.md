@@ -11,6 +11,7 @@ Course: `INF122` (id 59171)
 |---|---|
 | Heim | /courses/59171 |
 | Kunngjeringar | /courses/59171/announcements |
+| Oppgåver | /courses/59171/assignments |
 | Diskusjonar | /courses/59171/discussion_topics |
 | Vurderingar | /courses/59171/grades |
 | Personar | /courses/59171/users |
@@ -118,6 +119,7 @@ Første uke er kapitel 1 og 2 pensum. Les igjennom disse kapitlene og gjør oppg
 | 6-typer(kap8).pdf | course files/forelesningsnotater | `weeks/uke39/slides/` | 2026-09-21 |
 | 7-IO-hand.pdf | course files/forelesningsnotater | `weeks/uke40/slides/` | 2026-09-21 |
 | 8-grammatikk-hand.pdf | course files/forelesningsnotater | `weeks/uke41/slides/` | 2026-09-27 |
+| 9-unifi+HiMi-hand.pdf | course files/forelesningsnotater | `weeks/uke42/slides/` | 2026-10-05 |
 | uke1.txt | course files/oppgaver | `weeks/uke34/exercises/` | 2026-08-18 |
 | uke2.txt | course files/oppgaver | `weeks/uke35/exercises/` | 2026-08-25 |
 | uke3.txt | course files/oppgaver | `weeks/uke36/exercises/` | 2026-08-31 |

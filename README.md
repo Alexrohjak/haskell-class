@@ -90,6 +90,8 @@ parsing notes (`8-grammatikk-hand.pdf`) are week 8, so parsing arrived a week
 earlier than planned. His announcement of 27 September says the two to three
 weeks after IO are grammars and parsing, the unification algorithm, and type
 inference, and that the oblig is expected to be announced around mid-October.
+The unification and type-inference notes (`9-unifi+HiMi-hand.pdf`, course week
+9) followed on 5 October and are filed under uke 42.
 The tutorial column did not move: sheet *N* still lives in tutorial week *N*,
 so the book chapter in a tutorial week now trails the lectures.
 
