@@ -32,7 +32,7 @@ import Data.Char
 --   (i "A|B" er "|" et terminal symbol, men mellom det og "A", er det et
 --   metasymbol i grammatikken vår!)
 --       A ::= N & A | N
---       N ::= !C
+--       N ::= !C | C
 --       C ::= Atom | T | F | (B)
 --       Atom ::= lowerLetter+
 --
@@ -48,7 +48,8 @@ import Data.Char
 --
 --   Vi skal benytte følgende datatypen for boolske ASTer:
 --
---       data Bst = T | F | Atom String | Or Bst Bst | And Bst Bst | Not Bst deriving (Eq,Show,Read)
+--       data Bst = T | F | Atom String | Or Bst Bst | And Bst Bst | Not Bst
+--          deriving (Eq,Show,Read)
 --
 -- First disagreement: read literally, "N ::= !C" puts a ! in front of every
 -- operand, and then neither of the sheet's two "lovlige" expressions is
@@ -90,8 +91,47 @@ tokenise (x:xs)
   | otherwise = [x] : tokenise xs
   where (atom, rest) = span isLower (x:xs)
 
+-- "T | F & T" = ["T", "|", "F", "&", "T"]
+
 parse :: String -> Bst
-parse = undefined
+parse str = tree
+  where (tree, _) = parseB (tokenise str)
+
+--       B ::= A|B | A
+parseB :: [String] -> (Bst, [String])
+parseB tokens
+  | firstStrIs "|" aTokens = (Or aTree bTree, bTokens)
+  | otherwise = (aTree, aTokens)
+  where (aTree, aTokens) = parseA tokens
+        (bTree, bTokens) = parseB (drop 1 aTokens)
+
+firstStrIs :: String -> [String] -> Bool
+firstStrIs xs ("|":rest) = xs == "|"
+firstStrIs xs ("&":rest) = xs == "&"
+firstStrIs _ _ = False
+
+
+--       A ::= N & A | N
+parseA :: [String] -> (Bst, [String])
+parseA tokens
+  | firstStrIs "&" nTokens = (And nTree aTree, aTokens)
+  | otherwise = (nTree, nTokens)
+  where (nTree, nTokens) = parseN tokens
+        (aTree, aTokens) = parseA (drop 1 nTokens)
+
+--       N ::= !C | C
+parseN :: [String] -> (Bst, [String])
+parseN ("!":tokens) = (Not cTree, cTokens)
+  where (cTree, cTokens) = parseC tokens
+parseN tokens = parseC tokens
+
+--       C ::= Atom | T | F | (B)
+parseC :: [String] -> (Bst, [String])
+parseC ("T":tokens) = (T, tokens)
+parseC ("F":tokens) = (F, tokens)
+parseC ("(":tokens) = (bTree, drop 1 bTokens)
+  where (bTree, bTokens) = parseB tokens
+parseC (atom:tokens) = (Atom atom, tokens)
 
 -- ---------------------------------------------------------------------------
 -- Oppgave 2
