@@ -24,6 +24,7 @@
 -- is pointed out where it comes up; in all three the tests follow the
 -- examples, or accept both readings.
 module Oppgaver where
+import Data.Char
 
 -- ---------------------------------------------------------------------------
 --   Vi behandler grammatikken for boolske uttrykk, med startsymbolet B:
@@ -82,7 +83,12 @@ data Bst = T | F | Atom String | Or Bst Bst | And Bst Bst | Not Bst
 -- ---------------------------------------------------------------------------
 
 tokenise :: String -> [String]
-tokenise = undefined
+tokenise [] = []
+tokenise (x:xs)
+  | isSpace x = tokenise xs
+  | isLower x = atom : tokenise rest
+  | otherwise = [x] : tokenise xs
+  where (atom, rest) = span isLower (x:xs)
 
 parse :: String -> Bst
 parse = undefined
