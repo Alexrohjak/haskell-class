@@ -25,6 +25,7 @@
 -- examples, or accept both readings.
 module Oppgaver where
 import Data.Char
+import Data.List
 
 -- ---------------------------------------------------------------------------
 --   Vi behandler grammatikken for boolske uttrykk, med startsymbolet B:
@@ -146,7 +147,12 @@ parseC (atom:tokens) = (Atom atom, tokens)
 -- ---------------------------------------------------------------------------
 
 atomer :: Bst -> [String]
-atomer = undefined
+atomer T = []
+atomer F = []
+atomer (Atom a) = [a]
+atomer (Not a) = atomer a
+atomer (And l r) = nub (atomer l ++ atomer r)
+atomer (Or l r) = nub (atomer l ++ atomer r)
 
 -- ---------------------------------------------------------------------------
 -- Oppgave 3
@@ -168,7 +174,9 @@ atomer = undefined
 -- ---------------------------------------------------------------------------
 
 vals :: [String] -> [[(String, Bst)]]
-vals = undefined
+vals [] = [[]]
+vals (x:xs) = [(x,T) : p | p <- rest] ++ [(x,F) : p | p <- rest]
+  where rest = vals xs
 
 -- ---------------------------------------------------------------------------
 -- Oppgave 4
@@ -187,7 +195,29 @@ vals = undefined
 -- ---------------------------------------------------------------------------
 
 ev :: Bst -> [(String, Bst)] -> Bst
-ev = undefined
+ev T v = T
+ev F v = F
+ev (Atom a) v = case lookup a v of
+  Just b -> ev (Atom a) v
+ev (Not t) v = notB (ev t v)
+ev (And l r) v = andB (ev l v) (ev r v)
+ev (Or l r) v = orB (ev l v) (ev r v)
+
+notB :: Bst -> Bst
+notB T = F
+notB F = T
+
+andB :: Bst -> Bst -> Bst
+andB T T = T
+andB F F = F
+andB T F = F
+andB F T = F
+
+orB :: Bst -> Bst -> Bst
+orB T T = T
+orB T F = T
+orB F F = F
+orB F T = T
 
 -- ---------------------------------------------------------------------------
 -- Oppgave 5
