@@ -1,6 +1,6 @@
 # Uke 46 — INF122
 
-**9. - 15. nov** · Oblig (frist antakelig rundt 10. november)
+**9. - 15. nov** · ingen forelesninger
 
 ## Posted by the lecturer
 

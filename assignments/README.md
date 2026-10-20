@@ -1,46 +1,31 @@
 # Obligatorisk oppgåve
 
-**One** larger obligatorisk oppgåve, October/November, **deadline around 10
-November**. Godkjent/ikke-godkjent, no part-grade — and the lecturer warns
-there will probably be **no time to fix a rejected submission**:
+**Published 16 October. Frist: fredag 6. november 2026, kl. 16:00.** This is the
+one hard deadline in the semester. It is pass/fail with **no second attempt**,
+and approval is the only requirement for sitting the exam.
 
-> *det blir neppe tid til å rette på en ikke-godkjent innlevering!*
-> — `weeks/uke34/slides/1krav-plan+intro.pdf`, p.1
+Everything for it is in [`oblig/`](oblig/):
 
-Approval is the only academic requirement for sitting the exam. So this is the
-one hard deadline in the semester, and it has no second attempt built in. Start
-it the week it opens (uke 44), not the week it's due.
-
-Nothing is published yet. Run `.venv/bin/python src/canvas_sync.py`; the task
-and its real deadline land in `docs/canvas/course.md` and the week records.
-Check that rather than trusting this file.
-
-## How to file it
-
-```
-assignments/
-  oblig/
-    NOTES.md           what you were asked to do, and every decision you made
-    *.hs               the code
-    oblig.cabal        cabal is what the course expects for the bigger tasks
-```
-
-Keep the task text with the code. Mitt UiB gets reorganised, and access
-disappears when the course ends; the copy in `NOTES.md` is then the only record
-of what was actually required.
-
-`cabal init` inside `assignments/oblig/` — keep the project local to that folder
-so the tutorial harness stays dependency-free.
-
-## Before you submit
+| File | What |
+|---|---|
+| [`oblig/oblig.pdf`](oblig/oblig.pdf) | the task, as published on Mitt UiB |
+| [`oblig/Oblig.hs`](oblig/Oblig.hs) | the file you submit: the task text as comments, with stubs |
+| [`oblig/ObligTests.hs`](oblig/ObligTests.hs) | 17 checks: the PDF's own examples for `typeOf`, plus `main` |
+| [`oblig/NOTES.md`](oblig/NOTES.md) | the rules, open questions, the submit checklist, your decisions |
 
 ```bash
-cabal build                              # it compiles as a project, not just a file
-ghc -Wall -fno-code path/to/Oblig.hs     # no warnings
-cabal install --lib QuickCheck           # if you're property-testing it
+./tutorial/check.sh oblig            # the tests
+./tutorial/check.sh oblig --repl     # GHCi with Oblig.hs loaded
 ```
 
-`-Wall` catches the two things that cost easy marks: non-exhaustive patterns and
-unused bindings. Then ask me for an idiom review — the tests can't tell you that
-your five-line recursion wanted to be a `foldr`, and that is most of the distance
-between a pass and good work.
+In VS Code, `Ctrl+Shift+B` from `Oblig.hs` runs the same tests.
+
+The PDF asks for a **single `.hs` file that loads in GHCi**. That's why there is
+no cabal project here, even though this README once expected one. The
+`oblig-tests` component in `inf122-tutorial.cabal` is only there so the editor
+can load the file.
+
+**On AI:** the PDF itself says *"skal man ikke bruke KI til å programmere"*, and
+after submitting you may be called to an interview to explain your code. The
+`Svar.hs` files in the tutorial are AI-written, so keep them out of this file.
+See `oblig/NOTES.md`.

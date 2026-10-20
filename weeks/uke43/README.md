@@ -1,8 +1,6 @@
 # Uke 43 — INF122
 
-**19. - 25. okt** · typeinferens (forelesningsnotater!)
-
-Tutorial week: [`tutorial/week10/`](../../tutorial/week10/) — `cd tutorial && ./check.sh 10`
+**19. - 25. okt** · Oblig - ingen forelesninger, grupper fra 22.10
 
 ## Posted by the lecturer
 

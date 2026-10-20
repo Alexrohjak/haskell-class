@@ -73,6 +73,20 @@
   ],
   "announcements": [
     {
+      "title": "Oblig!",
+      "posted": "2026-10-16T14:05:54Z",
+      "text": "The oblig has been published!\n\nYou can find it (and where to submit it) under assignments\n\ngood luck!",
+      "file_ids": [],
+      "links": []
+    },
+    {
+      "title": "Uke 9 (12-16.10) oppgaver mm.",
+      "posted": "2026-10-07T13:24:14Z",
+      "text": "Pensumforelesninger avsluttes på mandag, 12.10 og resten av denne forelesningen bruker vi på Del I av oppgaver fra uke9 om typeavledning. Gjenstående oppgaver, spesielt implementasjon av unifikasjon, gjennomgås på grupper kommende uke, 14-16.10.\n\nObligatorisk oppgave kunngjøres på fredag, 16.10 med innleveringsfrist 6.11. Det blir ingen forlesninger i mellomtiden og alle grupper blir brukt for hjelp og arbeid med den obligatoriske oppgaven.\n\nVi møttes igjen på forelesning mandag 16 november for evt. repetisjon (send ønsker til Michal.Walicki@uib.no) og spørsmål om eksamen/gjennomgang av tidligere eksamener. (Noen tidligere eksamener blir lagt ut under Filer.)",
+      "file_ids": [],
+      "links": []
+    },
+    {
       "title": "De gjenstående forelesningene",
       "posted": "2026-09-27T10:05:14Z",
       "text": "de nærmeste 2-3 ukene, etter avsluttning av IO på mandag 28.09, vil omhandle deler av pensum som ikke er presentert i boken, nemlig\n\n1. formelle grammatikker og enkel parsing,\n\n2. unifikasjonsalgoritmen (som er en sentral del av)\n\n3. typeavledning i Haskell.\n\nDen obligatoriske oppgaven forventes å bli kunngjort rundt midten av oktober.",
@@ -131,8 +145,27 @@
       "links": []
     }
   ],
-  "assignments": [],
-  "files": {},
+  "assignments": [
+    {
+      "name": "Oblig",
+      "due_at": "2026-11-08T22:59:59Z",
+      "points": 0.0,
+      "url": "https://mitt.uib.no/courses/59171/assignments/126651",
+      "text": "You can find the oblig here: oblig.pdf",
+      "file_ids": [
+        8147219
+      ],
+      "links": []
+    }
+  ],
+  "files": {
+    "8147219": {
+      "name": "oblig.pdf",
+      "size": 111590,
+      "type": "application/pdf",
+      "updated": "2026-10-16T13:59:17Z"
+    }
+  },
   "area": [
     {
       "folder": "course files/forelesningsnotater",
@@ -277,6 +310,30 @@
       "size": 1462,
       "type": "text/plain",
       "updated": "2026-09-29T14:20:12Z"
+    },
+    {
+      "folder": "course files/oppgaver",
+      "name": "uke8.txt",
+      "id": 8111064,
+      "size": 2766,
+      "type": "text/plain",
+      "updated": "2026-10-06T14:36:26Z"
+    },
+    {
+      "folder": "course files/oppgaver",
+      "name": "uke9.txt",
+      "id": 8115696,
+      "size": 4367,
+      "type": "text/plain",
+      "updated": "2026-10-07T13:56:32Z"
+    },
+    {
+      "folder": "course files/oppgaver",
+      "name": "uke9+fasit-typing.txt",
+      "id": 8129525,
+      "size": 2872,
+      "type": "text/plain",
+      "updated": "2026-10-12T08:12:41Z"
     }
   ],
   "errors": [

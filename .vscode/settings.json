@@ -71,8 +71,11 @@
     "**/.searchcache": true,
     "**/.gitkeep": true,
 
-    // Course material that reads better outside the editor.
-    "assignments": true,
+    // Course material that reads better outside the editor. In assignments/
+    // only the oblig's code shows: Oblig.hs, with its notes and tests nested
+    // under it. The PDF wants a real viewer.
+    "assignments/README.md": true,
+    "assignments/oblig/oblig.pdf": true,
     "docs": true,
     "exam": true,
     "reference": true,
@@ -109,7 +112,8 @@
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
     "Exercises.hs": "LESSON.md, Tests.hs",
-    "Oppgaver.hs": "OppgaverTests.hs"
+    "Oppgaver.hs": "OppgaverTests.hs",
+    "Oblig.hs": "ObligTests.hs, NOTES.md"
   },
 
   // Ctrl+Shift+F searches your work, not the answers to it.

@@ -166,8 +166,8 @@ From the emneplan and his own first-lecture notes:
 - **Exam: 2 December, 3 hours, written, _no aids permitted_.** You will write
   Haskell by hand on paper. Every `LESSON.md` therefore has a **paper exercises**
   section — do those without a computer. Typing fluency is not being tested.
-- **One obligatorisk oppgåve**, October/November, deadline around 10 November,
-  approved or not approved. The lecturer warns there is probably *no time to fix
+- **One obligatorisk oppgåve**, published 16 October, **frist fredag 6. november
+  kl. 16:00**, approved or not approved. Run it with `./check.sh oblig`. The lecturer warns there is probably *no time to fix
   a rejected submission* — see `../assignments/`.
 - Grading A–F; the oblig and the exam must pass independently.
 - Pensum point (C) is **all exercises from the chapters covered**, assumed

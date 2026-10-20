@@ -32,8 +32,8 @@ PLAN: dict[int, tuple[str, int | None]] = {
     # here rather than split, because that is what he wrote.
     #
     # The tutorial column is mine, not his: it points at the tutorial week whose
-    # chapter the course is on. Weeks with no matching tutorial week say None —
-    # parsing, type inference and the oblig have no tutorial material.
+    # chapter the course is on. Weeks with no matching tutorial week say None:
+    # the oblig weeks, and the weeks with no teaching.
     34: ("kap. 1-2 (15) - intro, first steps", 1),
     35: ("kap. 3-4 - types and classes, defining functions", 2),
     # His plan said "kap. 3-4" for this week too, but the notes he published
@@ -53,15 +53,23 @@ PLAN: dict[int, tuple[str, int | None]] = {
     # tutorial week N.
     40: ("kap. 10 - interactive programming (IO)", 7),
     41: ("grammatikk og enkel parsing (forelesningsnotater!)", 8),
-    42: ("unifikasjon + typeinferens (forelesningsnotater!), oblig kunngjøres ca. midt i oktober", 9),
-    43: ("typeinferens (forelesningsnotater!)", 10),
-    44: ("typeinferens, and the oblig opens", 11),
-    45: ("Oblig (frist antakelig rundt 10. november)", None),
-    46: ("Oblig (frist antakelig rundt 10. november)", None),
-    47: ("resultater og gjennomgang av Oblig", None),
+    42: ("unifikasjon + typeinferens (forelesningsnotater!), oblig publisert 16. okt", 9),
+    # The announcement of 7 October: no lectures between 12 October and
+    # 16 November; every group session goes to the oblig, 22.10 to 6.11. The
+    # deadline is the oblig PDF's (Canvas says 8 Nov, the PDF says 6 Nov 16:00
+    # -- the PDF wins). See assignments/oblig/NOTES.md.
+    43: ("Oblig - ingen forelesninger, grupper fra 22.10", None),
+    44: ("Oblig - ingen forelesninger, grupper hjelper med obligen", None),
+    45: ("Oblig - **frist fredag 6. november kl. 16:00**", None),
+    46: ("ingen forelesninger", None),
+    47: ("forelesning mandag 16. nov: repetisjon, tidligere eksamener", None),
     48: ("spørsmål og svar", 12),
     49: ("**Eksamen 2. desember** - 3t skriftleg, ingen hjelpemiddel", None),
 }
+
+# From assignments/oblig/oblig.pdf, at 16:00. Canvas says 8 November; the PDF
+# is earlier, and it is what the lecturer wrote.
+OBLIG_DUE = date(2026, 11, 6)
 
 # The course numbers its own weeks from 1, and its filenames follow suit
 # ("uke1.txt", "1krav-plan+intro.pdf"). Teaching started in ISO week 34 — the
@@ -170,14 +178,20 @@ def main() -> int:
     print(f"Folder:  weeks/uke{current}/")
     if tut:
         print(f"Tutorial: tutorial/week{tut:02d}/  (./check.sh {tut})")
+    if current <= OBLIG_DUE.isocalendar().week:
+        days = (OBLIG_DUE - today).days
+        print(f"Oblig:   assignments/oblig/  (./tutorial/check.sh oblig)"
+              f" - due {OBLIG_DUE:%a %d %b} 16:00, {days} days left")
     print()
 
     weeks = sorted(PLAN) if args.all else [u for u in sorted(PLAN) if u <= current]
     for uke in weeks:
         print(line(uke, current))
 
-    # Only ever chase weeks that have already happened.
-    gaps = [u for u in sorted(PLAN) if u <= current and not survey(u)["slides"]]
+    # Only ever chase weeks that have already happened, and that had lectures:
+    # PLAN says None for the tutorial in the oblig weeks and the empty ones.
+    gaps = [u for u in sorted(PLAN)
+            if u <= current and PLAN[u][1] is not None and not survey(u)["slides"]]
     if gaps:
         print(
             "\nNo material filed for: "

@@ -10,6 +10,8 @@
 #   ./check.sh 3 --solution      the book tests against the reference solution
 #   ./check.sh 3 --repl          GHCi with your week-3 book code loaded
 #   ./check.sh 3 --oppg --repl   GHCi with your week-3 sheet code loaded
+#   ./check.sh oblig             the oblig's tests (../assignments/oblig/)
+#   ./check.sh oblig --repl      GHCi with Oblig.hs loaded
 #
 # There is no --solution for the sheets: the lecturer asks that AI not solve
 # them, so no reference answers exist.
@@ -21,10 +23,44 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 usage() {
   echo "usage: $(basename "$0") <week-number> [--book|--oppg] [--solution] [--repl]" >&2
+  echo "       $(basename "$0") oblig [--repl]" >&2
   exit 2
 }
 
 [ $# -ge 1 ] || usage
+
+# run <source dir> <test file> [extra ghc flags...]
+run() {
+  # Kept as a guard, not because it fires here any more: before libgmp-dev was
+  # installed GHC emitted a shared-library warning about libgmp on every run,
+  # and it would come back on a fresh machine that only has libgmp10. Strip it
+  # so the test report is the only thing on screen. See ../docs/setup-notes.md.
+  runghc -Wno-x-partial -i"$HERE/lib" -i"$1" "${@:3}" "$2" 2>&1 \
+    | grep -v -e 'missed-extra-shared-lib' \
+              -e 'libgmp' \
+              -e "It's OK if you don't want to use symbols" \
+              -e 'the package DLL is loaded by the system linker' \
+              -e 'which manages dependencies by itself' \
+              -e '^<no location info>: warning:' \
+    | cat -s
+  return "${PIPESTATUS[0]}"
+}
+
+# The oblig is one file outside tutorial/, with its own test file beside it.
+if [ "$1" = oblig ]; then
+  shift
+  DIR="$(cd "$HERE/../assignments/oblig" && pwd)"
+  for arg in "$@"; do
+    case "$arg" in
+      --repl|-r) exec ghci -Wno-x-partial "$DIR/Oblig.hs" ;;
+      *) echo "error: unknown option '$arg'" >&2; usage ;;
+    esac
+  done
+  # The tests run main in a fresh GHC, so they need process and directory.
+  OBLIG_FILE="$DIR/Oblig.hs" run "$DIR" "$DIR/ObligTests.hs" \
+    --ghc-arg=-package --ghc-arg=process --ghc-arg=-package --ghc-arg=directory
+  exit
+fi
 
 WEEK=$(printf 'week%02d' "$(( 10#${1#week} ))" 2>/dev/null) || {
   echo "error: '$1' is not a week number" >&2; exit 2; }
@@ -67,23 +103,6 @@ if [ -n "$REPL" ]; then
   fi
   exec ghci -Wno-x-partial -i"$HERE/lib" -i"$BOOK_SRC" "$BOOK_SRC/Exercises.hs"
 fi
-
-# run <source dir> <test file>
-run() {
-  # Kept as a guard, not because it fires here any more: before libgmp-dev was
-  # installed GHC emitted a shared-library warning about libgmp on every run,
-  # and it would come back on a fresh machine that only has libgmp10. Strip it
-  # so the test report is the only thing on screen. See ../docs/setup-notes.md.
-  runghc -Wno-x-partial -i"$HERE/lib" -i"$1" "$2" 2>&1 \
-    | grep -v -e 'missed-extra-shared-lib' \
-              -e 'libgmp' \
-              -e "It's OK if you don't want to use symbols" \
-              -e 'the package DLL is loaded by the system linker' \
-              -e 'which manages dependencies by itself' \
-              -e '^<no location info>: warning:' \
-    | cat -s
-  return "${PIPESTATUS[0]}"
-}
 
 STATUS=0
 

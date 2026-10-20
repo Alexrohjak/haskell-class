@@ -3,10 +3,11 @@
   "tasks": [
     {
       // Ctrl+Shift+B. Runs the week that owns the file you are looking at,
-      // by pulling the number straight out of its path.
+      // by pulling the number straight out of its path -- or the oblig's
+      // tests, from anywhere in assignments/oblig/.
       "label": "Check this week",
       "type": "shell",
-      "command": "./tutorial/check.sh \"$(echo '${relativeFile}' | sed -n 's|.*week0*\\([0-9]\\+\\).*|\\1|p')\"",
+      "command": "./tutorial/check.sh \"$(echo '${relativeFile}' | sed -n -e 's|^assignments/oblig/.*|oblig|p' -e 's|.*week0*\\([0-9]\\+\\).*|\\1|p')\"",
       "group": { "kind": "build", "isDefault": true },
       "presentation": { "reveal": "always", "panel": "dedicated", "clear": true },
       "problemMatcher": []
@@ -14,7 +15,7 @@
     {
       "label": "Check this week (solution)",
       "type": "shell",
-      "command": "./tutorial/check.sh \"$(echo '${relativeFile}' | sed -n 's|.*week0*\\([0-9]\\+\\).*|\\1|p')\" --solution",
+      "command": "./tutorial/check.sh \"$(echo '${relativeFile}' | sed -n -e 's|^assignments/oblig/.*|oblig|p' -e 's|.*week0*\\([0-9]\\+\\).*|\\1|p')\" --solution",
       "presentation": { "reveal": "always", "panel": "dedicated", "clear": true },
       "problemMatcher": []
     },
@@ -22,7 +23,7 @@
       // GHCi with the week loaded, for poking at your functions by hand.
       "label": "GHCi for this week",
       "type": "shell",
-      "command": "./tutorial/check.sh \"$(echo '${relativeFile}' | sed -n 's|.*week0*\\([0-9]\\+\\).*|\\1|p')\" --repl",
+      "command": "./tutorial/check.sh \"$(echo '${relativeFile}' | sed -n -e 's|^assignments/oblig/.*|oblig|p' -e 's|.*week0*\\([0-9]\\+\\).*|\\1|p')\" --repl",
       "presentation": { "reveal": "always", "panel": "dedicated" },
       "problemMatcher": []
     }

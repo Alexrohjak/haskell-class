@@ -1,0 +1,107 @@
+
+DEL I - TYPEAVLEDNING 
+
+Bruk Hindley-Milner (og deretter unifikasjon).  Husk at funksjonsapplikasjon assosierer til venstre, mens funksjonsabstraksjon til høyre. 
+Altså: 
+a b c           er det samme som        ((a b) c), mens 
+\x -> \y -> x y er det samme som        \x -> (\y -> (x y)) .
+
+
+1. Gitt følgende definisjon
+    pro x y = x
+finn typen til pro, dvs. et typeuttrykk t slik at 
+	pro :: t 
+eller vis at pro er feiltypet.
+(Hint: skriv først en ekvivalent definisjon på formen: pro = …) 
+
+pro = \x -> \y -> x
+
+ | \x -> \y -> x :: t
+x::a | (\y -> x) :: b             t = a -> b
+x::a,y::c | x::d                  b = c -> d
+                                  d = a
+t = a -> b, b = c -> a, d = a
+t = a -> (c -> a), b = c->a, d=a
+
+
+
+2. Finn typen til (pro 2) fra punkt 1, eller vis at det er feiltypet.
+
+Ø | (\x -> \y -> x) 2 :: t
++ 2::Int | 2 :: a		(2::Int kommer fra predefinert typing av konstanter)
++ 2::Int | (\x -> \y -> x) :: Int -> t
+
+\x -> \y -> x :: (Int -> t)
+x::a | (\y -> x) :: b             Int -> t = a -> b
+x::a,y::c | x::d                  b = c -> d
+                                  d = a
+Int -> t = a -> b, b = c -> a, d = a
+Int -> t = Int -> (c -> Int), b = c->Int, d=Int
+Int = Int, t = c -> Int
+
+
+
+3. \x -> \y -> x y :: t
+x::a | \y -> x y :: b           t = a -> b
+x::a, y::c | x y :: d           b = c -> d
+x::a, y::c | y :: e             e = c
+x::a, y::c | x :: e -> d        a = e -> d
+
+t = a -> b, b = c -> d, a = c->d
+t = (c->d) -> c -> d
+
+
+
+4. \x -> \y -> (x y) x :: t
+
+x::a |  \y -> (x y) x :: b        t = a -> b
+x::a, y::c |  (x y) x :: d        b = c -> d
++ x::a, y::c | x :: e             e = a
++ x::a, y::c | (x y) :: e -> d  
+-- x::a, y::c | y :: f            f = c
+-- x::a, y::c | x :: f -> (e -> d) a = f -> e -> d
+
+a = f -> a -> d - OCF!
+
+
+
+5. \x -> \y -> x (y x) :: t
+x::a |  \y -> x (y x) :: b             t = a -> b
+x::a, y::c | x (y x) :: d              b = c -> d
+- x::a, y::c | x :: e -> d             a = e -> d
+- x::a, y::c | (y x) :: e
+-- x::a, y::c | x :: f                  f = a
+-- x::a, y::c | y :: f -> e             c = f -> e
+
+ t = a -> b, c = f -> e, f=a,  a = e -> d,  b = c -> d
+ t = a -> b, c = a -> e, f=a,  a = e -> d,  b = c -> d
+ t = (e->d) -> b, c = (e->d) -> e, f=a, a = e -> d, b = c -> d
+ t = (e->d) -> b, c = (e->d) -> e, f=a, a = e -> d, b = ((e->d)->e)->d
+ t = (e->d) -> ((e->d) -> e) -> d
+
+
+
+6. \x -> \y -> x y x :: t 
+ - dette er nr. 4, hvis vi bare setter inn parenteser
+
+
+
+7. \x -> (x (\y -> x y)) :: t
+
+x::a | x (\y -> x y) :: b     t = a -> b
+- x::a | x :: c -> b          a = c->b
+- x::a | (\y -> x y) :: c
+x::a, y::d | x y :: e          c = d -> e
+- x::a, y::d | y :: f          f = d
+- x::a, y::d | x :: f -> e     a = f -> e
+
+ t = a -> b, a = d -> e, a = c->b , c = d -> e,   f = d,
+ t = a -> b, d = c, e = b, c = c -> b,  f = c, -- OCF!
+
+
+8. \x -> \y -> \z -> (x z) (y z)
+... 
+
+
+
+

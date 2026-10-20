@@ -1,18 +1,22 @@
 # Uke 42 — INF122
 
-**12. - 18. okt** · unifikasjon + typeinferens (forelesningsnotater!), oblig kunngjøres ca. midt i oktober
+**12. - 18. okt** · unifikasjon + typeinferens (forelesningsnotater!), oblig publisert 16. okt
 
 Tutorial week: [`tutorial/week09/`](../../tutorial/week09/) — `cd tutorial && ./check.sh 9`
 
 ## Posted by the lecturer
 
 - `slides/9-unifi+HiMi-hand.pdf` — from Canvas `course files/forelesningsnotater`, updated 2026-10-05
+- `exercises/uke9.txt` — from Canvas `course files/oppgaver`, updated 2026-10-07
+- `exercises/uke9+fasit-typing.txt` — from Canvas `course files/oppgaver`, updated 2026-10-12
 
 ## In this folder
 
 - `slides/` — 1 item(s), 358 KB
   - `9-unifi+HiMi-hand.pdf`
-- `exercises/` — empty
+- `exercises/` — 2 item(s), 7 KB
+  - `uke9+fasit-typing.txt`
+  - `uke9.txt`
 - `code/` — empty
 
 ---

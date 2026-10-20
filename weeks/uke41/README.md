@@ -7,12 +7,14 @@ Tutorial week: [`tutorial/week08/`](../../tutorial/week08/) — `cd tutorial && 
 ## Posted by the lecturer
 
 - `slides/8-grammatikk-hand.pdf` — from Canvas `course files/forelesningsnotater`, updated 2026-09-27
+- `exercises/uke8.txt` — from Canvas `course files/oppgaver`, updated 2026-10-06
 
 ## In this folder
 
 - `slides/` — 1 item(s), 156 KB
   - `8-grammatikk-hand.pdf`
-- `exercises/` — empty
+- `exercises/` — 1 item(s), 2 KB
+  - `uke8.txt`
 - `code/` — empty
 
 ---

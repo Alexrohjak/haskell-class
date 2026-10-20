@@ -127,8 +127,31 @@ Første uke er kapitel 1 og 2 pensum. Les igjennom disse kapitlene og gjør oppg
 | uke5.txt | course files/oppgaver | `weeks/uke38/exercises/` | 2026-09-15 |
 | uke6.txt | course files/oppgaver | `weeks/uke39/exercises/` | 2026-09-22 |
 | uke7.txt | course files/oppgaver | `weeks/uke40/exercises/` | 2026-09-29 |
+| uke8.txt | course files/oppgaver | `weeks/uke41/exercises/` | 2026-10-06 |
+| uke9+fasit-typing.txt | course files/oppgaver | `weeks/uke42/exercises/` | 2026-10-12 |
+| uke9.txt | course files/oppgaver | `weeks/uke42/exercises/` | 2026-10-07 |
 
 ## Announcements
+
+### Oblig!
+
+*Posted 2026-10-16T14:05:54Z*
+
+The oblig has been published!
+
+You can find it (and where to submit it) under assignments
+
+good luck!
+
+### Uke 9 (12-16.10) oppgaver mm.
+
+*Posted 2026-10-07T13:24:14Z*
+
+Pensumforelesninger avsluttes på mandag, 12.10 og resten av denne forelesningen bruker vi på Del I av oppgaver fra uke9 om typeavledning. Gjenstående oppgaver, spesielt implementasjon av unifikasjon, gjennomgås på grupper kommende uke, 14-16.10.
+
+Obligatorisk oppgave kunngjøres på fredag, 16.10 med innleveringsfrist 6.11. Det blir ingen forlesninger i mellomtiden og alle grupper blir brukt for hjelp og arbeid med den obligatoriske oppgaven.
+
+Vi møttes igjen på forelesning mandag 16 november for evt. repetisjon (send ønsker til Michal.Walicki@uib.no) og spørsmål om eksamen/gjennomgang av tidligere eksamener. (Noen tidligere eksamener blir lagt ut under Filer.)
 
 ### De gjenstående forelesningene
 
@@ -196,7 +219,12 @@ Gruppedeltakelse er ikke obligatorisk, men det er verdt å merke at kursets hist
 
 ## Assignments
 
-*None published yet.*
+### Oblig
+
+*Due: 2026-11-08T22:59:59Z · 0.0 points*
+
+You can find the oblig here: oblig.pdf
+
 
 ## Not readable
 

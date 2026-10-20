@@ -38,8 +38,10 @@ cd tutorial && ./check.sh 5                 # then verify what you wrote by hand
 Work a drill on paper first, type it in second, and note every place GHC
 disagreed with you. That gap is your revision list.
 
-Weeks 47 and 48 are gjennomgang of the oblig and open Q&A — the last chance to
-ask the person who writes the paper what he expects on it.
+Lectures resume on **Monday 16 November**: repetition (send topic requests to
+`Michal.Walicki@uib.no`), questions about the exam, and a walk through earlier
+exams. Some past papers will be posted under Filer, and the sync will pick them up.
+It is the last chance to ask the person who writes the paper what he expects on it.
 
 ## Revision guides written so far
 

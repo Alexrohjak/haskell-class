@@ -1,8 +1,6 @@
 # Uke 44 — INF122
 
-**26. okt - 1. nov** · typeinferens, and the oblig opens
-
-Tutorial week: [`tutorial/week11/`](../../tutorial/week11/) — `cd tutorial && ./check.sh 11`
+**26. okt - 1. nov** · Oblig - ingen forelesninger, grupper hjelper med obligen
 
 ## Posted by the lecturer
 

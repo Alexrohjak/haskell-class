@@ -16,6 +16,7 @@ Contact details for the gruppeleiarar are in [`docs/canvas/course.md`](docs/canv
 cd ~/code/haskell-class
 .venv/bin/python src/week.py   # what week is it, what is filed
 cd tutorial && ./check.sh 8    # work this week's tutorial
+./check.sh oblig               # the oblig (due 6 Nov 16:00)
 ```
 
 Verify the toolchain: `.venv/bin/python src/check_setup.py`. It runs week 1's
@@ -68,12 +69,12 @@ truth — re-run the sync and update `PLAN` in `src/week.py` when it changes.
 | 39 | 21.–27. sep | kap. 5–8 | [week06](tutorial/week06/) | [`uke39`](weeks/uke39/) |
 | 40 | 28. sep–4. okt | kap. 10 (IO) ‡ | [week07](tutorial/week07/) | [`uke40`](weeks/uke40/) |
 | 41 | 5.–11. okt | grammatikk · enkel parsing ‡ | [week08](tutorial/week08/) | [`uke41`](weeks/uke41/) |
-| 42 | 12.–18. okt | unifikasjon · typeinferens · **Oblig kunngjøres** ‡ | [week09](tutorial/week09/) | [`uke42`](weeks/uke42/) |
-| 43 | 19.–25. okt | typeinferens ‡ | week10 | [`uke43`](weeks/uke43/) |
-| 44 | 26. okt–1. nov | typeinferens · Oblig | week11 | [`uke44`](weeks/uke44/) |
-| 45 | 2.–8. nov | Oblig | — | [`uke45`](weeks/uke45/) |
-| 46 | 9.–15. nov | Oblig — frist ~10. nov | — | [`uke46`](weeks/uke46/) |
-| 47 | 16.–22. nov | Resultat og gjennomgang av Oblig | — | [`uke47`](weeks/uke47/) |
+| 42 | 12.–18. okt | unifikasjon · typeinferens · **Oblig publisert 16. okt** ‡ | [week09](tutorial/week09/) | [`uke42`](weeks/uke42/) |
+| 43 | 19.–25. okt | **Oblig** — ingen forelesningar, grupper frå 22.10 | [oblig](assignments/oblig/) | [`uke43`](weeks/uke43/) |
+| 44 | 26. okt–1. nov | **Oblig** — gruppene hjelper med obligen | [oblig](assignments/oblig/) | [`uke44`](weeks/uke44/) |
+| 45 | 2.–8. nov | **Oblig — frist fredag 6. nov kl. 16:00** | [oblig](assignments/oblig/) | [`uke45`](weeks/uke45/) |
+| 46 | 9.–15. nov | ingen forelesningar | — | [`uke46`](weeks/uke46/) |
+| 47 | 16.–22. nov | forelesning mån 16. nov: repetisjon, tidlegare eksamenar | — | [`uke47`](weeks/uke47/) |
 | 48 | 23.–29. nov | Spørsmål og svar | week12 | [`uke48`](weeks/uke48/) |
 | 49 | 30. nov–6. des | **Eksamen 2. desember** — 3t skriftleg, ingen hjelpemiddel | — | [`exam/`](exam/) |
 
@@ -91,21 +92,26 @@ earlier than planned. His announcement of 27 September says the two to three
 weeks after IO are grammars and parsing, the unification algorithm, and type
 inference, and that the oblig is expected to be announced around mid-October.
 The unification and type-inference notes (`9-unifi+HiMi-hand.pdf`, course week
-9) followed on 5 October and are filed under uke 42.
+9) followed on 5 October and are filed under uke 42. His announcement of 7
+October ended the lectures on 12 October: from then until Monday 16 November
+there are none, and every group session from 22 October goes to the oblig.
 The tutorial column did not move: sheet *N* still lives in tutorial week *N*,
 so the book chapter in a tutorial week now trails the lectures.
 
-The oblig weeks and the exam week have no tutorial week. The rest of the column
-is my mapping, not his: it points at the tutorial week whose chapter the course
-is on, and tutorial weeks 10 and 11 are parsing and type inference — the two
-topics no chapter of Hutton covers. `PLAN` in [`src/week.py`](src/week.py) is
+The oblig weeks point at the oblig. The weeks after it and the exam week have
+no tutorial week. The rest of the column is my mapping, not his: it points at
+the tutorial week whose chapter the course is on. Tutorial weeks 10 and 11
+(parsing and type inference, unwritten) have no teaching week left to sit in.
+The oblig covers both topics now. `PLAN` in [`src/week.py`](src/week.py) is
 the source of truth for this column; the week records are generated from it, so
 edit it there and this table follows.
 
-**One obligatorisk oppgåve**, October/November, deadline around 10 November.
-Godkjent/ikke-godkjent, no part-grade — and he warns there will probably be *no
-time to fix a rejected submission*. That makes it the one hard deadline in the
-semester. See [`assignments/`](assignments/).
+**The obligatorisk oppgåve is out** (16 October): a parser and Hindley-Milner
+type inference for a small Haskell subset. **Frist fredag 6. november, kl.
+16:00.** Godkjent/ikke-godkjent, *no second attempt*, and no exam without it.
+The task, a scaffold, tests and the rules (no AI programming, and a possible
+interview) are in [`assignments/oblig/`](assignments/oblig/) — start at
+[`NOTES.md`](assignments/oblig/NOTES.md).
 
 ## Two tracks, one repo
 

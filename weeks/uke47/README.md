@@ -1,6 +1,6 @@
 # Uke 47 — INF122
 
-**16. - 22. nov** · resultater og gjennomgang av Oblig
+**16. - 22. nov** · forelesning mandag 16. nov: repetisjon, tidligere eksamener
 
 ## Posted by the lecturer
 

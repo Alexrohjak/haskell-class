@@ -1,6 +1,6 @@
 # Uke 45 — INF122
 
-**2. - 8. nov** · Oblig (frist antakelig rundt 10. november)
+**2. - 8. nov** · Oblig - **frist fredag 6. november kl. 16:00**
 
 ## Posted by the lecturer
 

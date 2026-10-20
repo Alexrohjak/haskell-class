@@ -16,6 +16,7 @@ build-type:      Simple
 --
 -- Adding a week: copy the `executable`/`library` pair and bump the number.
 -- Adding a lecturer's sheet: copy a `weekNN-oppgaver` executable.
+-- The oblig is `oblig-tests`, near the bottom.
 
 common warnings
   ghc-options:      -Wno-x-partial
@@ -159,6 +160,17 @@ executable week09-oppgaver
   main-is:        OppgaverTests.hs
   other-modules:  Oppgaver
   build-depends:  base, inf122-tutorial:check, QuickCheck
+
+-- The oblig: one file, submitted as is, outside tutorial/. GHC2021 rather
+-- than the Haskell2010 above, because that is what the graders' plain GHCi
+-- uses -- the editor should judge the file the way they will.
+executable oblig-tests
+  hs-source-dirs:   assignments/oblig
+  main-is:          ObligTests.hs
+  other-modules:    Oblig
+  ghc-options:      -Wno-x-partial
+  default-language: GHC2021
+  build-depends:    base, inf122-tutorial:check, process, directory
 
 -- The reference solutions. No Tests.hs of their own, so these are libraries.
 library sol-week01
