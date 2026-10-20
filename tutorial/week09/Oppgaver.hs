@@ -75,7 +75,12 @@ module Oppgaver where
 --
 --   Finn typer til følgende uttrykk eller vis at de er feiltypet:
 --
---   3. \x -> \y -> x y
+3. \x -> \y -> x y
+x :: a | \y -> x y :: b       t = a -> b
+x :: a, y :: c | x y :: b      b = c -> d
+x :: a, y :: c |
+
+
 --
 --   4. \x -> \y -> (x y) x
 --
