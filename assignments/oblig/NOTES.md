@@ -50,6 +50,44 @@ their own. They check only:
 the count stays at 0 until the whole pipeline works, and then it jumps. Check
 each piece in GHCi on the way: `./tutorial/check.sh oblig --repl`.
 
+## The route
+
+The pipeline is `tokenise → parse → generateEqns → unify`, and `typeOf` chains
+them. Build it bottom-up and check each piece in GHCi, since the suite only
+goes green at the end.
+
+**Phase 0: read (21 Oct)**
+- [ ] Read `oblig.pdf` from start to finish, then the typing rules in `9-unifi+HiMi-hand.pdf`
+- [ ] Settle the open questions below
+
+**Phase 1: Sheet 9 Part II first (21–23 Oct)**
+- [ ] `./tutorial/check.sh 09` green: `Show Type`, `subst`, `occursIn`, `unify`
+- [ ] Port to §2. Changes: `Type` gets `NumT`; `unify`'s second argument is a `Type`, not a `String`; add the §2.1 name list
+
+**Phase 2: parser, §1 (24–27 Oct)**
+- [ ] `data Ast`: decide the argument types, write the choice under Decisions
+- [ ] `tokenise`: what's new compared with Sheet 8 is multi-digit numbers, `->` as a token (not `-`), and `|`, `[`, `]`
+- [ ] `parse`: one function per grammar level (Expr, Expr1, Value), the same pattern as Sheet 8.
+      Application takes two *Values*; a lambda body extends as far right as it can
+- [ ] Checkpoint: parse every §3.3 string in GHCi and read the trees off by hand
+
+**Phase 3: `generateEqns`, §3.1–3.2 (28–31 Oct)**
+- [ ] One case per Ast constructor. For each, find the matching line in your
+      Sheet 9 Part I derivations (`weeks/uke42/exercises/uke9+fasit-typing.txt`)
+- [ ] Operators: hard-coded or through `initialContext`. Write down which, and why
+- [ ] Thread the fresh-name supply the way the parser threads leftover tokens
+- [ ] Checkpoint: print the equations for `|x -> x` and compare with the paper version
+
+**Phase 4: `typeOf` (1 Nov)**
+- [ ] Connect the pieces; most of the 14 `typeOf` checks should turn green together
+
+**Phase 5: `main`, §4 (2–3 Nov)**
+- [ ] A `getLine` loop with `t`, `f`, `q`; `f` uses `readFile` and `lines`
+- [ ] 17/17
+
+**Phase 6: buffer (4–5 Nov)**
+- [ ] The "Before submitting" checklist below. **Submit Thursday 5 Nov**, leaving Friday as margin
+
 ## Things to settle by reading, or at a group
 
 - [ ] `:` in the grammar. Which Ast constructor does it become? Compare the
