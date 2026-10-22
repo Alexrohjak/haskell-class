@@ -13,6 +13,7 @@
 -- ===========================================================================
 
 module Oblig where
+import Data.Char
 
 -- ===========================================================================
 -- Innføring
@@ -52,7 +53,9 @@ module Oblig where
 --      og Lambda (anonyme funksjonsuttrykk).
 -- ---------------------------------------------------------------------------
 
-data Ast -- plassholder: bytt ut hele linjen med din deklarasjon
+data Ast = App Ast Ast | Add Ast Ast | Sub Ast Ast | Mult Ast Ast
+  | Div Ast Ast | Val Int | Var String | Lambda Ast Ast
+  deriving (Eq, Show, Read)
 
 -- ---------------------------------------------------------------------------
 -- 1.2  Definer funksjoner tokenise::String->[String] og parse::String->Ast
@@ -60,11 +63,18 @@ data Ast -- plassholder: bytt ut hele linjen med din deklarasjon
 -- ---------------------------------------------------------------------------
 
 tokenise :: String -> [String]
-tokenise = undefined
+tokenise [] = []
+tokenise ('-':'>':xs) = "->" : tokenise xs
+tokenise (x:xs)
+  | isSpace x = tokenise xs
+  | isLower x = atom : tokenise rest
+  | isDigit x = num : tokenise left
+  | otherwise = [x] : tokenise xs
+  where (atom, rest) = span isLower (x:xs)
+        (num, left) = span isDigit (x:xs)
 
 parse :: String -> Ast
 parse = undefined
-
 
 -- ===========================================================================
 -- 2  Typeuttrykk og Unifikasjon
