@@ -6,13 +6,11 @@ import Data.Char
 -- ===== 1  Parsing og ASTer =====
 
 -- 1.1  data Ast
-
 data Ast = App Ast Ast | Add Ast Ast | Sub Ast Ast | Mult Ast Ast
   | Div Ast Ast | Val Int | Var String | Lambda String Ast
   deriving (Eq, Show, Read)
 
 -- 1.2  tokenise og parse
-
 tokenise :: String -> [String]
 tokenise [] = []
 tokenise ('-':'>':xs) = "->" : tokenise xs
@@ -60,14 +58,14 @@ parseValue (t:rest)
 -- ===== 2  Typeuttrykk og unifikasjon =====
 
 -- 2.1  Uendelig liste med typevariabelnavn "t1", "t2", ...
-
+liste :: [String]
+liste = ["t" ++ show n | n <- [1::Int ..]]
 
 -- 2.2  data Type
 data Type = TVar String | NumT | Arr Type Type
   deriving (Show, Eq)
 
 -- 2.3  occursIn
-
 occursIn :: String -> Type -> Bool
 occursIn xs (TVar t) = xs == t
 occursIn _ NumT = False
@@ -82,7 +80,6 @@ subst _ _ NumT = NumT
 subst xs s (Arr t u) =  Arr (subst xs s t) (subst xs s u)
 
 -- 2.4  unify (med occurs-check)
-
 type Eqn = (Type, Type)
 
 unify :: [Eqn] -> Type -> Type
