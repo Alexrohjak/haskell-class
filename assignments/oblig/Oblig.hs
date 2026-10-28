@@ -1,4 +1,4 @@
--- Navn: Alexander Rohde Jakobsen
+-- Navn: Alexander Rohde Jakobsen & Bashar Mohamad
 
 module Oblig where
 import Data.Char
@@ -59,20 +59,38 @@ parseValue (t:rest)
 
 
 -- 2.2  data Type
-
-data Type deriving (Show, Eq)
+data Type = TVar String | NumT | Arr Type Type
+  deriving (Show, Eq)
 
 -- 2.3  occursIn
 
 occursIn :: String -> Type -> Bool
-occursIn = undefined
+occursIn xs (TVar t) = xs == t
+occursIn _ NumT = False
+occursIn xs (Arr t u) = occursIn xs t || occursIn xs u
+
+-- 2.3.1 subst
+subst :: String -> Type -> Type -> Type
+subst xs s (TVar t)
+  | xs == t = s
+  | otherwise = TVar t
+subst _ _ NumT = NumT
+subst xs s (Arr t u) =  Arr (subst xs s t) (subst xs s u)
 
 -- 2.4  unify (med occurs-check)
 
 type Eqn = (Type, Type)
 
 unify :: [Eqn] -> Type -> Type
-unify = undefined
+unify [(a, x)] t0 | a == t0 = x
+unify ((a, x) : rest) t0 | a == t0 = unify (rest ++ [(a, x)]) t0
+unify ((TVar a, x) : rest) t0 | not (occursIn a x) = unify [(subst a x l, subst a x r) | (l, r) <- rest] t0
+unify ((NumT, NumT) : rest) t0 = unify rest t0
+unify ((Arr a x, Arr y z) : rest) t0 = unify ((a, y) : (x, z) : rest) t0
+unify ((TVar a, TVar x) : rest) t0 | a == x = unify rest t0
+unify ((a, TVar x) : rest) t0 = unify ((TVar x, a) : rest) t0
+unify _ _ = error "Occurs check feil"
+
 
 -- ===== 3  Typing =====
 
