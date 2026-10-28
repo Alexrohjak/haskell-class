@@ -24,6 +24,10 @@ tokenise (x:xs)
   where (atom, rest) = span isLower (x:xs)
         (num, left) = span isDigit (x:xs)
 
+parse :: String -> Ast
+parse s = tree
+  where (tree, _) = parseExpr (tokenise s)
+
 parseExpr :: [String] -> (Ast, [String])
 parseExpr tokens
   | take 1 rest1 == ["+"] = (Add tree1 tree2, rest2)
