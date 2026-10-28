@@ -111,7 +111,6 @@ firstStrIs xs ("|":rest) = xs == "|"
 firstStrIs xs ("&":rest) = xs == "&"
 firstStrIs _ _ = False
 
-
 --       A ::= N & A | N
 parseA :: [String] -> (Bst, [String])
 parseA tokens
