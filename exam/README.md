@@ -1,5 +1,9 @@
 # Eksamen — 2. desember 2026
 
+> **Revise here: [The Exam Room](https://claude.ai/artifact/2WJWfyB5XFopyzfzd7epXr)** (private).
+> One page for INF122 and DAT158 together: today's 3-hour session, the 36-day plan, spaced drills
+> and timed mocks. It replaces this folder's `interactive-revision.html`. Source of record: `~/code/exam-prep/`.
+
 **3 hours, written, no aids permitted.** You write Haskell by hand, on paper.
 The date is from the lecturer's plan (`weeks/uke34/slides/1krav-plan+intro.pdf`,
 p.2: *"49: 2.12 – Eksamen"*). Mitt UiB is the source of truth — re-run the sync
