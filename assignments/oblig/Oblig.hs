@@ -118,10 +118,11 @@ generateEqns ctx (Mult a b) t names = ([(t, NumT)] ++ eqsA ++ eqsB, namesB)
 generateEqns ctx (Div a b) t names = ([(t, NumT)] ++ eqsA ++ eqsB, namesB)
   where (eqsA, namesA) = generateEqns ctx a NumT names
         (eqsB, namesB) = generateEqns ctx b NumT namesA
-generateEqns ctx (App a b) t names = undefined
 generateEqns ctx (Lambda x body) t (n1:n2:rest) = ([(t, Arr (TVar n1)(TVar n2))] ++ eqsB, namesB)
   where (eqsB, namesB) = generateEqns ((Var x, TVar n1) : ctx) body (TVar n2) rest
-
+generateEqns ctx (App f a) t (n1:rest) = (eqsF ++ eqsA, namesA)
+  where (eqsF, namesF) = generateEqns ctx f (Arr (TVar n1) t) rest
+        (eqsA, namesA) = generateEqns ctx a (TVar n1) namesF
 
 -- 3.3  typeOf
 
