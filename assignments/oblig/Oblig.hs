@@ -101,6 +101,27 @@ type Context = [(Ast, Type)]
 
 -- 3.2  generateEqns
 
+generateEqns :: Context -> Ast -> Type -> [String] -> ([Eqn], [String])
+generateEqns ctx (Val n) t names = ([(t, NumT)], names)
+generateEqns ctx (Var x) t names = case lookup (Var x) ctx of
+  Just tx -> ([(t, tx)], names)
+  Nothing -> error "unknown variable"
+generateEqns ctx (Add a b) t names = ([(t, NumT)] ++ eqsA ++ eqsB, namesB)
+  where (eqsA, namesA) = generateEqns ctx a NumT names
+        (eqsB, namesB) = generateEqns ctx b NumT namesA
+generateEqns ctx (Sub a b) t names = ([(t, NumT)] ++ eqsA ++ eqsB, namesB)
+  where (eqsA, namesA) = generateEqns ctx a NumT names
+        (eqsB, namesB) = generateEqns ctx b NumT namesA
+generateEqns ctx (Mult a b) t names = ([(t, NumT)] ++ eqsA ++ eqsB, namesB)
+  where (eqsA, namesA) = generateEqns ctx a NumT names
+        (eqsB, namesB) = generateEqns ctx b NumT namesA
+generateEqns ctx (Div a b) t names = ([(t, NumT)] ++ eqsA ++ eqsB, namesB)
+  where (eqsA, namesA) = generateEqns ctx a NumT names
+        (eqsB, namesB) = generateEqns ctx b NumT namesA
+generateEqns ctx (App a b) t names = undefined
+generateEqns ctx (Lambda x body) t (n1:n2:rest) = ([(t, Arr (TVar n1)(TVar n2))] ++ eqsB, namesB)
+  where (eqsB, namesB) = generateEqns ((Var x, TVar n1) : ctx) body (TVar n2) rest
+
 
 -- 3.3  typeOf
 
