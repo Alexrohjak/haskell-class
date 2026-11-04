@@ -139,4 +139,14 @@ typeOf s = unify eqs (TVar "t0")
 -- main: t Expr, f filnavn, q
 
 main :: IO ()
-main = undefined
+main = do
+  line <- getLine
+  case line of
+    ('t':_:expr) -> do
+      putStrLn (show (typeOf expr))
+      main
+    "q" -> return()
+    ('f':_:name) -> do
+      contents <- readFile name
+      putStr (unlines [e ++ " : " ++ show (typeOf e) | e <- lines contents])
+      main
