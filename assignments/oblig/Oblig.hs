@@ -63,7 +63,13 @@ liste = ["t" ++ show n | n <- [1::Int ..]]
 
 -- 2.2  data Type
 data Type = TVar String | NumT | Arr Type Type
-  deriving (Show, Eq)
+  deriving (Eq)
+
+instance (Show Type) where
+  show NumT = "NumT"
+  show (TVar x) = x
+  show (Arr (Arr x y) b) = "(" ++ (show x ++ "->" ++ show y) ++ ")" ++ "->" ++ show b
+  show (Arr a b) = show a ++ "->" ++ show b
 
 -- 2.3  occursIn
 occursIn :: String -> Type -> Bool
