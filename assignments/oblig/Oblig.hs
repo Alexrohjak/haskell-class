@@ -100,7 +100,6 @@ unify _ _ = error "Occurs check feil"
 type Context = [(Ast, Type)]
 
 -- 3.2  generateEqns
-
 generateEqns :: Context -> Ast -> Type -> [String] -> ([Eqn], [String])
 generateEqns ctx (Val n) t names = ([(t, NumT)], names)
 generateEqns ctx (Var x) t names = case lookup (Var x) ctx of
@@ -125,9 +124,9 @@ generateEqns ctx (App f a) t (n1:rest) = (eqsF ++ eqsA, namesA)
         (eqsA, namesA) = generateEqns ctx a (TVar n1) namesF
 
 -- 3.3  typeOf
-
 typeOf :: String -> Type
-typeOf = undefined
+typeOf s = unify eqs (TVar "t0")
+  where (eqs, _) = generateEqns [] (parse s) (TVar "t0") liste
 
 -- ===== 4  Interaksjon med bruker =====
 
