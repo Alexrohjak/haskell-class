@@ -62,28 +62,46 @@ goes green at the end.
 
 **Phase 1: Sheet 9 Part II first (21–23 Oct)**
 - [ ] `./tutorial/check.sh 09` green: `Show Type`, `subst`, `occursIn`, `unify`
-- [ ] Port to §2. Changes: `Type` gets `NumT`; `unify`'s second argument is a `Type`, not a `String`; add the §2.1 name list
+- [x] Port to §2. Changes: `Type` gets `NumT`; `unify`'s second argument is a `Type`, not a `String`; add the §2.1 name list
+      (28 Oct: §2 written straight into `Oblig.hs` instead; Sheet 9 Part II is still blank)
 
 **Phase 2: parser, §1 (24–27 Oct)**
 - [ ] `data Ast`: decide the argument types, write the choice under Decisions
-- [ ] `tokenise`: what's new compared with Sheet 8 is multi-digit numbers, `->` as a token (not `-`), and `|`, `[`, `]`
-- [ ] `parse`: one function per grammar level (Expr, Expr1, Value), the same pattern as Sheet 8.
+- [x] `tokenise`: what's new compared with Sheet 8 is multi-digit numbers, `->` as a token (not `-`), and `|`, `[`, `]`
+- [x] `parse`: one function per grammar level (Expr, Expr1, Value), the same pattern as Sheet 8.
       Application takes two *Values*; a lambda body extends as far right as it can
-- [ ] Checkpoint: parse every §3.3 string in GHCi and read the trees off by hand
+- [x] Checkpoint: parse every §3.3 string in GHCi and read the trees off by hand
+
+**Stopped here, 28 Oct.** §1 and §2 done and committed. Next session: write
+`generateEqns`'s type signature from the §3.2 wording, and decide whether the
+initial type variable is a `String` or a `Type`. Open items for *Decisions*:
+the `data Ast` argument types; `parseValue`'s `otherwise = undefined` and its
+missing `[]` case; `parse` ignoring leftover tokens; `unify`'s single
+"Occurs check feil" message also covering clashes.
+
+**Stopped here, 4 Nov.** §3 and §4 done and committed (`bf8a13d`): 17/17.
+Also added a hand-written `Show Type` so types print the PDF's way. What's
+left is Phase 6 only. Open items, all listed under *Things worth knowing* in
+[`EXPLAINED.md`](EXPLAINED.md): unknown commands crash `main` (catch-all
+`_ ->`?), an `error` in `t` ends `main`, `-Wall`'s unused `ctx`/`n`, and the
+latent `unify` loop (never hit). *Decisions* below is still empty: copy in the
+starting unknown being a `Type`, hard-coded operators, `Show` by hand, and the
+error behaviour of `main`.
 
 **Phase 3: `generateEqns`, §3.1–3.2 (28–31 Oct)**
-- [ ] One case per Ast constructor. For each, find the matching line in your
+- [x] One case per Ast constructor. For each, find the matching line in your
       Sheet 9 Part I derivations (`weeks/uke42/exercises/uke9+fasit-typing.txt`)
-- [ ] Operators: hard-coded or through `initialContext`. Write down which, and why
-- [ ] Thread the fresh-name supply the way the parser threads leftover tokens
-- [ ] Checkpoint: print the equations for `|x -> x` and compare with the paper version
+- [x] Operators: hard-coded or through `initialContext`. Write down which, and why
+      (4 Nov: hard-coded; the why is in EXPLAINED.md §3.1, still to copy under Decisions)
+- [x] Thread the fresh-name supply the way the parser threads leftover tokens
+- [x] Checkpoint: print the equations for `|x -> x` and compare with the paper version
 
 **Phase 4: `typeOf` (1 Nov)**
-- [ ] Connect the pieces; most of the 14 `typeOf` checks should turn green together
+- [x] Connect the pieces; most of the 14 `typeOf` checks should turn green together
 
 **Phase 5: `main`, §4 (2–3 Nov)**
-- [ ] A `getLine` loop with `t`, `f`, `q`; `f` uses `readFile` and `lines`
-- [ ] 17/17
+- [x] A `getLine` loop with `t`, `f`, `q`; `f` uses `readFile` and `lines`
+- [x] 17/17
 
 **Phase 6: buffer (4–5 Nov)**
 - [ ] The "Before submitting" checklist below. **Submit Thursday 5 Nov**, leaving Friday as margin
