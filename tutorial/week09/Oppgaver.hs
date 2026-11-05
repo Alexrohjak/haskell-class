@@ -64,33 +64,119 @@ module Oppgaver where
 
 -- pro x y = x
 
+-- pro x y = x blir: pro = \x -> \y -> x
+--
+-- (               | \x -> \y -> x::t    t = a -> b)
+-- (x::a         | \y -> x::b            b = c -> d)
+-- (x::a, y::c | x::d                    d = a)
+--
+-- t = a -> b
+-- t = a -> c -> d
+-- t = a -> c -> a , ferdig a + c har ikke sin egen definisjon
+
 -- ---------------------------------------------------------------------------
 -- Oppgave I.2
 --
 --   Finn typen til (pro 2) fra punkt 1, eller vis at det er feiltypet.
 -- ---------------------------------------------------------------------------
-
+-- pro   = \x -> \y -> x
+-- pro 2 = (\x -> \y -> x) 2
+-- pro 2 = \y -> 2
+-- | pro 2::t
+-- | 2::e           e = number
+-- | pro::e -> t    e -> t = a -> c -> a
+-- e = a, t = c -> a
+-- t = c -> e
+-- t = c -> number
 -- ---------------------------------------------------------------------------
 -- Oppgaver I.3 - I.8
 --
 --   Finn typer til følgende uttrykk eller vis at de er feiltypet:
---
-3. \x -> \y -> x y
-x :: a | \y -> x y :: b       t = a -> b
-x :: a, y :: c | x y :: b      b = c -> d
-x :: a, y :: c |
-
-
+--   3. \x -> \y -> x y
+--      (           | \x -> \y -> x y::t             t = a -> b)
+--      (x::a       | \y -> x y::b                   b = c -> d)
+--      (x::a, y::c | x y::d                                   )
+--      (x::a, y::c | y::e                           e = c     )
+--      (x::a, y::c | x::e -> d                      a = e -> d)
+--      t = a -> b
+--      t = a -> c -> d
+--      t = (e -> d) -> c -> d
+--      t = (c -> d) -> c -> d
 --
 --   4. \x -> \y -> (x y) x
+--      (           | \x -> \y -> (x y) x::t          t = a -> b     )
+--      (x::a       | \y -> (x y) x::b                b = c -> d     )
+--      (x::a, y::c | (x y) x::d                                     )
+--      (x::a, y::c | x::e                            e = a          )
+--      (x::a, y::c | (x y)::e -> d                                  )
+--      (x::a, y::c | y::f                            f = c          )
+--      (x::a, y::c | x::f -> e -> d                  a = f -> e -> d)
+--      t = a -> b
+--      t = a -> c -> d
+--      t = a -> c -> d
+--      t = (f -> e -> d) -> c -> d
+--      t = (c -> e -> d) -> c -> d
+--      t = (c -> a -> d) -> c -> d
+--      t = (c -> (f -> e -> d) -> d) -> c -> d
+--      feiltypet, uendelig
 --
 --   5. \x -> \y -> x (y x)
+--      (           | \x -> \y -> x (y x)::t          t = a -> b     )
+--      (x::a       | \y -> x (y x)::b                b = c -> d     )
+--      (x::a, y::c | x (y x)::d                                     )
+--      (x::a, y::c | (y x)::e                                       )
+--      (x::a, y::c | x::f                            f = a          )
+--      (x::a, y::c | y::f -> e                       c = f -> e     )
+--      (x::a, y::c | x::e -> d                       a = e -> d     )
+--      t = a -> b
+--      t = a -> c -> d
+--      t = a -> (f -> e) -> d
+--      t = a -> (a -> e) -> d
+--      t = a -> ((e -> d) -> e) -> d
+--      t = (e -> d) -> ((e -> d) -> e) -> d
+--
 --
 --   6. \x -> \y -> x y x
+--      (           | \x -> \y -> x y x::t            t = a -> b     )
+--      (x::a       | \y -> x y x::b                  b = c -> d     )
+--      (x::a, y::c | (x y) x::d                                     )
+--      (x::a, y::c | x::e                            e = a          )
+--      (x::a, y::c | (x y)::e -> d                                  )
+--      (x::a, y::c | y::f                            f = c          )
+--      (x::a, y::c | x::f -> e -> d                  a = f -> e -> d)
+--      a = f -> e -> d, e = a, f = c => a = c -> a -> d (occurs check)
+--      samme som I.4, feiltypet
 --
 --   7. \x -> x (\y -> x y)
+--      (           | \x -> x (\y -> x y)::t          t = a -> b      )
+--      (x::a       | x (\y -> x y)::b                                )
+--      (x::a       | \y -> x y::c                    c = d -> e      )
+--      (x::a, y::d | x y::e                                          )
+--      (x::a, y::d | y::f                            f = d           )
+--      (x::a, y::d | x::f -> e                       a = f -> e      )
+--      (x::a, y::d | x::c -> b                       a = c -> b      )
+--      f = c, e = b, f = d && f = c, d = c
+--      d = c, c = d -> e, c = c -> e (occurs check)
+--      samme som før, feiltypet
 --
 --   8. \x -> \y -> \z -> (x z) (y z)
+--      (           | \x -> \y -> \z -> (x z) (y z)::t    t = a -> b  )
+--      (x::a       | \y -> \z -> (x z) (y z)::b          b = c -> d  )
+--      (x::a, y::c | \z -> (x z) (y z)::d                d = e -> f  )
+--      (x::a, y::c, z::e | (x z) (y z)::f                            )
+--      (x::a, y::c, z::e | y z::g                                    )
+--      (x::a, y::c, z::e | z::h                          h = e       )
+--      (x::a, y::c, z::e | y::h -> g                     c = h -> g  )
+--      (x::a, y::c, z::e | x z::g -> f                               )
+--      (x::a, y::c, z::e | z::i                          i = e       )
+--      (x::a, y::c, z::e | x::i -> g -> f                a = i -> g -> f)
+--      t = a -> b
+--      t = a -> c -> d
+--      t = a -> c -> e -> f
+--      t = a -> (h -> g) -> e -> f
+--      t = a -> (e -> g) -> e -> f
+--      t = (i -> g -> f) -> (e -> g) -> e -> f
+--      t = (e -> g -> f) -> (e -> g) -> e -> f
 -- ---------------------------------------------------------------------------
 
 -- ===========================================================================
