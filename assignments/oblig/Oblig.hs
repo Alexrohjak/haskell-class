@@ -89,15 +89,15 @@ subst xs s (Arr t u) =  Arr (subst xs s t) (subst xs s u)
 type Eqn = (Type, Type)
 
 unify :: [Eqn] -> Type -> Type
-unify [(a, x)] t0 | a == t0 = x
-unify ((a, x) : rest) t0 | a == t0 = unify (rest ++ [(a, x)]) t0
-unify ((TVar a, x) : rest) t0 | not (occursIn a x) = unify [(subst a x l, subst a x r) | (l, r) <- rest] t0
-unify ((NumT, NumT) : rest) t0 = unify rest t0
-unify ((Arr a x, Arr y z) : rest) t0 = unify ((a, y) : (x, z) : rest) t0
+unify [(a, x)] t0 | a == t0 = x -- stoppebetingelsen
+unify ((a, x) : rest) t0 | a == t0 = unify (rest ++ [(a, x)]) t0 -- ta vare på t0
+unify ((TVar a, x) : rest) t0
+  | not (occursIn a x) = unify [(subst a x l, subst a x r) | (l, r) <- rest] t0 -- eliminer en variabel
+unify ((NumT, NumT) : rest) t0 = unify rest t0 -- slett trivielle likninger
+unify ((Arr a x, Arr y z) : rest) t0 = unify ((a, y) : (x, z) : rest) t0 -- Dekomponer piler
 unify ((TVar a, TVar x) : rest) t0 | a == x = unify rest t0
-unify ((a, TVar x) : rest) t0 = unify ((TVar x, a) : rest) t0
-unify _ _ = error "Occurs check feil"
-
+unify ((a, TVar x) : rest) t0 = unify ((TVar x, a) : rest) t0 -- bytt om variabler
+unify _ _ = error "Occurs check feil" -- feil
 
 -- ===== 3  Typing =====
 
@@ -107,24 +107,32 @@ type Context = [(Ast, Type)]
 
 -- 3.2  generateEqns
 generateEqns :: Context -> Ast -> Type -> [String] -> ([Eqn], [String])
+
 generateEqns ctx (Val n) t names = ([(t, NumT)], names)
+
 generateEqns ctx (Var x) t names = case lookup (Var x) ctx of
   Just tx -> ([(t, tx)], names)
   Nothing -> error "unknown variable"
+
 generateEqns ctx (Add a b) t names = ([(t, NumT)] ++ eqsA ++ eqsB, namesB)
   where (eqsA, namesA) = generateEqns ctx a NumT names
         (eqsB, namesB) = generateEqns ctx b NumT namesA
+
 generateEqns ctx (Sub a b) t names = ([(t, NumT)] ++ eqsA ++ eqsB, namesB)
   where (eqsA, namesA) = generateEqns ctx a NumT names
         (eqsB, namesB) = generateEqns ctx b NumT namesA
+
 generateEqns ctx (Mult a b) t names = ([(t, NumT)] ++ eqsA ++ eqsB, namesB)
   where (eqsA, namesA) = generateEqns ctx a NumT names
         (eqsB, namesB) = generateEqns ctx b NumT namesA
+
 generateEqns ctx (Div a b) t names = ([(t, NumT)] ++ eqsA ++ eqsB, namesB)
   where (eqsA, namesA) = generateEqns ctx a NumT names
         (eqsB, namesB) = generateEqns ctx b NumT namesA
+
 generateEqns ctx (Lambda x body) t (n1:n2:rest) = ([(t, Arr (TVar n1)(TVar n2))] ++ eqsB, namesB)
   where (eqsB, namesB) = generateEqns ((Var x, TVar n1) : ctx) body (TVar n2) rest
+
 generateEqns ctx (App f a) t (n1:rest) = (eqsF ++ eqsA, namesA)
   where (eqsF, namesF) = generateEqns ctx f (Arr (TVar n1) t) rest
         (eqsA, namesA) = generateEqns ctx a (TVar n1) namesF
@@ -139,14 +147,13 @@ typeOf s = unify eqs (TVar "t0")
 -- main: t Expr, f filnavn, q
 
 main :: IO ()
-main = do
-  line <- getLine
-  case line of
-    ('t':_:expr) -> do
-      putStrLn (show (typeOf expr))
-      main
-    "q" -> return()
-    ('f':_:name) -> do
-      contents <- readFile name
-      putStr (unlines [e ++ " : " ++ show (typeOf e) | e <- lines contents])
-      main
+main =
+  getLine >>= \line ->
+    case line of
+      ('t':_:expr) ->
+        putStrLn (show (typeOf expr)) >> main
+      "q" ->
+        return ()
+      ('f':_:name) ->
+        readFile name >>= \contents ->
+          putStr (unlines [e ++ " : " ++ show (typeOf e) | e <- lines contents]) >> main
