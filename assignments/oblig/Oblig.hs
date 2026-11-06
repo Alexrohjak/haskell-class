@@ -68,7 +68,7 @@ data Type = TVar String | NumT | Arr Type Type
 instance (Show Type) where
   show NumT = "NumT"
   show (TVar x) = x
-  show (Arr (Arr x y) b) = "(" ++ (show x ++ "->" ++ show y) ++ ")" ++ "->" ++ show b
+  show (Arr (Arr x y) b) = "(" ++ show (Arr x y) ++ ")" ++ "->" ++ show b
   show (Arr a b) = show a ++ "->" ++ show b
 
 -- 2.3  occursIn
@@ -88,21 +88,20 @@ subst xs s (Arr t u) =  Arr (subst xs s t) (subst xs s u)
 -- 2.4  unify (med occurs-check)
 type Eqn = (Type, Type)
 
-unify :: [Eqn] -> Type -> Type
-unify [(a, x)] t0 | a == t0 = x -- stoppebetingelsen
-unify ((a, x) : rest) t0 | a == t0 = unify (rest ++ [(a, x)]) t0 -- ta vare på t0
-unify ((TVar a, x) : rest) t0
-  | not (occursIn a x) = unify [(subst a x l, subst a x r) | (l, r) <- rest] t0 -- eliminer en variabel
-unify ((NumT, NumT) : rest) t0 = unify rest t0 -- slett trivielle likninger
-unify ((Arr a x, Arr y z) : rest) t0 = unify ((a, y) : (x, z) : rest) t0 -- Dekomponer piler
-unify ((TVar a, TVar x) : rest) t0 | a == x = unify rest t0
-unify ((a, TVar x) : rest) t0 = unify ((TVar x, a) : rest) t0 -- bytt om variabler
-unify _ _ = error "Occurs check feil" -- feil
+unify :: [(Type, Type)] -> String -> Type
+unify [(TVar t, r)] t0 | t == t0 = r -- stoppebetingelsen
+unify ((TVar t, r) : rest) t0 | t == t0 = unify (rest ++ [(TVar t, r)]) t0 -- rule 1 flytt t = bakerst, med variabel t på venstre side
+unify ((l, TVar t) : rest) t0 | t == t0 = unify (rest ++ [(TVar t, l)]) t0 -- rule 1 flytt t = bakerts, med variabel t på høyre side
+unify ((TVar x, y) : rest) t0 | not (occursIn x y) = unify [(subst x y l, subst x y r) | (l, r) <- rest] t0 -- rule 2 substitusjon, om det ikke er occurs feil, gå gjennom alle parene i resten av listen, bytt inn verdien og lag nye par etter substutisjon
+unify ((Arr a b, Arr c d) : rest) t0 = unify ((a, c) : (b, d) : rest) t0 -- rule 3 dekomponer piler, om et par har piler på begge sider må de endres om til to nye utrykk
+unify ((TVar t, TVar r) : rest) t0 | t == r = unify rest t0 -- Johannes regel 1 fjern, irrelevante par fjernes. a = a sier ingenting nytt og gir evig løkke om den faller i regel 4
+unify ((y, TVar x) : rest) t0 = unify ((TVar x, y) : rest) t0 -- rule 4 snu, om variabelen er på feil side må den byttes om
+unify ((NumT, NumT) : rest) t0 = unify rest t0 -- Johannes regel 1 fjern, alltid sann og dermed sier ingenting nytt
+unify _ _ = error "Occurs check error" -- alle andre tilfeller som ikke er en av reglene
 
 -- ===== 3  Typing =====
 
 -- 3.1  Context (og eventuelt initialContext)
-
 type Context = [(Ast, Type)]
 
 -- 3.2  generateEqns
@@ -145,15 +144,6 @@ typeOf s = unify eqs (TVar "t0")
 -- ===== 4  Interaksjon med bruker =====
 
 -- main: t Expr, f filnavn, q
-
 main :: IO ()
 main =
-  getLine >>= \line ->
-    case line of
-      ('t':_:expr) ->
-        putStrLn (show (typeOf expr)) >> main
-      "q" ->
-        return ()
-      ('f':_:name) ->
-        readFile name >>= \contents ->
-          putStr (unlines [e ++ " : " ++ show (typeOf e) | e <- lines contents]) >> main
+
