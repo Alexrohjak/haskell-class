@@ -75,13 +75,6 @@ module Oppgaver where
 --
 --   Finn typer til følgende uttrykk eller vis at de er feiltypet:
 --
-3. \x -> \y -> x y
-x :: a | \y -> x y :: b       t = a -> b
-x :: a, y :: c | x y :: b      b = c -> d
-x :: a, y :: c |
-
-
---
 --   4. \x -> \y -> (x y) x
 --
 --   5. \x -> \y -> x (y x)
@@ -139,7 +132,9 @@ data Type = Var String | Arrow Type Type
 -- ---------------------------------------------------------------------------
 
 instance Show Type where
-  show = undefined
+  show (Var x)               = x
+  show (Arrow (Arrow a b) c) = "(" ++ show (Arrow a b) ++ ")" ++ " -> " ++ show c
+  show (Arrow l r)           = show l ++ " -> " ++ show r
 
 -- ---------------------------------------------------------------------------
 -- Oppgave II.2
@@ -170,7 +165,10 @@ instance Show Type where
 -- ---------------------------------------------------------------------------
 
 subst :: String -> Type -> Type -> Type
-subst = undefined
+subst xs t (Var a)
+  | xs == a = t
+  | otherwise = (Var a)
+subst xs t (Arrow l r) = Arrow (subst xs t l) (subst xs t r)
 
 -- ---------------------------------------------------------------------------
 -- Oppgave II.3
@@ -189,7 +187,8 @@ subst = undefined
 -- ---------------------------------------------------------------------------
 
 occursIn :: String -> Type -> Bool
-occursIn = undefined
+occursIn xs (Var a) = xs == a
+occursIn xs (Arrow l r) = occursIn xs l || occursIn xs r
 
 -- ---------------------------------------------------------------------------
 -- Oppgave II.4
@@ -221,6 +220,10 @@ occursIn = undefined
 --   F.eks.:
 --
 --     unify [(Arrow (Var "a") (Var "b"), Var "t"), (Var "a", Arrow (Var "c") (Var "d"))] "t"
+--           [ a -> b = t, a = c -> d] regel 4 snu
+--           [t = a -> b, a = c -> d ] regel 1 ta vare på t
+--           [a = c -> d, t = a -> b ] regel 2 limer
+--           [t = (c -> d) -> b      ] no!
 --   ⇒ unify [(Var "t", Arrow (Var "a") (Var "b")), (Var "a", Arrow (Var "c") (Var "d"))] "t" -- Rule 4
 --   ⇒ unify [(Var "a", Arrow (Var "c") (Var "d")), (Var "t", Arrow (Var "a") (Var "b"))] "t" -- Rule 1
 --   ⇒ unify [(Var "t", Arrow (Arrow (Var "c") (Var "d")) (Var "b"))] "t" -- Rule 2
@@ -236,4 +239,10 @@ occursIn = undefined
 -- ---------------------------------------------------------------------------
 
 unify :: [(Type, Type)] -> String -> Type
-unify = undefined
+unify [(Var t, r)] t0 | t == t0 = r -- stoppebetingelsen
+unify ((Var t, r) : rest) t0 | t == t0 = unify (rest ++ [(Var t, r)]) t0 -- rule 1 flytt t = bakerst, med variabel t på venstre side
+unify ((l, Var t) : rest) t0 | t == t0 = unify (rest ++ [(Var t, l)]) t0 -- rule 1 flytt t = bakerts, med variabel t på høyre side
+unify ((Var x, y) : rest) t0 | not (occursIn x y) = unify [(subst x y l, subst x y r) | (l, r) <- rest] t0 -- rule 2 substitusjon, om det ikke er occurs feil, gå gjennom alle parene i resten av listen, bytt inn verdien og lag nye par etter substutisjon
+unify ((Arrow a b) (Arrow c d) : rest) t0 | unify ((a, c) : (b, d) : rest) t0 -- rule 3 dekomponer piler, om et par har piler på begge sider må de endres om til to nye utrykk
+unify ((y, Var x) : rest) t0 = unify ((Var x, y) : rest) t0 -- rule 4 snu, om variabelen er på feil side må den byttes om
+unify _ _ = error "Occurs check error" -- alle andre tilfeller som ikke er en av reglene
