@@ -3,7 +3,7 @@
 module Oblig where
 import Data.Char
 
--- ===== 1  Parsing og ASTer =====
+-- 1
 
 -- 1.1  data Ast
 data Ast = App Ast Ast | Add Ast Ast | Sub Ast Ast | Mult Ast Ast
@@ -55,9 +55,9 @@ parseValue (t:rest)
         (inner, restP) = parseExpr rest
         (body, restL) = parseExpr (drop 2 rest)
 
--- ===== 2  Typeuttrykk og unifikasjon =====
+-- 2
 
--- 2.1  Uendelig liste med typevariabelnavn "t1", "t2", ...
+-- 2.1
 liste :: [String]
 liste = ["t" ++ show n | n <- [1::Int ..]]
 
@@ -85,7 +85,7 @@ subst xs s (TVar t)
 subst _ _ NumT = NumT
 subst xs s (Arr t u) =  Arr (subst xs s t) (subst xs s u)
 
--- 2.4  unify (med occurs-check)
+-- 2.4  unify
 type Eqn = (Type, Type)
 
 unify :: [(Type, Type)] -> String -> Type
@@ -99,9 +99,9 @@ unify ((y, TVar x) : rest) t0 = unify ((TVar x, y) : rest) t0 -- rule 4 snu, om 
 unify ((NumT, NumT) : rest) t0 = unify rest t0 -- Johannes regel 1 fjern, alltid sann og dermed sier ingenting nytt
 unify _ _ = error "Occurs check error" -- alle andre tilfeller som ikke er en av reglene
 
--- ===== 3  Typing =====
+-- 3
 
--- 3.1  Context (og eventuelt initialContext)
+-- 3.1  Context
 type Context = [(Ast, Type)]
 
 -- 3.2  generateEqns
@@ -141,7 +141,7 @@ typeOf :: String -> Type
 typeOf s = unify eqs (TVar "t0")
   where (eqs, _) = generateEqns [] (parse s) (TVar "t0") liste
 
--- ===== 4  Interaksjon med bruker =====
+-- 4
 
 -- main: t Expr, f filnavn, q
 main :: IO ()
