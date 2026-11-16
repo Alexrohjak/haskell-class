@@ -10,6 +10,11 @@ cradle:
         cradle:
           direct:
             arguments: ["-Wno-x-partial", "-iscratch"]
+    - path: "./exam/solving"
+      config:
+        cradle:
+          direct:
+            arguments: ["-Wno-x-partial", "-iexam/solving"]
     - path: "./"
       config:
         cradle:
