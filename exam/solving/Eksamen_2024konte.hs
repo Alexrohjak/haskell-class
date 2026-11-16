@@ -22,9 +22,6 @@ module Eksamen_2024konte where
   ## 1 Programmer følgende funksjoner (20%)
 -}
 
-
-
-
 {-
   **1.1.** `kompress::Eq a=>[a]->[a]` fjerner sammenhengende duplikater fra en liste, f.eks.:
 
@@ -34,8 +31,12 @@ module Eksamen_2024konte where
   ```
 -}
 
-
-
+kompress :: Eq a => [a] -> [a]
+kompress [] = []
+kompress [a] = [a]
+kompress (x:y:xs)
+  | x == y = kompress (y:xs)
+  | otherwise = x : kompress (y:xs)
 
 {-
   **1.2.** `pakk::Eq a=>[a]->[[a]]` pakker sammenhengende duplikater i separate lister, f.eks.:
@@ -46,8 +47,13 @@ module Eksamen_2024konte where
   ```
 -}
 
-
-
+pakk :: Eq a => [a] -> [[a]]
+pakk [] = []
+pakk [a] = [[a]]
+pakk (x:y:xs) 
+  | x == y = (x : first) : rest
+  | otherwise = [x] : first : rest  
+  where (first:rest) = pakk (y:xs)
 
 {-
   **1.3.** `lkode::Eq a=>[a]->[(a,Int)]` "lengdekoder" en liste ved å erstatte hvert segment av sammenhengende duplikater med kun ett slikt element og lengden av segmentet, f.eks.:
@@ -58,8 +64,8 @@ module Eksamen_2024konte where
   (Lengder markeres i det siste eksempelet med tykkskrift kun for å øke lesbarheten.)
 -}
 
-
-
+lkode :: Eq a => [a] -> [(a, Int)]
+lkode xs = [(head g, length g) | g <- pakk xs] 
 
 {-
   **1.4.** `dekode::[(a,Int)]->[a]` gjenskaper den opprinelige listen fra dens lengdekode produsert av `lkode`. (Det skal gjelde at `dekode(lkode xs) == xs`.) F.eks.:
@@ -68,7 +74,8 @@ module Eksamen_2024konte where
   dekode [(1,**1**),(2,**1**),(3,**4**),(2,**3**)] = [1,2,3,3,3,3,2,2,2]
 -}
 
-
+dekode :: [(a, Int)] -> [a]
+dekode xs = concat [replicate b a | (a, b) <- xs]
 
 
 {-
@@ -84,7 +91,17 @@ module Eksamen_2024konte where
   Er definisjonen halerekursiv? Hvis ikke, gi en halerekursiv definisjon av `erOdd`.
 -}
 
+-- Koden er IKKE halerekursiv, siden rekursjonen skjer i det indre uttrykket, 
+-- der etter rekursjonen er ferdig må resultatet andvendes med not, dermed skjer
+-- rekursjonen ikke sist. For at halerekursjon skal skje må rekorsjonen være det 
+-- siste som blir kallt, altså være det yttre uttrykket.
 
+erOdd :: Int -> Bool
+erOdd n = erOdd' False n
+
+erOdd' :: Bool -> Int -> Bool
+erOdd' acc 0 = acc
+erOdd' acc n = erOdd' (not acc) (n - 1)
 
 
 {-
