@@ -77,7 +77,10 @@
     "assignments/README.md": true,
     "assignments/oblig/oblig.pdf": true,
     "docs": true,
-    "exam": true,
+    // In exam/ only solving/ is visible -- that's where the papers are worked.
+    "exam/*.md": true,
+    "exam/*.html": true,
+    "exam/solving/.vscode": true,
     "reference": true,
     "resources": true,
 

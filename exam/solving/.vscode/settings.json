@@ -1,0 +1,30 @@
+{
+  // Exam practice: no help from the editor. These settings apply when
+  // exam/solving is opened as its own folder in VS Code. When the whole repo
+  // is open, the repo's .vscode/settings.json already turns off popups and AI.
+
+  // ---- No AI autocomplete ---------------------------------------------------
+  "github.copilot.enable": { "*": false },
+  "github.copilot.nextEditSuggestions.enabled": false,
+  "editor.inlineSuggest.enabled": false,
+
+  // ---- No suggestion popups -------------------------------------------------
+  "editor.quickSuggestions": { "comments": "off", "strings": "off", "other": "off" },
+  "editor.suggestOnTriggerCharacters": false,
+  "editor.acceptSuggestionOnEnter": "off",
+  "editor.acceptSuggestionOnCommitCharacter": false,
+  "editor.wordBasedSuggestions": "off",
+  "editor.parameterHints.enabled": false,
+  "editor.snippetSuggestions": "none",
+
+  // ---- HLS: keep type errors, drop completions and code-writing lenses -----
+  // Squiggles still show, the same as GHCi would report. Completions, and the
+  // lenses that write signatures for you, are switched off.
+  "haskell.plugin.ghcide-completions.globalOn": false,
+  "haskell.plugin.ghcide-type-lenses.globalOn": false,
+
+  "[haskell]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  }
+}
