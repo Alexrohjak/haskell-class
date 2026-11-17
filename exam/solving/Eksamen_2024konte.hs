@@ -1,4 +1,5 @@
 module Eksamen_2024konte where
+import Data.List
 
 {-
   # INF122 — Konteeksamen februar 2025 (2024konte)
@@ -211,6 +212,10 @@ mult m n = foldn (plus n) Z m
   ```
 -}
 
+diag :: (Int, Int) -> (Int, Int) -> Bool
+diag (x1, y1) (x2, y2) = dr == dk
+  where dr = abs(x1 - x2)
+        dk = abs(y1 - y2)
 
 
 
@@ -222,22 +227,31 @@ mult m n = foldn (plus n) Z m
   ```
 -}
 
-
+test :: [Int] -> Bool
+test xs = and [not (diag x y)| x <- list, y <- list, x < y]
+  where list = zip [1..] xs
 
 
 {-
   **4.3.** Anta en funksjon `perm::[a]->[[a]]` som for en inputliste [a1, ..., ak] returnerer en liste med alle dens permutasjoner. Bruk den og funksjon `test` for å definere funksjon `dro::Int->[[Int]]` som for et input n gir en liste med alle løsninger for n dronninger.
 -}
 
-
+dro :: Int -> [[Int]]
+dro n = filter test (permN [1..n])
 
 
 {-
   **4.4.** Definer selv funksjon `perm` uten å bruke `permutations` (fra `Data.List`).
 -}
 
+permN :: [a] -> [[a]]
+permN [] = [[]]
+permN (x:xs) = [q | p <- permN xs, q <- settInn x p]
 
-
+settInn :: a -> [a] -> [[a]]
+settInn n [] = [[n]]
+settInn n (x:xs) = [n : x : xs] ++ [x : ys | ys <- rest]
+  where rest = settInn n xs
 
 {-
   ## 5 Litt IO (20%)
