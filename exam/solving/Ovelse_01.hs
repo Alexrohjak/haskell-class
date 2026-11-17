@@ -1,4 +1,5 @@
 module Ovelse_01 where
+import Data.Char
 
 {-
   # Øvingssett 1: listefunksjoner, halerekursjon og enkel fold
@@ -27,7 +28,11 @@ module Ovelse_01 where
   ```
 -}
 
-
+fjernLike :: Eq a => a -> [a] -> [a]
+fjernLike _ [] = []
+fjernLike n (x:xs)
+  | x == n = fjernLike n xs
+  | otherwise = x : fjernLike n xs
 
 
 {-
@@ -40,7 +45,9 @@ module Ovelse_01 where
   ```
 -}
 
-
+unike :: Eq a => [a] -> [a]
+unike [] = []
+unike (x:xs) = x : unike (fjernLike x xs)
 
 
 {-
@@ -54,8 +61,12 @@ module Ovelse_01 where
   ```
 -}
 
+forekomster :: Eq a => [a] -> [(a, Int)]
+forekomster [] = []
+forekomster xs = [(x, length (filter (== x) xs)) | x <- unike xs]
 
-
+antallStore :: String -> Int
+antallStore xs = length (filter isUpper xs)
 
 {-
   **A.4.** `splittPaa :: Eq a => a -> [a] -> [[a]]` deler en liste opp i
@@ -69,7 +80,12 @@ module Ovelse_01 where
   ```
 -}
 
-
+splittPaa :: Eq a => a -> [a] -> [[a]]
+splittPaa _ [] = [[]]
+splittPaa s (x:xs)
+  | x == s = [] : (first : rest)
+  | otherwise = (x : first) : rest
+  where (first:rest) = splittPaa s xs
 
 
 {-
@@ -88,7 +104,15 @@ module Ovelse_01 where
   ```
 -}
 
+-- Den er ikke halerekursiv, fordi 1 + settes i kø mens det venter på rekursjonen til å bli fullført
 
+lengde :: [a] -> Int
+lengde [] = 0
+lengde (_:xs) = lengde' 1 xs
+
+lengde' :: Int -> [a] -> Int
+lengde' acc [] = acc
+lengde' acc (_:xs) = lengde' (acc + 1) xs
 
 
 {-
@@ -100,7 +124,14 @@ module Ovelse_01 where
   ```
 -}
 
+-- Den er ikke halerekursiv, fordi det ytterste uttrykket b * venter på resultatet til potens kallet
 
+potens :: Int -> Int -> Int
+potens b n = potens' b n 1
+
+potens' :: Int -> Int -> Int -> Int
+potens' _ 0 acc = acc
+potens' b n acc = potens' b (n - 1) (acc * b) 
 
 
 {-
@@ -112,7 +143,7 @@ module Ovelse_01 where
   ```
 -}
 
-
+-- Ja denne er halerekursiv, siden det eneste og siste kallet er rekursjonen
 
 
 {-
@@ -130,7 +161,8 @@ module Ovelse_01 where
   ```
 -}
 
-
+produkt :: [Int] -> Int
+produkt = foldr (*) 1
 
 
 {-
@@ -143,7 +175,8 @@ module Ovelse_01 where
   ```
 -}
 
-
+antall :: (a -> Bool) -> [a] -> Int
+antall p xs = foldr (\x acc -> if p x then acc + 1 else acc) 0 xs
 
 
 {-

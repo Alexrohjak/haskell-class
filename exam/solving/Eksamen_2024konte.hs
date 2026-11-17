@@ -102,7 +102,7 @@ erOdd n = erOdd' False n
 
 erOdd' :: Bool -> Int -> Bool
 erOdd' acc 0 = acc
-erOdd' acc n = erOdd' (not acc) (n - 1)
+erOdd' acc n = erOdd' (not acc) (abs n - 1)
 
 
 {-
