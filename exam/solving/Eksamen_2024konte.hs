@@ -121,16 +121,18 @@ erOdd' acc n = erOdd' (not acc) (n - 1)
   ```
 -}
 
-
-
-
 {-
   **3.1.** Angi typen til `foldn` (uten å avlede den formelt med Hindley-Milner).
 
   Bruk `foldn` for å definere følgende funksjoner:
 -}
 
+data Nat = Z | S Nat
+  deriving (Show, Eq)
 
+foldn :: (b -> b) -> b -> Nat -> b 
+foldn s z Z = z
+foldn s z (S n) = s (foldn s z n)
 
 
 {-
@@ -141,7 +143,8 @@ erOdd' acc n = erOdd' (not acc) (n - 1)
   ```
 -}
 
-
+erOdde :: Nat -> Bool
+erOdde = foldn not False
 
 
 {-
@@ -152,8 +155,8 @@ erOdd' acc n = erOdd' (not acc) (n - 1)
   ```
 -}
 
-
-
+arab :: Nat -> Int
+arab = foldn (1 +) 0
 
 {-
   **3.4.** `plus::Nat->Nat->Nat` – som gir summen av argumenter, f.eks.:
@@ -163,8 +166,8 @@ erOdd' acc n = erOdd' (not acc) (n - 1)
   ```
 -}
 
-
-
+plus :: Nat -> Nat -> Nat
+plus m n = foldn S n m
 
 {-
   **3.5.** `mult::Nat->Nat->Nat` – som multipliserer argumenter, f.eks.:
@@ -175,7 +178,8 @@ erOdd' acc n = erOdd' (not acc) (n - 1)
   ```
 -}
 
-
+mult :: Nat -> Nat -> Nat
+mult m n = foldn (plus n) Z m
 
 
 {-
